@@ -4,10 +4,10 @@ import AddIcon from '@mui/icons-material/Add';
 import {useDispatch} from "react-redux"
 
 import Header from "../components/Header";
-import PostList from "../components/PostList";
 import useStyles from "./style";
 import { showModal } from "../redux/actions";
 import CreatePostModal from "../components/CreatePostModal";
+import List6in1 from "../components/6in1";
 
 const HomePage = () => {
   const classes = useStyles();
@@ -20,7 +20,7 @@ const HomePage = () => {
   return (
     <Container maxWidth="lg" className="container">
       <Header />
-      <PostList/>
+      <List6in1/>
       <CreatePostModal/>
       <Fab color="primary" className={classes.fab} onClick={openCreatePostModal}>
         <AddIcon />

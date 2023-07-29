@@ -5,39 +5,55 @@ import io from "socket.io-client";
 import { scheduleState$} from '../../redux/selectors';
 
 
-export default function PostList() {
+export default function List6in1() {
     const dispatch = useDispatch();
     const schedule = useSelector(scheduleState$);
     
     useEffect(() => {
         dispatch(actions.getSchedule.getSchedulesRequest());
+        
         const socket = io.connect("http://localhost:5000");
-        socket.on("ODDS", (data) => {
-            if (data && Array.isArray(data)) {
-                bf_refresh(data, 0);
-            } else {
-                console.error("Invalid data format:", data);
+        socket.on("connect", () => {
+            console.log("con ws");
+        });
+
+        socket.on("ODDS", async (data) => {
+            try {
+                const dataJson = JSON.parse(data);
+                if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
+                    const dataOdds = dataJson['ODDS_DATA']['ODDS_ITEM'];
+                    await bf_refresh(dataOdds);
+                }
+            } catch (error) {
+                console.error("Error while parsing JSON data:", error.message);
             }
         });
 
-        socket.on("SCHEDULE", (data) => {
-            if (data && Array.isArray(data)) {
-                tb_refresh(data);
-            } else {
-                console.error("Invalid data format:", data);
+        socket.on("SCHEDULE", async (data) => {
+            try{
+                const dataJson = JSON.parse(data);
+                if (dataJson && dataJson['SCHEDULE_DATA'] && dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM']) {
+                    tb_refresh(dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM']);
+                }
+            }catch(error) {
+                console.error("Error while parsing JSON data:", error.message);
             }
+        });
+
+        socket.on("disconnect", () => {
+            console.log("dis ws");
         });
 
         return () => {
             socket.disconnect();
         };
     }, [dispatch]);
-
+    
     function tb_refresh(data) {
         var length = 0;
         length = data.length;
         for (var i = 0; i < length; i++) {
-            var D = data[i];
+            var D = data[i].$;
             var match = D;
             
             var tr = document.getElementById("table_" + D.MATCH_ID);
@@ -85,10 +101,10 @@ export default function PostList() {
     function bf_refresh(data, type) {
         var length = 0;
         length = data.length;
+        
         for (var i = 0; i < length; i++) {
-            var D = data[i];
+            var D = data[i].$;
             var odds = D;
-            
             var tr = document.getElementById("table_" + D.MATCH_ID);
             if (tr === null) continue;
             try {
@@ -141,7 +157,6 @@ export default function PostList() {
             tr.attributes["odds"].value = JSON.stringify(odds);
         }
     }
-
 
     function MatchTable({ e }) {
         return (

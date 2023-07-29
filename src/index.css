@@ -93,6 +93,9 @@ span.change_status {
 }
 
 table[data-t *="Finished"],
-table[data-t *="Pend"] {
+table[data-t *="Pend"],
+table[data-t *="Cancel"],
+table[data-t *="Abd"],
+table[data-t *="Postp"] {
     display: none;
 }
