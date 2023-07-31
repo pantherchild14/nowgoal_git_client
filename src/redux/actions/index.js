@@ -16,5 +16,11 @@ export const getRT = createActions({
     getRTFailure: (err) => err,
 });
 
+export const getStatusRT = createActions({
+    getStatusRTRequest: undefined,
+    getStatusRTSuccess: (payload) => payload,
+    getStatusRTFailure: (err) => err,
+});
+
 export const showModal = createAction("SHOW_CREATE_POST_MODAL");
 export const hideModal = createAction("HIDE_CREATE_POST_MODAL");

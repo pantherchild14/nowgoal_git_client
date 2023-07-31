@@ -2,17 +2,32 @@ import React, {useEffect,useState} from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import * as actions from "../../redux/actions";
 import io from "socket.io-client";
-import { scheduleState$} from '../../redux/selectors';
-
+import { scheduleState$, rtState$, statusrtState$} from '../../redux/selectors';
 
 export default function List6in1() {
     const dispatch = useDispatch();
     const schedule = useSelector(scheduleState$);
-    
+    const oddsRedux = useSelector(rtState$);
+    const statusRedux = useSelector(statusrtState$);
+
+    const [isLoading, setIsLoading] = useState(true); 
+
+    bf_refresh(oddsRedux,0);
+    tb_refresh(statusRedux,0);
+
     useEffect(() => {
-        dispatch(actions.getSchedule.getSchedulesRequest());
-        
-        const socket = io.connect("http://localhost:5000");
+        const fetchData = async () => {
+            await Promise.all([
+              dispatch(actions.getSchedule.getSchedulesRequest()),
+              dispatch(actions.getRT.getRTRequest()),
+              dispatch(actions.getStatusRT.getStatusRTRequest()),
+            ]);
+            setIsLoading(false);
+        };
+      
+        const fetchDataAfterDelay = setTimeout(fetchData, 3000);
+
+        const socket = io.connect(process.env.REACT_APP_URL_SERVER);
         socket.on("connect", () => {
             console.log("con ws");
         });
@@ -22,7 +37,7 @@ export default function List6in1() {
                 const dataJson = JSON.parse(data);
                 if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
                     const dataOdds = dataJson['ODDS_DATA']['ODDS_ITEM'];
-                    await bf_refresh(dataOdds);
+                    await bf_refresh(dataOdds,1);
                 }
             } catch (error) {
                 console.error("Error while parsing JSON data:", error.message);
@@ -33,7 +48,7 @@ export default function List6in1() {
             try{
                 const dataJson = JSON.parse(data);
                 if (dataJson && dataJson['SCHEDULE_DATA'] && dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM']) {
-                    tb_refresh(dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM']);
+                    tb_refresh(dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM'],1);
                 }
             }catch(error) {
                 console.error("Error while parsing JSON data:", error.message);
@@ -45,27 +60,39 @@ export default function List6in1() {
         });
 
         return () => {
+            clearTimeout(fetchDataAfterDelay);
             socket.disconnect();
         };
     }, [dispatch]);
     
-    function tb_refresh(data) {
+    function tb_refresh(data,type) {
         var length = 0;
-        length = data.length;
+        if (type == 1) {
+            length = data?.length || 0;
+        } else {
+            length = data?.data?.SCHEDULE_DATA?.SCHEDULE_ITEM?.length || 0;
+        }
         for (var i = 0; i < length; i++) {
-            var D = data[i].$;
+            var D;
+            if (type == 0) {
+                D = data?.data?.SCHEDULE_DATA?.SCHEDULE_ITEM?.[i]?.$;
+            } else {
+                D = data?.[i]?.$;
+            }
+            if (!D) continue;
             var match = D;
-            
             var tr = document.getElementById("table_" + D.MATCH_ID);
             if (tr === null) continue;
             try {
                 var HOME_SCORE = tr.querySelector("#hs" + D.MATCH_ID);
                 var AWAY_SCORE = tr.querySelector("#gs" + D.MATCH_ID); 
                 var STATUS_MATCH = tr.querySelector("#ms" + D.MATCH_ID); 
+                var STATUS = tr.querySelector("#tos_" + D.MATCH_ID); 
 
                 HOME_SCORE.innerHTML = D.HOME_SCORE;
                 AWAY_SCORE.innerHTML = D.AWAY_SCORE;
                 STATUS_MATCH.innerHTML = D.START_TIME;
+                STATUS.innerHTML = D.STATUS;
                 // var scheduleValue = tr.attributes["data-s"].value;
 
                 // var HOME_SCORE = tr.querySelector("#hs" + D.MATCH_ID);
@@ -91,8 +118,8 @@ export default function List6in1() {
             } catch (error) {
                 console.error("Error parsing JSON:", error);
             }
-            
-
+            tr.setAttribute("data-s", "");
+            tr.setAttribute("data-t", "");
             tr.attributes["data-s"].value = JSON.stringify(match.STATUS);
             tr.attributes["data-t"].value = JSON.stringify(match);
         }
@@ -100,15 +127,25 @@ export default function List6in1() {
 
     function bf_refresh(data, type) {
         var length = 0;
-        length = data.length;
+        if (type == 1) {
+            length = data?.length || 0;
+        } else {
+            length = data?.data?.ODDS_DATA?.ODDS_ITEM?.length || 0;
+        }
         
         for (var i = 0; i < length; i++) {
-            var D = data[i].$;
+            var D;
+            if (type == 1) {
+                D = data?.[i]?.$;
+            } else {
+                D = data?.data?.ODDS_DATA?.ODDS_ITEM?.[i]?.$;
+            }
+            if (!D) continue;
             var odds = D;
             var tr = document.getElementById("table_" + D.MATCH_ID);
             if (tr === null) continue;
             try {
-                var oddsValue = tr.attributes["odds"].value;
+                var oddsValue = tr.attributes["odds"]?.value;
                 /* 1X2 */
                 var homewin = tr.querySelector("#homewin_" + D.MATCH_ID);
                 var guestwin = tr.querySelector("#guestwin_" + D.MATCH_ID);
@@ -154,20 +191,21 @@ export default function List6in1() {
             } catch (error) {
                 console.error("Error parsing JSON:", error);
             }
+            tr.setAttribute("odds", "");
             tr.attributes["odds"].value = JSON.stringify(odds);
         }
     }
 
     function MatchTable({ e }) {
         return (
-            <table width="100%" border="0" cellPadding="4" cellSpacing="1" style={{ marginBottom: "-1px", textAlign: "center" }} className="odds-table-bg dataItem" leagueid="388" id={'table_' + e.MATCH_ID} data-s="" data-t="" odds="">
+            <table width="100%" border="0" cellPadding="4" cellSpacing="1" style={{ marginBottom: "-1px", textAlign: "center" }} className="odds-table-bg dataItem" leagueid="388" id={'table_' + e.MATCH_ID}>
             <tbody>
                 <tr name="LeaguestitleTr" data-l={e.LEAGUE_ID}>
                     <td colSpan="9" className="Leaguestitle"><span className="l1"><a href="#" target="_blank">{e.LEAGUE_NAME}</a></span></td>
                 </tr>
                 <tr className="b1" id={'tr_' + e.MATCH_ID}>
                     <td rowSpan="3" width="3%"></td>
-                    <td rowSpan="3" width="5%"><span id={'t_'+ e.MATCH_ID} name="timeData" style={{fontSize:'13px'}}>{e.MATCH_TIME}</span><br /><span id={'tos_'+e.MATCH_ID} style={{fontSize:'13px'}} className="red">{e.STATUS}</span></td>
+                    <td rowSpan="3" width="5%"><span id={'t_'+ e.MATCH_ID} name="timeData" style={{fontSize:'13px'}}>{e.MATCH_TIME}</span><br /><span id={'tos_'+e.MATCH_ID} style={{fontSize:'13px'}} className="red"></span></td>
                     <td className="sl" width="23%" id={'home_'+e.MATCH_ID}><a href="#">{e.HOME_NAME}</a></td>
                     <td width="6%" rowSpan="3" style={{ textAlign: 'center' }}><span id={'hs'+e.MATCH_ID} className="blue"></span><br /><span id={'ms'+e.MATCH_ID}></span><br /><span id={'gs'+e.MATCH_ID} className="blue"></span></td>
                     <td width="7%"><a href="#" className="sb" id={'homewin_'+e.MATCH_ID}></a></td>
@@ -202,30 +240,38 @@ export default function List6in1() {
 
     return (
         <div id='teamid'>
-            <div id='6in1'>
-                <table width="100%" border="0" align="center" cellPadding="2" cellSpacing="1" className="odds-table-bg">
-                    <tbody>
-                        <tr className="oodstable-t" align="center">
-                            <td width="3%"></td>
-                            <td width="5%">Date</td>
-                            <td width="23%" className="sl">Teams</td>
-                            <td width="6%">Score</td>
-                            <td width="7%">1X2</td>
-                            <td width="14%">Asian Handicap</td>
-                            <td width="14%">Over/Under</td>
-                            <td width="14%">HT Asian Handicap</td>
-                            <td width="14%">HT Over/Under</td>
-                        </tr>
-                    </tbody>
-                </table>
+          <div id='6in1'>
+            <table width="100%" border="0" align="center" cellPadding="2" cellSpacing="1" className="odds-table-bg" data-t="">
+                <tbody>
+                    <tr className="oodstable-t" align="center">
+                        <td width="3%"></td>
+                        <td width="5%">Date</td>
+                        <td width="23%" className="sl">Teams</td>
+                        <td width="6%">Score</td>
+                        <td width="7%">1X2</td>
+                        <td width="14%">Asian Handicap</td>
+                        <td width="14%">Over/Under</td>
+                        <td width="14%">HT Asian Handicap</td>
+                        <td width="14%">HT Over/Under</td>
+                    </tr>
+                </tbody>
+            </table>
+            {isLoading ? (
+              <p>Loading...</p> 
+            ) : (
+              <React.Fragment>
                 
+      
                 {sortedMatches.filter((match) => match.STATUS >= 1).map((e) => (
-                    <MatchTable key={e.MATCH_ID} e={e} />
+                  <MatchTable key={e.MATCH_ID} e={e} />
                 ))}
                 {sortedMatches.filter((match) => match.STATUS < 1).map((e) => (
-                    <MatchTable key={e.MATCH_ID} e={e} />
+                  <MatchTable key={e.MATCH_ID} e={e} />
                 ))}
-            </div>
+              </React.Fragment>
+            )}
+          </div>
         </div>
-    )
+      );
+      
 }

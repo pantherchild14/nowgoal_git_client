@@ -21,6 +21,15 @@ function* fetchRTSaga(action) {
     }
 }
 
+function* fetchstatusRTSaga(action) {
+    try {
+        const statusrt = yield call(api.fetchStatusRT);
+        yield put(actions.getStatusRT.getStatusRTSuccess(statusrt.data));
+    } catch (error) {
+        console.error("Error fetching rt:", error);
+    }
+}
+
 
 function* myScheduleSaga() {
     yield takeLatest(actions.getSchedule.getSchedulesRequest, fetchScheduleSaga);
@@ -30,4 +39,8 @@ function* myrtSaga() {
     yield takeLatest(actions.getRT.getRTRequest, fetchRTSaga);
 }
 
-export { myScheduleSaga, myrtSaga };
+function* mystatysrtSaga() {
+    yield takeLatest(actions.getStatusRT.getStatusRTRequest, fetchstatusRTSaga);
+}
+
+export { myScheduleSaga, myrtSaga, mystatysrtSaga };

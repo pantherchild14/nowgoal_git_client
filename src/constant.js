@@ -7,6 +7,10 @@ export const INIT_STATE = {
         isLoading: false,
         data: [],
     },
+    statusrt: {
+        isLoading: false,
+        data: [],
+    },
     modal: {
         isShow: false,
     }

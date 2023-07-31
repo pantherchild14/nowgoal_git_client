@@ -92,10 +92,12 @@ span.change_status {
     background-color: #ecbc37;
 }
 
+table:not([data-t]),
 table[data-t *="Finished"],
 table[data-t *="Pend"],
 table[data-t *="Cancel"],
 table[data-t *="Abd"],
-table[data-t *="Postp"] {
+table[data-t *="Postp"],
+table[data-t *="Pause"] {
     display: none;
 }
