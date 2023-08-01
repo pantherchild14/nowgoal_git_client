@@ -3,7 +3,6 @@ import { Container, Fab } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add'; 
 import {useDispatch} from "react-redux"
 
-import Header from "../components/Header";
 import useStyles from "./style";
 import { showModal } from "../redux/actions";
 import CreatePostModal from "../components/CreatePostModal";
@@ -18,14 +17,13 @@ const HomePage = () => {
   },[dispatch]);
   
   return (
-    <Container maxWidth="lg" className="container">
-      <Header />
+      <>
       <List6in1/>
       <CreatePostModal/>
       <Fab color="primary" className={classes.fab} onClick={openCreatePostModal}>
         <AddIcon />
       </Fab>
-    </Container>
+      </>
   );
 };
 

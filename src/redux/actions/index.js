@@ -10,16 +10,30 @@ export const getSchedule = createActions({
     getScheduleFailure: (err) => err,
 });
 
+
 export const getRT = createActions({
     getRTRequest: undefined,
     getRTSuccess: (payload) => payload,
     getRTFailure: (err) => err,
 });
 
+export const getOddsSingle = createActions({
+    getOddsSingleRequest: (id) => ({ id }),
+    getOddsSingleSuccess: (payload) => payload,
+    getOddsSingleFailure: (err) => err,
+});
+
 export const getStatusRT = createActions({
     getStatusRTRequest: undefined,
     getStatusRTSuccess: (payload) => payload,
     getStatusRTFailure: (err) => err,
+});
+
+
+export const getScheduleSingleRT = createActions({
+    getScheduleSingleRTRequest: (id) => ({ id }),
+    getScheduleSingleRTSuccess: (payload) => payload,
+    getScheduleSingleRTFailure: (err) => err,
 });
 
 export const showModal = createAction("SHOW_CREATE_POST_MODAL");

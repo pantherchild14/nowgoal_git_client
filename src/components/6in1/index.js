@@ -1,5 +1,6 @@
 import React, {useEffect,useState} from 'react';
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from 'react-router-dom';
 import * as actions from "../../redux/actions";
 import io from "socket.io-client";
 import { scheduleState$, rtState$, statusrtState$} from '../../redux/selectors';
@@ -9,6 +10,7 @@ export default function List6in1() {
     const schedule = useSelector(scheduleState$);
     const oddsRedux = useSelector(rtState$);
     const statusRedux = useSelector(statusrtState$);
+    console.log(schedule);
 
     const [isLoading, setIsLoading] = useState(true); 
 
@@ -17,64 +19,74 @@ export default function List6in1() {
 
     useEffect(() => {
         const fetchData = async () => {
+          try {
+            setIsLoading(true);
+      
+            const socket = io.connect(process.env.REACT_APP_URL_SERVER);
+      
             await Promise.all([
               dispatch(actions.getSchedule.getSchedulesRequest()),
               dispatch(actions.getRT.getRTRequest()),
               dispatch(actions.getStatusRT.getStatusRTRequest()),
             ]);
-            setIsLoading(false);
-        };
       
-        const fetchDataAfterDelay = setTimeout(fetchData, 3000);
-
-        const socket = io.connect(process.env.REACT_APP_URL_SERVER);
-        socket.on("connect", () => {
-            console.log("con ws");
-        });
-
-        socket.on("ODDS", async (data) => {
-            try {
+            socket.on("connect", () => {
+              console.log("con ws");
+            });
+      
+            socket.on("ODDS", async (data) => {
+              try {
                 const dataJson = JSON.parse(data);
                 if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
-                    const dataOdds = dataJson['ODDS_DATA']['ODDS_ITEM'];
-                    await bf_refresh(dataOdds,1);
+                  const dataOdds = dataJson['ODDS_DATA']['ODDS_ITEM'];
+                  await bf_refresh(dataOdds, 1);
                 }
-            } catch (error) {
+              } catch (error) {
                 console.error("Error while parsing JSON data:", error.message);
-            }
-        });
-
-        socket.on("SCHEDULE", async (data) => {
-            try{
+              }
+            });
+      
+            socket.on("SCHEDULE", async (data) => {
+              try {
                 const dataJson = JSON.parse(data);
                 if (dataJson && dataJson['SCHEDULE_DATA'] && dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM']) {
-                    tb_refresh(dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM'],1);
+                  tb_refresh(dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM'], 1);
                 }
-            }catch(error) {
+              } catch (error) {
                 console.error("Error while parsing JSON data:", error.message);
-            }
-        });
-
-        socket.on("disconnect", () => {
-            console.log("dis ws");
-        });
-
-        return () => {
-            clearTimeout(fetchDataAfterDelay);
-            socket.disconnect();
+              }
+            });
+      
+            socket.on("disconnect", () => {
+              console.log("dis ws");
+            });
+      
+            setTimeout(() => {
+              setIsLoading(false);
+            }, 5000); 
+      
+            return () => {
+              socket.disconnect();
+            };
+          } catch (error) {
+            console.error("Error fetching data:", error.message);
+            setIsLoading(false);
+          }
         };
-    }, [dispatch]);
+      
+        fetchData();
+      }, [dispatch]);
     
     function tb_refresh(data,type) {
         var length = 0;
-        if (type == 1) {
+        if (type === 1) {
             length = data?.length || 0;
         } else {
             length = data?.data?.SCHEDULE_DATA?.SCHEDULE_ITEM?.length || 0;
         }
         for (var i = 0; i < length; i++) {
             var D;
-            if (type == 0) {
+            if (type === 0) {
                 D = data?.data?.SCHEDULE_DATA?.SCHEDULE_ITEM?.[i]?.$;
             } else {
                 D = data?.[i]?.$;
@@ -127,7 +139,7 @@ export default function List6in1() {
 
     function bf_refresh(data, type) {
         var length = 0;
-        if (type == 1) {
+        if (type === 1) {
             length = data?.length || 0;
         } else {
             length = data?.data?.ODDS_DATA?.ODDS_ITEM?.length || 0;
@@ -135,7 +147,7 @@ export default function List6in1() {
         
         for (var i = 0; i < length; i++) {
             var D;
-            if (type == 1) {
+            if (type === 1) {
                 D = data?.[i]?.$;
             } else {
                 D = data?.data?.ODDS_DATA?.ODDS_ITEM?.[i]?.$;
@@ -199,36 +211,36 @@ export default function List6in1() {
     function MatchTable({ e }) {
         return (
             <table width="100%" border="0" cellPadding="4" cellSpacing="1" style={{ marginBottom: "-1px", textAlign: "center" }} className="odds-table-bg dataItem" leagueid="388" id={'table_' + e.MATCH_ID}>
-            <tbody>
-                <tr name="LeaguestitleTr" data-l={e.LEAGUE_ID}>
-                    <td colSpan="9" className="Leaguestitle"><span className="l1"><a href="#" target="_blank">{e.LEAGUE_NAME}</a></span></td>
-                </tr>
-                <tr className="b1" id={'tr_' + e.MATCH_ID}>
-                    <td rowSpan="3" width="3%"></td>
-                    <td rowSpan="3" width="5%"><span id={'t_'+ e.MATCH_ID} name="timeData" style={{fontSize:'13px'}}>{e.MATCH_TIME}</span><br /><span id={'tos_'+e.MATCH_ID} style={{fontSize:'13px'}} className="red"></span></td>
-                    <td className="sl" width="23%" id={'home_'+e.MATCH_ID}><a href="#">{e.HOME_NAME}</a></td>
-                    <td width="6%" rowSpan="3" style={{ textAlign: 'center' }}><span id={'hs'+e.MATCH_ID} className="blue"></span><br /><span id={'ms'+e.MATCH_ID}></span><br /><span id={'gs'+e.MATCH_ID} className="blue"></span></td>
-                    <td width="7%"><a href="#" className="sb" id={'homewin_'+e.MATCH_ID}></a></td>
-                    <td width="14%" className="sr"><a href="#" className="pk" id={'goal_'+e.MATCH_ID}></a> &nbsp;<a href="#" className="sb" id={'upodds_'+e.MATCH_ID}></a></td>
-                    <td className="sr" width="14%"><a href="#" className="pk" id={'goal_t1_'+e.MATCH_ID}></a> <a href="#" className="sb" id={'upodds_t_'+e.MATCH_ID}></a> </td>
-                    <td width="14%" className="sr sbg"><a href="#" className="pk" id={'goal2_'+e.MATCH_ID}></a> &nbsp;<a href="#" className="sb" id={'upodds2_'+e.MATCH_ID}></a></td>
-                    <td className="sr sbg" width="14%"><a href="#" className="pk" id={'goal_t12_'+e.MATCH_ID}></a> <a href="#" className="sb" id={'upodds_t2_'+e.MATCH_ID}></a> </td>
-                </tr>
-                <tr className="b1" id={'tr2_'+e.MATCH_ID}>
-                    <td className="sl" id={'away_'+e.MATCH_ID}><a href="#">{e.AWAY_NAME}</a></td>
-                    <td><a href="#" className="sb" id={'guestwin_'+e.MATCH_ID}></a></td>
-                    <td className="sr"><a href="#" className="sb" id={'downodds_'+e.MATCH_ID}></a></td>
-                    <td className="sr"><a href="#" className="sb" id={'downodds_t_'+e.MATCH_ID}></a> </td>
-                    <td className="sr sbg"><a href="#" className="sb" id={'downodds2_'+e.MATCH_ID}></a></td>
-                    <td className="sr sbg"><a href="#" className="sb" id={'downodds_t2_'+e.MATCH_ID}></a> </td>
-                </tr>
-                <tr className="b1" id={'tr3_'+e.MATCH_ID}>
-                    <td className="sl">Draw</td>
-                    <td><a href="#" className="sb" id={'Standoff_'+e.MATCH_ID}></a></td>
-                    <td colSpan="4" className="sr underLine"><a href='#'>Analysis</a>&nbsp;<a href='#'>Odds</a> &nbsp;<a href='#'>1X2</a></td>
-                </tr>
-            </tbody>
-        </table>
+                <tbody>
+                    <tr name="LeaguestitleTr" data-l={e.LEAGUE_ID}>
+                        <td colSpan="9" className="Leaguestitle"><span className="l1"><Link to="/">{e.LEAGUE_NAME}</Link></span></td>
+                    </tr>
+                    <tr className="b1" id={'tr_' + e.MATCH_ID}>
+                        <td rowSpan="3" width="3%"></td>
+                        <td rowSpan="3" width="5%"><span id={'t_'+ e.MATCH_ID} name="timeData" style={{fontSize:'13px'}}>{e.MATCH_TIME}</span><br /><span id={'tos_'+e.MATCH_ID} style={{fontSize:'13px'}} className="red"></span></td>
+                        <td className="sl" width="23%" id={'home_'+e.MATCH_ID}><Link to={`/match/${e.MATCH_ID}`}>{e.HOME_NAME}</Link></td>
+                        <td width="6%" rowSpan="3" style={{ textAlign: 'center' }}><span id={'hs'+e.MATCH_ID} className="blue"></span><br /><span id={'ms'+e.MATCH_ID}></span><br /><span id={'gs'+e.MATCH_ID} className="blue"></span></td>
+                        <td width="7%"><Link to="#" className="sb" id={'homewin_'+e.MATCH_ID}></Link></td>
+                        <td width="14%" className="sr"><Link to="#" className="pk" id={'goal_'+e.MATCH_ID}></Link> &nbsp;<Link to="#" className="sb" id={'upodds_'+e.MATCH_ID}></Link></td>
+                        <td className="sr" width="14%"><Link to="#" className="pk" id={'goal_t1_'+e.MATCH_ID}></Link> <Link to="#" className="sb" id={'upodds_t_'+e.MATCH_ID}></Link> </td>
+                        <td width="14%" className="sr sbg"><Link to="#" className="pk" id={'goal2_'+e.MATCH_ID}></Link> &nbsp;<Link to="#" className="sb" id={'upodds2_'+e.MATCH_ID}></Link></td>
+                        <td className="sr sbg" width="14%"><Link to="#" className="pk" id={'goal_t12_'+e.MATCH_ID}></Link> <Link to="#" className="sb" id={'upodds_t2_'+e.MATCH_ID}></Link> </td>
+                    </tr>
+                    <tr className="b1" id={'tr2_'+e.MATCH_ID}>
+                        <td className="sl" id={'away_'+e.MATCH_ID}><Link to={`/match/${e.MATCH_ID}`}>{e.AWAY_NAME}</Link></td>
+                        <td><Link to="#" className="sb" id={'guestwin_'+e.MATCH_ID}></Link></td>
+                        <td className="sr"><Link to="#" className="sb" id={'downodds_'+e.MATCH_ID}></Link></td>
+                        <td className="sr"><Link to="#" className="sb" id={'downodds_t_'+e.MATCH_ID}></Link> </td>
+                        <td className="sr sbg"><Link to="#" className="sb" id={'downodds2_'+e.MATCH_ID}></Link></td>
+                        <td className="sr sbg"><Link to="#" className="sb" id={'downodds_t2_'+e.MATCH_ID}></Link> </td>
+                    </tr>
+                    <tr className="b1" id={'tr3_'+e.MATCH_ID}>
+                        <td className="sl">Draw</td>
+                        <td><Link to="#" className="sb" id={'Standoff_'+e.MATCH_ID}></Link></td>
+                        <td colSpan="4" className="sr underLine"><Link to='#'>Analysis</Link>&nbsp;<Link to='#'>Odds</Link> &nbsp;<Link to='#'>1X2</Link></td>
+                    </tr>
+                </tbody>
+            </table>
         );
     }
 
@@ -257,19 +269,17 @@ export default function List6in1() {
                 </tbody>
             </table>
             {isLoading ? (
-              <p>Loading...</p> 
-            ) : (
-              <React.Fragment>
-                
-      
-                {sortedMatches.filter((match) => match.STATUS >= 1).map((e) => (
-                  <MatchTable key={e.MATCH_ID} e={e} />
-                ))}
-                {sortedMatches.filter((match) => match.STATUS < 1).map((e) => (
-                  <MatchTable key={e.MATCH_ID} e={e} />
-                ))}
-              </React.Fragment>
-            )}
+                <p>Loading...</p>
+                ) : (
+                <React.Fragment>
+                    {sortedMatches.filter((match) => match.STATUS >= 1).map((e) => (
+                    <MatchTable key={e.MATCH_ID} e={e} />
+                    ))}
+                    {sortedMatches.filter((match) => match.STATUS < 1).map((e) => (
+                    <MatchTable key={e.MATCH_ID} e={e} />
+                    ))}
+                </React.Fragment>
+                )}
           </div>
         </div>
       );

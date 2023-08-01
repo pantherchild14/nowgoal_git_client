@@ -7,6 +7,14 @@ export const INIT_STATE = {
         isLoading: false,
         data: [],
     },
+    oddssingle: {
+        isLoading: false,
+        data: [],
+    },
+    schedulesingle: {
+        isLoading: false,
+        data: [],
+    },
     statusrt: {
         isLoading: false,
         data: [],
