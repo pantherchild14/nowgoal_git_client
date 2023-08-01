@@ -1,4 +1,4 @@
-import React, {useEffect,useState} from 'react';
+import React, { useEffect, useState, useCallback} from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 import * as actions from "../../redux/actions";
@@ -10,75 +10,10 @@ export default function List6in1() {
     const schedule = useSelector(scheduleState$);
     const oddsRedux = useSelector(rtState$);
     const statusRedux = useSelector(statusrtState$);
-    console.log(schedule);
 
     const [isLoading, setIsLoading] = useState(true); 
-
-    bf_refresh(oddsRedux,0);
-    tb_refresh(statusRedux,0);
-
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            setIsLoading(true);
-      
-            const socket = io.connect(process.env.REACT_APP_URL_SERVER);
-      
-            await Promise.all([
-              dispatch(actions.getSchedule.getSchedulesRequest()),
-              dispatch(actions.getRT.getRTRequest()),
-              dispatch(actions.getStatusRT.getStatusRTRequest()),
-            ]);
-      
-            socket.on("connect", () => {
-              console.log("con ws");
-            });
-      
-            socket.on("ODDS", async (data) => {
-              try {
-                const dataJson = JSON.parse(data);
-                if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
-                  const dataOdds = dataJson['ODDS_DATA']['ODDS_ITEM'];
-                  await bf_refresh(dataOdds, 1);
-                }
-              } catch (error) {
-                console.error("Error while parsing JSON data:", error.message);
-              }
-            });
-      
-            socket.on("SCHEDULE", async (data) => {
-              try {
-                const dataJson = JSON.parse(data);
-                if (dataJson && dataJson['SCHEDULE_DATA'] && dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM']) {
-                  tb_refresh(dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM'], 1);
-                }
-              } catch (error) {
-                console.error("Error while parsing JSON data:", error.message);
-              }
-            });
-      
-            socket.on("disconnect", () => {
-              console.log("dis ws");
-            });
-      
-            setTimeout(() => {
-              setIsLoading(false);
-            }, 5000); 
-      
-            return () => {
-              socket.disconnect();
-            };
-          } catch (error) {
-            console.error("Error fetching data:", error.message);
-            setIsLoading(false);
-          }
-        };
-      
-        fetchData();
-      }, [dispatch]);
-    
-    function tb_refresh(data,type) {
-        var length = 0;
+    const tb_refresh = useCallback((data, type) => {
+      var length = 0;
         if (type === 1) {
             length = data?.length || 0;
         } else {
@@ -135,10 +70,10 @@ export default function List6in1() {
             tr.attributes["data-s"].value = JSON.stringify(match.STATUS);
             tr.attributes["data-t"].value = JSON.stringify(match);
         }
-    }
-
-    function bf_refresh(data, type) {
-        var length = 0;
+    }, []);
+  
+    const bf_refresh = useCallback((data, type) => {
+      var length = 0;
         if (type === 1) {
             length = data?.length || 0;
         } else {
@@ -206,7 +141,67 @@ export default function List6in1() {
             tr.setAttribute("odds", "");
             tr.attributes["odds"].value = JSON.stringify(odds);
         }
-    }
+    }, []);
+
+    useEffect(() => {
+      dispatch(actions.getSchedule.getSchedulesRequest());
+      dispatch(actions.getRT.getRTRequest());
+      dispatch(actions.getStatusRT.getStatusRTRequest()); 
+      bf_refresh(oddsRedux,0);
+      tb_refresh(statusRedux,0);
+    }, [dispatch, tb_refresh, bf_refresh]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            setIsLoading(true);
+            const socket = io.connect(`${process.env.REACT_APP_URL_SERVER}`);
+            socket.on("connect", () => {
+              console.log("con ws");
+            });
+      
+            socket.on("ODDS", async (data) => {
+              try {
+                const dataJson = JSON.parse(data);
+                if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
+                  const dataOdds = dataJson['ODDS_DATA']['ODDS_ITEM'];
+                  await bf_refresh(dataOdds, 1);
+                }
+              } catch (error) {
+                console.error("Error while parsing JSON data:", error.message);
+              }
+            });
+      
+            socket.on("SCHEDULE", async (data) => {
+              try {
+                const dataJson = JSON.parse(data);
+                if (dataJson && dataJson['SCHEDULE_DATA'] && dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM']) {
+                  tb_refresh(dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM'], 1);
+                }
+              } catch (error) {
+                console.error("Error while parsing JSON data:", error.message);
+              }
+            });
+      
+            socket.on("disconnect", () => {
+              console.log("dis ws");
+            });
+      
+            setTimeout(() => {
+              setIsLoading(false);
+            }, 3000); 
+      
+            return () => {
+              socket.disconnect();
+            };
+          } catch (error) {
+            console.error("Error fetching data:", error.message);
+            setIsLoading(false);
+          }
+        };
+      
+        fetchData();
+    }, []);
 
     function MatchTable({ e }) {
         return (
