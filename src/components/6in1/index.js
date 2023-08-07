@@ -75,7 +75,6 @@ const MatchTable = React.memo(function MatchTable({ e }) {
 
 export default function List6in1() {
     const dispatch = useDispatch();
-    const [isLoading, setIsLoading] = useState(true); 
     const schedule = useSelector(scheduleState$);
     const oddsRedux = useSelector(rtState$);
     const statusRedux = useSelector(statusrtState$);
@@ -222,8 +221,8 @@ export default function List6in1() {
         }
     }, []);
 
-    bf_refresh(oddsRedux, 0);
-    tb_refresh(statusRedux, 0);
+    // bf_refresh(oddsRedux, 0);
+    // tb_refresh(statusRedux, 0);
     
     useEffect(() => {
         const fetchData = async () => {

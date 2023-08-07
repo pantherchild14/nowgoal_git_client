@@ -32,9 +32,9 @@ const AwayAnalysis = (props) => {
             <div id='porletP5' className='porletP' style={styles.porletP5}>
                 <table width="100%" border="0" align="center" cellPadding="2" cellSpacing="1" className="odds-table-bg" data-t="">
                     <tbody>
-                        <tr class="team-home" style={styles.awayHome}>
-                            <td colspan="16">
-                                <label  for="checkboxleague1">{awayTeam}</label>
+                        <tr className="team-home" style={styles.awayHome}>
+                            <td colSpan="16">
+                                <label >{awayTeam}</label>
                             </td>
                         </tr>
                         <tr className="tr-title" align="center" height="25">

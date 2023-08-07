@@ -27,12 +27,12 @@ const HomeAnalysis = (props) => {
     return (
         <>
             <div  id='porletP5' className='porletP'>
-                <h2 class="team-table-title" style={styles.textCenter}>{title}</h2>
+                <h2 className="team-table-title" style={styles.textCenter}>{title}</h2>
                 <table width="100%" border="0" align="center" cellPadding="2" cellSpacing="1" className="odds-table-bg" data-t="">
                     <tbody>
-                        <tr class="team-home" style={styles.teamHome}>
-                            <td colspan="16">
-                                <label  for="checkboxleague1">{nameTeam}</label>
+                        <tr className="team-home" style={styles.teamHome}>
+                            <td colSpan="16">
+                                <label >{nameTeam}</label>
                             </td>
                         </tr>
                         <tr className="tr-title" align="center" height="25">
