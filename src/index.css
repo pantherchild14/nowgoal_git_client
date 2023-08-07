@@ -101,3 +101,50 @@ table[data-t *="Postp"],
 table[data-t *="Pause"] {
     display: none;
 }
+
+.matchLive .tr-title th {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.matchLive .sb {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+.matchLive .tr-title {
+    background: #efefef;
+    color: #222;
+    text-align: center;
+    line-height: 30px;
+    font-weight: bold;
+}
+
+.matchLive .company-comp tr {
+    text-align: center;
+}
+
+.matchLive .tb-bgcolor1 {
+    background: #fff;
+}
+
+.matchLive .lb {
+    border-left: 1px solid #e5e5e5;
+}
+
+.matchLive .company-comp span {
+    padding: 5px 0;
+    display: block;
+}
+
+.matchLive .company-comp .up2 {
+    background-position-y: 12px;
+}
+
+
+/* .up2 {
+    background: url(/images/redup.png) no-repeat 43px 5px;
+    display: block;
+    width: 50px;
+    margin: 0 auto;
+    color: #f00;
+} */

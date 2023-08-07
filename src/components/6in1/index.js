@@ -1,17 +1,96 @@
-import React, { useEffect, useState, useCallback} from 'react';
+import React, { useEffect, useState, useCallback, useLayoutEffect, useMemo} from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
 import * as actions from "../../redux/actions";
 import io from "socket.io-client";
 import { scheduleState$, rtState$, statusrtState$} from '../../redux/selectors';
 
+
+const MatchTable = React.memo(function MatchTable({ e }) {
+  const [oddsValue, setOddsValue] = useState('');
+
+  const updateElement = useCallback((newValue, oldValue, elementPrefix, element) => {
+    if (parseFloat(oldValue) !== parseFloat(newValue)) {
+      if (parseFloat(oldValue) > parseFloat(newValue)) {
+        newValue = '<span class="down">' + newValue + '</span>';
+      } else if (parseFloat(oldValue) < parseFloat(newValue)) {
+        newValue = '<span class="up">' + newValue + '</span>';
+      }
+    }
+    element.innerHTML = newValue;
+  }, []);
+
+  useEffect(() => {
+    if (oddsValue && oddsValue.trim() !== '') {
+      const old = JSON.parse(oddsValue);
+      const tr = document.getElementById('table_' + e.MATCH_ID);
+      if (!tr) return;
+
+      updateElement(e.HomeHandicap, old.HomeHandicap, 'upodds_', tr.querySelector('#upodds_' + e.MATCH_ID));
+      updateElement(e.Handicap, old.Handicap, 'goal_', tr.querySelector('#goal_' + e.MATCH_ID));
+      updateElement(e.AwayHandicap, old.AwayHandicap, 'downodds_', tr.querySelector('#downodds_' + e.MATCH_ID));
+      updateElement(e.Over, old.Over, 'upodds_t_', tr.querySelector('#upodds_t_' + e.MATCH_ID));
+      updateElement(e.Goals, old.Goals, 'goal_t1_', tr.querySelector('#goal_t1_' + e.MATCH_ID));
+      updateElement(e.Under, old.Under, 'downodds_t_', tr.querySelector('#downodds_t_' + e.MATCH_ID));
+      updateElement(e.HW, old.HW, 'homewin_', tr.querySelector('#homewin_' + e.MATCH_ID));
+      updateElement(e.D, old.D, 'Standoff_', tr.querySelector('#Standoff_' + e.MATCH_ID));
+      updateElement(e.AW, old.AW, 'guestwin_', tr.querySelector('#guestwin_' + e.MATCH_ID));
+    }
+  }, [e, oddsValue, updateElement]);
+
+  return (
+    <table width="100%" border="0" cellPadding="4" cellSpacing="1" style={{ marginBottom: '-1px', textAlign: 'center' }} className="odds-table-bg dataItem" leagueid="388" id={'table_' + e.MATCH_ID}>
+      <tbody>
+        <tr name="LeaguestitleTr" data-l={e.LEAGUE_ID}>
+            <td colSpan="9" className="Leaguestitle"><span className="l1"><Link to="/">{e.LEAGUE_NAME}</Link></span></td>
+        </tr>
+        <tr className="b1" id={'tr_' + e.MATCH_ID}>
+            <td rowSpan="3" width="3%"></td>
+            <td rowSpan="3" width="5%"><span id={'t_'+ e.MATCH_ID} name="timeData" style={{fontSize:'13px'}}>{e.MATCH_TIME}</span><br /><span id={'tos_'+e.MATCH_ID} style={{fontSize:'13px'}} className="red"></span></td>
+            <td className="sl" width="23%" id={'home_'+e.MATCH_ID}><Link to={`/match/${e.MATCH_ID}`}>{e.HOME_NAME}</Link></td>
+            <td width="6%" rowSpan="3" style={{ textAlign: 'center' }}><span id={'hs'+e.MATCH_ID} className="blue"></span><br /><span id={'ms'+e.MATCH_ID}></span><br /><span id={'gs'+e.MATCH_ID} className="blue"></span></td>
+            <td width="7%"><Link to="#" className="sb" id={'homewin_'+e.MATCH_ID}></Link></td>
+            <td width="14%" className="sr"><Link to="#" className="pk" id={'goal_'+e.MATCH_ID}></Link> &nbsp;<Link to="#" className="sb" id={'upodds_'+e.MATCH_ID}></Link></td>
+            <td className="sr" width="14%"><Link to="#" className="pk" id={'goal_t1_'+e.MATCH_ID}></Link> <Link to="#" className="sb" id={'upodds_t_'+e.MATCH_ID}></Link> </td>
+            <td width="14%" className="sr sbg"><Link to="#" className="pk" id={'goal2_'+e.MATCH_ID}></Link> &nbsp;<Link to="#" className="sb" id={'upodds2_'+e.MATCH_ID}></Link></td>
+            <td className="sr sbg" width="14%"><Link to="#" className="pk" id={'goal_t12_'+e.MATCH_ID}></Link> <Link to="#" className="sb" id={'upodds_t2_'+e.MATCH_ID}></Link> </td>
+        </tr>
+        <tr className="b1" id={'tr2_'+e.MATCH_ID}>
+            <td className="sl" id={'away_'+e.MATCH_ID}><Link to={`/match/${e.MATCH_ID}`}>{e.AWAY_NAME}</Link></td>
+            <td><Link to="#" className="sb" id={'guestwin_'+e.MATCH_ID}></Link></td>
+            <td className="sr"><Link to="#" className="sb" id={'downodds_'+e.MATCH_ID}></Link></td>
+            <td className="sr"><Link to="#" className="sb" id={'downodds_t_'+e.MATCH_ID}></Link> </td>
+            <td className="sr sbg"><Link to="#" className="sb" id={'downodds2_'+e.MATCH_ID}></Link></td>
+            <td className="sr sbg"><Link to="#" className="sb" id={'downodds_t2_'+e.MATCH_ID}></Link> </td>
+        </tr>
+        <tr className="b1" id={'tr3_'+e.MATCH_ID}>
+            <td className="sl">Draw</td>
+            <td><Link to="#" className="sb" id={'Standoff_'+e.MATCH_ID}></Link></td>
+            <td colSpan="4" className="sr underLine"><Link to='#'>Analysis</Link>&nbsp;<Link to='#'>Odds</Link> &nbsp;<Link to='#'>1X2</Link></td>
+        </tr>
+      </tbody>
+    </table>
+  );
+});
+
 export default function List6in1() {
     const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(true); 
     const schedule = useSelector(scheduleState$);
     const oddsRedux = useSelector(rtState$);
     const statusRedux = useSelector(statusrtState$);
-
-    const [isLoading, setIsLoading] = useState(true); 
+    useLayoutEffect(() => {
+      const fetchData = async () => {
+        await Promise.all([
+          dispatch(actions.getSchedule.getSchedulesRequest()),
+          dispatch(actions.getRT.getRTRequest()),
+          dispatch(actions.getStatusRT.getStatusRTRequest()),
+        ]);
+      };
+  
+      fetchData();
+    }, [dispatch]);
+  
     const tb_refresh = useCallback((data, type) => {
       var length = 0;
         if (type === 1) {
@@ -143,18 +222,12 @@ export default function List6in1() {
         }
     }, []);
 
-    useEffect(() => {
-      dispatch(actions.getSchedule.getSchedulesRequest());
-      dispatch(actions.getRT.getRTRequest());
-      dispatch(actions.getStatusRT.getStatusRTRequest()); 
-      bf_refresh(oddsRedux,0);
-      tb_refresh(statusRedux,0);
-    }, [dispatch, tb_refresh, bf_refresh]);
-
+    bf_refresh(oddsRedux, 0);
+    tb_refresh(statusRedux, 0);
+    
     useEffect(() => {
         const fetchData = async () => {
           try {
-            setIsLoading(true);
             const socket = io.connect(`${process.env.REACT_APP_URL_SERVER}`);
             socket.on("connect", () => {
               console.log("con ws");
@@ -187,63 +260,26 @@ export default function List6in1() {
               console.log("dis ws");
             });
       
-            setTimeout(() => {
-              setIsLoading(false);
-            }, 3000); 
+            
       
             return () => {
               socket.disconnect();
             };
           } catch (error) {
             console.error("Error fetching data:", error.message);
-            setIsLoading(false);
           }
         };
       
         fetchData();
     }, []);
 
-    function MatchTable({ e }) {
-        return (
-            <table width="100%" border="0" cellPadding="4" cellSpacing="1" style={{ marginBottom: "-1px", textAlign: "center" }} className="odds-table-bg dataItem" leagueid="388" id={'table_' + e.MATCH_ID}>
-                <tbody>
-                    <tr name="LeaguestitleTr" data-l={e.LEAGUE_ID}>
-                        <td colSpan="9" className="Leaguestitle"><span className="l1"><Link to="/">{e.LEAGUE_NAME}</Link></span></td>
-                    </tr>
-                    <tr className="b1" id={'tr_' + e.MATCH_ID}>
-                        <td rowSpan="3" width="3%"></td>
-                        <td rowSpan="3" width="5%"><span id={'t_'+ e.MATCH_ID} name="timeData" style={{fontSize:'13px'}}>{e.MATCH_TIME}</span><br /><span id={'tos_'+e.MATCH_ID} style={{fontSize:'13px'}} className="red"></span></td>
-                        <td className="sl" width="23%" id={'home_'+e.MATCH_ID}><Link to={`/match/${e.MATCH_ID}`}>{e.HOME_NAME}</Link></td>
-                        <td width="6%" rowSpan="3" style={{ textAlign: 'center' }}><span id={'hs'+e.MATCH_ID} className="blue"></span><br /><span id={'ms'+e.MATCH_ID}></span><br /><span id={'gs'+e.MATCH_ID} className="blue"></span></td>
-                        <td width="7%"><Link to="#" className="sb" id={'homewin_'+e.MATCH_ID}></Link></td>
-                        <td width="14%" className="sr"><Link to="#" className="pk" id={'goal_'+e.MATCH_ID}></Link> &nbsp;<Link to="#" className="sb" id={'upodds_'+e.MATCH_ID}></Link></td>
-                        <td className="sr" width="14%"><Link to="#" className="pk" id={'goal_t1_'+e.MATCH_ID}></Link> <Link to="#" className="sb" id={'upodds_t_'+e.MATCH_ID}></Link> </td>
-                        <td width="14%" className="sr sbg"><Link to="#" className="pk" id={'goal2_'+e.MATCH_ID}></Link> &nbsp;<Link to="#" className="sb" id={'upodds2_'+e.MATCH_ID}></Link></td>
-                        <td className="sr sbg" width="14%"><Link to="#" className="pk" id={'goal_t12_'+e.MATCH_ID}></Link> <Link to="#" className="sb" id={'upodds_t2_'+e.MATCH_ID}></Link> </td>
-                    </tr>
-                    <tr className="b1" id={'tr2_'+e.MATCH_ID}>
-                        <td className="sl" id={'away_'+e.MATCH_ID}><Link to={`/match/${e.MATCH_ID}`}>{e.AWAY_NAME}</Link></td>
-                        <td><Link to="#" className="sb" id={'guestwin_'+e.MATCH_ID}></Link></td>
-                        <td className="sr"><Link to="#" className="sb" id={'downodds_'+e.MATCH_ID}></Link></td>
-                        <td className="sr"><Link to="#" className="sb" id={'downodds_t_'+e.MATCH_ID}></Link> </td>
-                        <td className="sr sbg"><Link to="#" className="sb" id={'downodds2_'+e.MATCH_ID}></Link></td>
-                        <td className="sr sbg"><Link to="#" className="sb" id={'downodds_t2_'+e.MATCH_ID}></Link> </td>
-                    </tr>
-                    <tr className="b1" id={'tr3_'+e.MATCH_ID}>
-                        <td className="sl">Draw</td>
-                        <td><Link to="#" className="sb" id={'Standoff_'+e.MATCH_ID}></Link></td>
-                        <td colSpan="4" className="sr underLine"><Link to='#'>Analysis</Link>&nbsp;<Link to='#'>Odds</Link> &nbsp;<Link to='#'>1X2</Link></td>
-                    </tr>
-                </tbody>
-            </table>
-        );
-    }
-
-    const sortedMatches = schedule.data.sort((a, b) => {
+    const sortedMatches = useMemo(() => {
+      return schedule.data.sort((a, b) => {
         const timeA = new Date(a.MATCH_TIME);
         const timeB = new Date(b.MATCH_TIME);
         return timeA - timeB;
-    });
+      });
+    }, [schedule.data]);
 
     return (
         <div id='teamid'>
@@ -263,18 +299,15 @@ export default function List6in1() {
                     </tr>
                 </tbody>
             </table>
-            {isLoading ? (
-                <p>Loading...</p>
-                ) : (
-                <React.Fragment>
-                    {sortedMatches.filter((match) => match.STATUS >= 1).map((e) => (
-                    <MatchTable key={e.MATCH_ID} e={e} />
-                    ))}
-                    {sortedMatches.filter((match) => match.STATUS < 1).map((e) => (
-                    <MatchTable key={e.MATCH_ID} e={e} />
-                    ))}
-                </React.Fragment>
-                )}
+          
+            <React.Fragment>
+              {sortedMatches.filter((match) => match.STATUS >= 1).map((e) => (
+                <MatchTable key={e.MATCH_ID} e={e} />
+              ))}
+              {sortedMatches.filter((match) => match.STATUS < 1).map((e) => (
+                <MatchTable key={e.MATCH_ID} e={e} />
+              ))}
+            </React.Fragment>
           </div>
         </div>
       );

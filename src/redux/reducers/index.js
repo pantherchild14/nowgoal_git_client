@@ -5,6 +5,9 @@ import rt from "./rt";
 import statusrt from "./statusrt";
 import oddssingle from "./oddssingle";
 import schedulesingle from "./schedulesingle";
+import scheduleAllsingle from "./scheduleAllsingle";
+import oddsAllsingle from "./oddsAllsingle";
+import h2h from "./h2h";
 
 export default combineReducers({
     modal,
@@ -13,4 +16,7 @@ export default combineReducers({
     schedule,
     statusrt,
     schedulesingle,
+    scheduleAllsingle,
+    oddsAllsingle,
+    h2h
 })

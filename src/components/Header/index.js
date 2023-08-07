@@ -12,12 +12,11 @@ export default function Header() {
     { title: 'Results', url: '#' },
     { title: 'Schedule', url: '#' },
     { title: 'Community', url: '#' },
-    { title: '6in1', url: '#' },
+    { title: '6in1', url: 'http://localhost:3000/' },
     { title: 'Statistics', url: '#' },
   ];
   return (
     <>
-      {/* <Typography variant="h4" align="center" className={classes.container}>blog</Typography> */}
      <Navbar title="Header" sections={sections}/>
     </>
   )

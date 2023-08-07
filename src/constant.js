@@ -19,6 +19,18 @@ export const INIT_STATE = {
         isLoading: false,
         data: [],
     },
+    scheduleAllsingle: {
+        isLoading: false,
+        data: [],
+    },
+    oddsAllsingle: {
+        isLoading: false,
+        data: [],
+    },
+    h2h: {
+        isLoading: false,
+        data: [],
+    },
     modal: {
         isShow: false,
     }
