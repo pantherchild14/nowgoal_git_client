@@ -6,13 +6,13 @@ import Navbar from './Navbar';
 export default function Header() {
   const [userData, setUserData] = useState(null);
   const sections = [
-    { title: 'Livescore', url: '#' },
+    { title: 'Livescore', url: 'http://localhost:3000/' },
     { title: 'Favorites', url: '#' },
     { title: 'Results', url: '#' },
     { title: 'Schedule', url: '#' },
     { title: 'Community', url: '#' },
-    { title: '6in1', url: 'http://localhost:3000/' },
-    { title: 'Statistics', url: '#' },
+    { title: '6in1', url: '#' },
+    { title: 'caothu', url: 'http://localhost:3000/caothu' },
   ];
 
 

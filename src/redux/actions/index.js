@@ -17,6 +17,12 @@ export const getRT = createActions({
     getRTFailure: (err) => err,
 });
 
+export const getOddsAllRT = createActions({
+    getOddsAllRTRequest: undefined,
+    getOddsAllRTSuccess: (payload) => payload,
+    getOddsAllRTFailure: (err) => err,
+});
+
 export const getOddsSingle = createActions({
     getOddsSingleRequest: (id) => ({ id }),
     getOddsSingleSuccess: (payload) => payload,

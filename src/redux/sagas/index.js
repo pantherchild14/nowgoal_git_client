@@ -21,6 +21,15 @@ function* fetchRTSaga(action) {
     }
 }
 
+function* fetchOddsAllSaga(action) {
+    try {
+        const rt = yield call(api.fetchOddAllRT);
+        yield put(actions.getOddsAllRT.getOddsAllRTSuccess(rt.data));
+    } catch (error) {
+        console.error("Error fetching rt:", error);
+    }
+}
+
 function* fetchOddsSingleSaga(action) {
     try {
         const { id } = action.payload;
@@ -102,6 +111,10 @@ function* myrtSaga() {
     yield takeLatest(actions.getRT.getRTRequest, fetchRTSaga);
 }
 
+function* myoddsallrtSaga() {
+    yield takeLatest(actions.getOddsAllRT.getOddsAllRTRequest, fetchOddsAllSaga);
+}
+
 function* myOddsSingleSaga() {
     yield takeLatest(actions.getOddsSingle.getOddsSingleRequest, fetchOddsSingleSaga);
 }
@@ -130,4 +143,4 @@ function* myUserSaga() {
     yield takeLatest(actions.getUser.getUserRequest, fetchUserSaga);
 }
 
-export { myScheduleSaga, myrtSaga, myOddsSingleSaga, mystatysrtSaga, myScheduleSingleSaga, myScheduleAllSingleSaga, myOddsAllSingleSaga, myH2HSaga, myUserSaga };
+export { myScheduleSaga, myrtSaga, myoddsallrtSaga, myOddsSingleSaga, mystatysrtSaga, myScheduleSingleSaga, myScheduleAllSingleSaga, myOddsAllSingleSaga, myH2HSaga, myUserSaga };

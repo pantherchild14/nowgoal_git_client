@@ -7,6 +7,10 @@ export const INIT_STATE = {
         isLoading: false,
         data: [],
     },
+    oddsall: {
+        isLoading: false,
+        data: [],
+    },
     oddssingle: {
         isLoading: false,
         data: [],

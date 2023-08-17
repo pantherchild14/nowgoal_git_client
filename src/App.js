@@ -17,14 +17,14 @@ function App() {
 
     return ( 
         <>  
-           
-
             {/* Main routes */}
             <Container maxWidth="lg" className="container"> 
                 {isDashboardRoute ? null : <Header />}
                 <Routes>
                     <Route path='/' element={<HomePage />} />
                     <Route path='/match/:id' element={<MatchPage />} />
+
+                    {/* Auth  */}
                     <Route path='/sign-in' element={<SignIn />} />
                     <Route path='/sign-up' element={<SignUp />} />
                     <Route path='/profile/change-password' element={<ChangePassword />} />

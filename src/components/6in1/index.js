@@ -5,8 +5,6 @@ import io from "socket.io-client";
 import { scheduleState$, rtState$, statusrtState$} from '../../redux/selectors';
 import MatchTable from './MatchTable';
 
-
-
 export default function List6in1() {
     const dispatch = useDispatch();
     const schedule = useSelector(scheduleState$);

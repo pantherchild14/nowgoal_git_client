@@ -22,7 +22,8 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import SportsSoccerOutlinedIcon from '@mui/icons-material/SportsSoccerOutlined';
+import CaoThu from './components/CaoThu';
 
 function Copyright(props) {
   return (
@@ -50,12 +51,13 @@ function TabPanel(props) {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <div>{children}</div>
         </Box>
       )}
     </div>
   );
 }
+
 
 function a11yProps(index) {
   return {
@@ -185,11 +187,12 @@ export default function Dashboard() {
             centered
           >
             <Tab label={drawerOpen ? "Dashboard" : ""} {...a11yProps(0)} icon={<DashboardIcon />} />
-            <Tab label={drawerOpen ? "Soccer Tip" : ""} {...a11yProps(1)} icon={<SportsSoccerIcon />} />
-            <Tab label={drawerOpen ? "Predictions" : ""} {...a11yProps(2)} icon={<SportsSoccerIcon />}/>
+            <Tab label={drawerOpen ? "Soccer Tip" : ""} {...a11yProps(1)} icon={<SportsSoccerOutlinedIcon />} />
+            <Tab label={drawerOpen ? "Predictions" : ""} {...a11yProps(2)} icon={<SportsSoccerOutlinedIcon />}/>
             <Tab label={drawerOpen ? "Source Tips" : ""} {...a11yProps(3)} icon={<BarChartIcon />}/>
             <Tab label={drawerOpen ? "User" : ""} {...a11yProps(4)} icon={<PersonIcon />}/>
             <Tab label={drawerOpen ? "Isport Setting" : ""} {...a11yProps(5)} icon={<SettingsIcon />}/>
+            <Tab label={drawerOpen ? "Cao Thu Setting" : ""} {...a11yProps(6)} icon={<SportsSoccerOutlinedIcon />} />
           </Tabs>
         </Drawer>
         <Box
@@ -205,15 +208,11 @@ export default function Dashboard() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          {/* <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}> */}
             <Grid container spacing={3} >
               <Grid item xs={12}>
                 <TabPanel value={selectedTab} index={0}>
-                  <Grid item xs={12}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                      Content of Dashboard
-                    </Paper>
-                  </Grid>
+                  Content of Dashboard
                 </TabPanel>
                 <TabPanel value={selectedTab} index={1}>
                   <Grid item xs={12}>
@@ -250,10 +249,13 @@ export default function Dashboard() {
                     </Paper>
                   </Grid>
                 </TabPanel>
+                <TabPanel value={selectedTab} index={6}>
+                  <CaoThu />
+                </TabPanel>
               </Grid>
             </Grid>
             <Copyright sx={{ pt: 4 }} />
-          </Container>
+          {/* </Container> */}
         </Box>
       </Box>
     </ThemeProvider>
