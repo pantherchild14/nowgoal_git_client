@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import reducers from './redux/reducers';
-import { myH2HSaga, myOddsAllSingleSaga, myOddsSingleSaga, myScheduleAllSingleSaga, myScheduleSaga, myScheduleSingleSaga, myrtSaga, mystatysrtSaga} from './redux/sagas';
+import { myH2HSaga, myOddsAllSingleSaga, myOddsSingleSaga, myScheduleAllSingleSaga, myScheduleSaga, myScheduleSingleSaga, myUserSaga, myrtSaga, mystatysrtSaga} from './redux/sagas';
 
 const sagaMiddleware = creatSagaMiddleware();
 const store = createStore(reducers,applyMiddleware(sagaMiddleware));
@@ -19,6 +19,7 @@ sagaMiddleware.run(myScheduleSingleSaga);
 sagaMiddleware.run(myScheduleAllSingleSaga);
 sagaMiddleware.run(myOddsAllSingleSaga);
 sagaMiddleware.run(myH2HSaga);
+sagaMiddleware.run(myUserSaga);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

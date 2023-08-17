@@ -54,5 +54,11 @@ export const getH2H = createActions({
     getH2HFailure: (err) => err,
 });
 
+export const getUser = createActions({
+    getUserRequest: (user) => ({ user }),
+    getUserSuccess: (payload) => payload,
+    getUserFailure: (err) => err,
+});
+
 export const showModal = createAction("SHOW_CREATE_POST_MODAL");
 export const hideModal = createAction("HIDE_CREATE_POST_MODAL");

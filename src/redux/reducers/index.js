@@ -8,6 +8,7 @@ import schedulesingle from "./schedulesingle";
 import scheduleAllsingle from "./scheduleAllsingle";
 import oddsAllsingle from "./oddsAllsingle";
 import h2h from "./h2h";
+import user from "./user";
 
 export default combineReducers({
     modal,
@@ -18,5 +19,6 @@ export default combineReducers({
     schedulesingle,
     scheduleAllsingle,
     oddsAllsingle,
-    h2h
+    h2h,
+    user,
 })

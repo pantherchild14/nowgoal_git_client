@@ -84,6 +84,16 @@ function* fetchH2HSaga(action) {
     }
 }
 
+function* fetchUserSaga(action) {
+    try {
+        const { user } = action.payload;
+        const users = yield call(api.fetchGetUser, user);
+        yield put(actions.getUser.getUserSuccess(users.data));
+    } catch (error) {
+        console.error("Error fetching rt:", error);
+    }
+}
+
 function* myScheduleSaga() {
     yield takeLatest(actions.getSchedule.getSchedulesRequest, fetchScheduleSaga);
 }
@@ -116,4 +126,8 @@ function* myH2HSaga() {
     yield takeLatest(actions.getH2H.getH2HRequest, fetchH2HSaga);
 }
 
-export { myScheduleSaga, myrtSaga, myOddsSingleSaga, mystatysrtSaga, myScheduleSingleSaga, myScheduleAllSingleSaga, myOddsAllSingleSaga, myH2HSaga };
+function* myUserSaga() {
+    yield takeLatest(actions.getUser.getUserRequest, fetchUserSaga);
+}
+
+export { myScheduleSaga, myrtSaga, myOddsSingleSaga, mystatysrtSaga, myScheduleSingleSaga, myScheduleAllSingleSaga, myOddsAllSingleSaga, myH2HSaga, myUserSaga };

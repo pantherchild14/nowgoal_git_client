@@ -12,3 +12,4 @@ export const scheduleAllSingleState$ = (state) => state.scheduleAllsingle;
 export const oddsAllSingleState$ = (state) => state.oddsAllsingle;
 
 export const h2hState$ = (state) => state.h2h;
+export const userState$ = (state) => state.user;
