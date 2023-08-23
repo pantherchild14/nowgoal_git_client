@@ -93,6 +93,16 @@ function* fetchH2HSaga(action) {
     }
 }
 
+function* fetchOddsChangeDetailHistorySaga(action) {
+    try {
+        const { id } = action.payload;
+        const oddsDetail = yield call(api.fetchOddsChangeDetailHistory, id);
+        yield put(actions.getOddsChangeDetailHistory.getOddsChangeDetailHistorySuccess(oddsDetail.data));
+    } catch (error) {
+        console.error("Error fetching rt:", error);
+    }
+}
+
 function* fetchUserSaga(action) {
     try {
         const { user } = action.payload;
@@ -139,8 +149,12 @@ function* myH2HSaga() {
     yield takeLatest(actions.getH2H.getH2HRequest, fetchH2HSaga);
 }
 
+function* myOddsChangeDetailHistorySaga() {
+    yield takeLatest(actions.getOddsChangeDetailHistory.getOddsChangeDetailHistoryRequest, fetchOddsChangeDetailHistorySaga);
+}
+
 function* myUserSaga() {
     yield takeLatest(actions.getUser.getUserRequest, fetchUserSaga);
 }
 
-export { myScheduleSaga, myrtSaga, myoddsallrtSaga, myOddsSingleSaga, mystatysrtSaga, myScheduleSingleSaga, myScheduleAllSingleSaga, myOddsAllSingleSaga, myH2HSaga, myUserSaga };
+export { myScheduleSaga, myrtSaga, myoddsallrtSaga, myOddsSingleSaga, mystatysrtSaga, myScheduleSingleSaga, myScheduleAllSingleSaga, myOddsAllSingleSaga, myH2HSaga, myUserSaga, myOddsChangeDetailHistorySaga };

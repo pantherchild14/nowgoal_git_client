@@ -60,6 +60,12 @@ export const getH2H = createActions({
     getH2HFailure: (err) => err,
 });
 
+export const getOddsChangeDetailHistory = createActions({
+    getOddsChangeDetailHistoryRequest: (id) => ({ id }),
+    getOddsChangeDetailHistorySuccess: (payload) => payload,
+    getOddsChangeDetailHistoryFailure: (err) => err,
+});
+
 export const getUser = createActions({
     getUserRequest: (user) => ({ user }),
     getUserSuccess: (payload) => payload,

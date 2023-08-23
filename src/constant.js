@@ -35,6 +35,10 @@ export const INIT_STATE = {
         isLoading: false,
         data: [],
     },
+    oddschangedetailhistory: {
+        isLoading: false,
+        data: [],
+    },
     user: {
         isLoading: false,
         data: [],

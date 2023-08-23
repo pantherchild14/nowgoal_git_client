@@ -17,6 +17,7 @@ export const fetchScheduleAllSingleRT = (id) => axios.get(`${URL}/ajax/socceraja
 export const fetchOddsAllSingleRT = (id) => axios.get(`${URL}/ajax/soccerajax/ch_oddsAll_xml/${id}`);
 
 export const fetchH2H = (id) => axios.get(`${URL}/ajax/soccerajax/ch_h2h_xml/${id}`);
+export const fetchOddsChangeDetailHistory = (id) => axios.get(`${URL}/ajax/soccerajax/odds_change_detail_history_xml/${id}`);
 
 export const fetchGetUser = (user) => axios.get(`${URL}/api/users/${user}`);
 
