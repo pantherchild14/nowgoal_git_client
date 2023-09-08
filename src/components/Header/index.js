@@ -5,26 +5,17 @@ import Navbar from './Navbar';
 
 export default function Header() {
   const [userData, setUserData] = useState(null);
-  const sections = [
-    { title: 'Livescore', url: 'http://localhost:3000/' },
-    { title: 'Favorites', url: '#' },
-    { title: 'Results', url: '#' },
-    { title: 'Schedule', url: '#' },
-    { title: 'Community', url: '#' },
-    { title: '6in1', url: '#' },
-    { title: 'caothu', url: 'http://localhost:3000/caothu' },
-  ];
+
 
 
   function checkLocalStorage(itemName) {
     const storedValue = localStorage.getItem(itemName);
-    return storedValue !== null; 
+    return storedValue !== null;
   }
   const tokenExists = checkLocalStorage('token');
   const isLocalUser = localStorage.getItem('USER_NAME')
+  const isLocalTimeZone = localStorage.getItem('TIME_ZONE')
   return (
-    <>
-      <Navbar title="Header" sections={sections} isLoggedIn={tokenExists} isLocalUser={isLocalUser}/>
-    </>
+    <Navbar title="Header" isLoggedIn={tokenExists} isLocalUser={isLocalUser} isLocalTimeZone={isLocalTimeZone} />
   );
 }

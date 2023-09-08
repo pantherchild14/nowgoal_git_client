@@ -13,6 +13,13 @@ code {
 }
 
 
+/* css on Header */
+
+.navbar_headerTips ul li a.active {
+    color: #0089F1 !important;
+}
+
+
 /* css on 6in1 */
 
 body a {
@@ -99,16 +106,15 @@ div#\36 in1 table[data-t *="Pend"],
 div#\36 in1 table[data-t *="Cancel"],
 div#\36 in1 table[data-t *="Abd"],
 div#\36 in1 table[data-t *="Postp"],
-div#\36 in1 table[data-t *="Pause"]
-
-/* table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr:not([data-t]), */
-/* table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Finished"],
+div#\36 in1 table[data-t *="Pause"],
+table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-s="-1"],
+table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[chodds=""],
+table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Finished"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Pend"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Cancel"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Abd"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Postp"],
-table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Pause"] */
-    {
+table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Pause"] {
     display: none;
 }
 
@@ -277,4 +283,244 @@ div#caothu tbody tr td {
     border-bottom: 1px solid transparent;
     border-color: #e5e5e5 !important;
     text-align: center;
+}
+
+/* category  */
+
+.bxlistbytax_top {
+    display: flex;
+    margin: 0 -10px;
+}
+
+.bxlistbytax_top .bxitem_post:first-child {
+    width: 70%;
+    padding: 10px;
+}
+
+.bxlistbytax_top .bxitem_post:last-child {
+    width: 30%;
+    padding: 10px;
+}
+
+.bxlistbytax_col3 {
+    display: flex;
+    margin: 0 -10px;
+}
+
+.bxlistbytax_col3 .bxitem_post {
+    width: 33.3%;
+    padding: 10px;
+}
+
+
+
+.bxlistbytax_top .bxitem_post:first-child h5 {
+    font-size: 20px;
+    line-height: 28px;
+    margin: 8px 0;
+}
+
+.bxitem_post h5 a {
+    color: #000;
+    transition: 0.3s;
+}
+
+.bxitem_post .thumb {
+    border-radius: 5px;
+    transition: 0.5s;
+    position: relative;
+}
+
+.bxlistbytax_top .bxitem_post:first-child .thumb img {
+    width: 100%;
+    height: 370px;
+}
+
+.bxlistbytax_top .bxitem_post:last-child .thumb img {
+    height: 230px;
+    width: 100%;
+}
+
+.bxitem_post .thumb img {
+    border-radius: 5px;
+}
+
+.bxlistbytax_col3 .bxitem_post .thumb img {
+    width: 100%;
+    height: 195px;
+}
+
+.bxlistbytax_top .bxitem_post:last-child h5,
+.bxlistbytax_col3 .bxitem_post h5 {
+    font-size: 18px;
+    margin: 8px 0;
+    line-height: 24px;
+}
+
+.bxlistbytax_top .bxitem_post .bxcat_abs,
+.bxlistbytax_col3 .bxitem_post .thumb .bxcat_abs,
+.bxlistbytax_bottom .thumb .bxcat_abs {
+    position: absolute;
+    bottom: 10px;
+    left: 0px;
+    z-index: 2;
+}
+
+.bxcat_abs a,
+.bxitem_post .thumb .bxcat_abs a {
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 13px;
+    display: inline-block;
+    margin: 0 5px;
+    padding: 6px 15px;
+    border-radius: 2px;
+}
+
+.bxcat_abs a:hover,
+.bxitem_post .thumb .bxcat_abs a:hover {
+    background: #3452ff;
+    color: #fff;
+}
+
+.bxflex_mg {
+    margin-left: -8px;
+    margin-right: -8px;
+    display: flex;
+}
+
+.bxcontainer_single.bxw65 {
+    width: 66.66%;
+}
+
+.bxcontainer_single.bxw65 {
+    text-align: justify;
+}
+
+.bxcontainer_single {
+    padding: 0 15px 0 0;
+    border-right: unset !important;
+}
+
+.bxcontainer_single {
+    background: #fff;
+    padding: 15px;
+    border-right: 1px solid #ddd;
+}
+
+.bxlistbytax_bottom .bxitem_post {
+    border-bottom: none;
+}
+
+.bxlistbytax_bottom .bxitem_post {
+    padding: 12px 0;
+    /* border-bottom: 1px solid #ddd; */
+    margin: 0;
+}
+
+.bxflex_mg10,
+.bxlistbytax_bottom .bxitem_post {
+    margin-left: -10px;
+    margin-right: -10px;
+    display: flex;
+}
+
+.bxw30,
+.bxlistbytax_bottom .bxitem_post .thumb img {
+    width: 100%;
+}
+
+.bxw70,
+.bxlistbytax_bottom .bxitem_post .bxtt {
+    width: 70%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.bxw70,
+.bxlistbytax_bottom .bxitem_post .bxtt h5 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.bxlistbytax_bottom .thumb {
+    height: 145px;
+    border-radius: 5px;
+    width: 30%;
+}
+
+/* content  */
+.content p {
+    text-align: justify;
+}
+
+.content img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* sidebar  */
+.nc-WidgetHeading1.relative.h1.title {
+    display: inline-block;
+    font-size: 16px !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 5px 20px 5px 20px;
+}
+
+.recent-post ul {
+    display: block;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    padding: 25px;
+}
+
+.recent-post ul li {
+    display: block;
+    margin: 0px 0px 20px 0px;
+}
+
+.recent-post ul li a {
+    display: block;
+    overflow: hidden;
+}
+
+.recent-post ul li a span.post-left {
+    display: block;
+    float: left;
+    width: 28%;
+    height: 80px;
+    border-radius: 5px;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+    background-position: 50% 50% !important;
+}
+
+.recent-post ul li a span.post-right {
+    display: block;
+    float: right;
+    width: 70%;
+    height: 60px;
+    overflow: hidden;
+}
+
+.recent-post ul li a span.post-right h2 {
+    display: block;
+    font-size: 11pt;
+    font-weight: 700;
+    line-height: 13pt;
+    color: #000;
+    padding: 0;
+    margin: 0px 0px 10px 0px;
+    overflow: hidden;
+    height: 32px;
+}
+
+.recent-post ul li a span.post-right b {
+    display: block;
+    font-size: 9pt;
+    font-weight: 700;
+    color: #000;
 }

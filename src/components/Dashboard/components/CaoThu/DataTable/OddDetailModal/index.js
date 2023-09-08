@@ -8,6 +8,10 @@ import Modal from '@mui/material/Modal';
 import CircularProgress from '@mui/material/CircularProgress';
 import OddsDetailFT from "./OddsDetailFT";
 import OddsDetailHT from "./OddsDetailHT";
+import Odds1X2DetailFT from "./1X2DetailFT";
+import Odds1X2DetailHT from "./1X2DetailHT";
+import OddsOUDetailFT from "./OUDetailFT";
+import OddsOUDetailHT from "./OUDetailHT";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -47,7 +51,6 @@ const OddDetailModal = (props) => {
     const [value, setValue] = useState(0);
     const [subTabValue, setSubTabValue] = useState("FT");
 
-
     useEffect(() => {
         setValue(0);
         setSubTabValue("FT");
@@ -57,6 +60,7 @@ const OddDetailModal = (props) => {
         setValue(newValue);
         setSubTabValue("FT");
     };
+
 
     const style = {
         Box: {
@@ -76,12 +80,9 @@ const OddDetailModal = (props) => {
 
     let parsedOdds = {};
 
-    if (oddDetailHistory.data && oddDetailHistory.data.$) {
-        parsedOdds = {
-            _ODDS_DETAIL: JSON.parse(oddDetailHistory.data.$._ODDS_DETAIL),
-            _X2_DETAIL: JSON.parse(oddDetailHistory.data.$._X2_DETAIL),
-            _OU_DETAIL: JSON.parse(oddDetailHistory.data.$._OU_DETAIL)
-        };
+
+    if (oddDetailHistory?.data && oddDetailHistory?.data && oddDetailHistory?.data?.ODDS) {
+        parsedOdds = JSON.parse(oddDetailHistory?.data?.ODDS);
     }
 
     return (
@@ -113,11 +114,11 @@ const OddDetailModal = (props) => {
                                 </Tabs>
                                 {subTabValue === "FT" ? (
                                     <CustomTabPanel value={subTabValue} index="FT">
-                                        <OddsDetailFT parsedOdds={parsedOdds['_ODDS_DETAIL']} />
+                                        <OddsDetailFT parsedOdds={parsedOdds['ODDS_FT']} />
                                     </CustomTabPanel>
                                 ) : (
                                     <CustomTabPanel value={subTabValue} index="HT">
-                                        <OddsDetailHT parsedOdds={parsedOdds['_ODDS_DETAIL']} />
+                                        <OddsDetailHT parsedOdds={parsedOdds['ODDS_HT']} />
                                     </CustomTabPanel>
                                 )}
                             </div>
@@ -130,11 +131,11 @@ const OddDetailModal = (props) => {
                                 </Tabs>
                                 {subTabValue === "FT" ? (
                                     <CustomTabPanel value={subTabValue} index="FT">
-                                        <OddsDetailFT parsedOdds={parsedOdds['_X2_DETAIL']} />
+                                        <Odds1X2DetailFT parsedOdds={parsedOdds['ODDS_FT']} />
                                     </CustomTabPanel>
                                 ) : (
                                     <CustomTabPanel value={subTabValue} index="HT">
-                                        <OddsDetailHT parsedOdds={parsedOdds['_X2_DETAIL']} />
+                                        <Odds1X2DetailHT parsedOdds={parsedOdds['ODDS_HT']} />
                                     </CustomTabPanel>
                                 )}
                                 {/* Render content for 1x2 Odds sub-tabs */}
@@ -148,11 +149,11 @@ const OddDetailModal = (props) => {
                                 </Tabs>
                                 {subTabValue === "FT" ? (
                                     <CustomTabPanel value={subTabValue} index="FT">
-                                        <OddsDetailFT parsedOdds={parsedOdds['_OU_DETAIL']} />
+                                        <OddsOUDetailFT parsedOdds={parsedOdds['ODDS_FT']} />
                                     </CustomTabPanel>
                                 ) : (
                                     <CustomTabPanel value={subTabValue} index="HT">
-                                        <OddsDetailHT parsedOdds={parsedOdds['_OU_DETAIL']} />
+                                        <OddsOUDetailHT parsedOdds={parsedOdds['ODDS_HT']} />
                                     </CustomTabPanel>
                                 )}
                             </div>
@@ -161,6 +162,7 @@ const OddDetailModal = (props) => {
                 )}
             </Box>
         </Modal>
+
     );
 }
 

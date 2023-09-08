@@ -2,15 +2,19 @@ import { takeLatest, call, put, delay } from "redux-saga/effects";
 import * as actions from "../actions";
 import * as api from "../../api";
 
-
 function* fetchScheduleSaga(action) {
     try {
-        const schedule = yield call(api.fetchSchedule);
+        const { day } = action.payload;
+
+        yield put(actions.getSchedule.clearSchedules());
+
+        const schedule = yield call(api.fetchSchedule, day);
         yield put(actions.getSchedule.getScheduleSuccess(schedule.data));
     } catch (error) {
         console.error("Error fetching schedule:", error);
     }
 }
+
 
 function* fetchRTSaga(action) {
     try {
@@ -113,6 +117,33 @@ function* fetchUserSaga(action) {
     }
 }
 
+function* fetchUsersSaga(action) {
+    try {
+        const users = yield call(api.fetchGetUsers);
+        yield put(actions.getUsers.getUsersSuccess(users.data));
+    } catch (error) {
+        console.error("Error fetching users:", error);
+    }
+}
+
+function* fetchCategorySaga(action) {
+    try {
+        const category = yield call(api.fetchGET_Category);
+        yield put(actions.getCategory.getCategorySuccess(category.data));
+    } catch (error) {
+        console.error("Error fetching category:", error);
+    }
+}
+
+function* fetchPostsSaga(action) {
+    try {
+        const posts = yield call(api.fetchGET_Post);
+        yield put(actions.getPosts.getPostsSuccess(posts.data));
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+    }
+}
+
 function* myScheduleSaga() {
     yield takeLatest(actions.getSchedule.getSchedulesRequest, fetchScheduleSaga);
 }
@@ -157,4 +188,16 @@ function* myUserSaga() {
     yield takeLatest(actions.getUser.getUserRequest, fetchUserSaga);
 }
 
-export { myScheduleSaga, myrtSaga, myoddsallrtSaga, myOddsSingleSaga, mystatysrtSaga, myScheduleSingleSaga, myScheduleAllSingleSaga, myOddsAllSingleSaga, myH2HSaga, myUserSaga, myOddsChangeDetailHistorySaga };
+function* myUsersSaga() {
+    yield takeLatest(actions.getUsers.getUsersRequest, fetchUsersSaga);
+}
+
+function* myCategorySaga() {
+    yield takeLatest(actions.getCategory.getCategoryRequest, fetchCategorySaga);
+}
+
+function* myPostsSaga() {
+    yield takeLatest(actions.getPosts.getPostsRequest, fetchPostsSaga);
+}
+
+export { myScheduleSaga, myrtSaga, myoddsallrtSaga, myOddsSingleSaga, mystatysrtSaga, myScheduleSingleSaga, myScheduleAllSingleSaga, myOddsAllSingleSaga, myH2HSaga, myUserSaga, myUsersSaga, myOddsChangeDetailHistorySaga, myCategorySaga, myPostsSaga };

@@ -1,30 +1,42 @@
-import React, { useLayoutEffect, useMemo, useEffect, useCallback } from "react";
+import React, { useLayoutEffect, useMemo, useEffect, useCallback, useState } from "react";
 import io from "socket.io-client";
 import { useDispatch, useSelector } from "react-redux";
 import { renderToString } from "react-dom/server";
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import * as actions from "../../../../redux/actions";
-import { scheduleState$, oddsallState$ } from "../../../../redux/selectors";
+import { scheduleState$, oddsallState$, rtState$, statusrtState$ } from "../../../../redux/selectors";
 import DataTable from "./DataTable";
+import DateSelector from "./Functions/DateSelector";
 
 const CaoThu = () => {
   const dispatch = useDispatch();
   const schedule = useSelector(scheduleState$);
   const odds = useSelector(oddsallState$);
+  const oddsRedux = useSelector(rtState$);
+  const statusRedux = useSelector(statusrtState$);
+
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedHandicap, setSelectedHandicap] = useState("");
+  const [selectedOddHandicap, setSelectedOddHandicap] = useState("");
+  const [selectedOver, setSelectedOver] = useState("");
+  const [selectedOddOver, setSelectedOddOver] = useState("");
 
   useLayoutEffect(() => {
-    const fetchData = async () => {
-      await Promise.all([
-        dispatch(actions.getSchedule.getSchedulesRequest()),
-        dispatch(actions.getOddsAllRT.getOddsAllRTRequest()),
-      ]);
-    };
+    fetchData(selectedDate);
+  }, [selectedDate]);
 
-    fetchData();
-  }, [dispatch]);
+  const fetchData = async (date) => {
+    await Promise.all([
+      dispatch(actions.getSchedule.getSchedulesRequest(date)),
+      dispatch(actions.getOddsAllRT.getOddsAllRTRequest()),
+      dispatch(actions.getRT.getRTRequest()),
+      dispatch(actions.getStatusRT.getStatusRTRequest()),
+    ]);
+  };
 
   const tb_refresh = useCallback((data, type) => {
     var length = 0;
@@ -74,7 +86,7 @@ const CaoThu = () => {
           const old = JSON.parse(oddsValue);
 
           const upoddsHtml = getUpDownIconHtml(D.HomeHandicap, old.HomeHandicap);
-          const goalHtml = getUpDownIconHtml(D.Handicap, old.Handicap);
+          const goalHtml = test(D.Handicap, old.Handicap);
           const downoddsHtml = getUpDownIconHtml(D.AwayHandicap, old.AwayHandicap);
 
           const up_t_oddsHtml = getUpDownIconHtml(D.Over, old.Over);
@@ -85,9 +97,9 @@ const CaoThu = () => {
           updateElement(goalHtml, "goal_" + D.MATCH_ID);
           updateElement(downoddsHtml, "downodds_" + D.MATCH_ID);
 
-          updateElement(up_t_oddsHtml, "upodds_" + D.MATCH_ID);
-          updateElement(goal_t_Html, "goal_" + D.MATCH_ID);
-          updateElement(down_t_oddsHtml, "downodds_" + D.MATCH_ID);
+          updateElement(up_t_oddsHtml, "upodds_t_" + D.MATCH_ID);
+          updateElement(goal_t_Html, "goal_t1_" + D.MATCH_ID);
+          updateElement(down_t_oddsHtml, "upodds_t_" + D.MATCH_ID);
         }
         function getUpDownIconHtml(newValue, oldValue) {
           if (parseFloat(oldValue) !== parseFloat(newValue)) {
@@ -106,6 +118,11 @@ const CaoThu = () => {
             }
           }
           return newValue;
+        }
+
+        function test(newValue) {
+          const parsedNewValue = parseFloat(newValue);
+          return newValue > 0 ? -newValue : -newValue;
         }
 
         function updateElement(htmlValue, elementId) {
@@ -168,19 +185,74 @@ const CaoThu = () => {
   }, []);
 
   if (schedule.data.length === 0 || odds.data.length === 0) {
-    return;
+    return <div style={{ textAlign: 'center' }}><CircularProgress /></div>;
   }
+
+  const handleDateSelect = (newDate) => {
+    dispatch(actions.getSchedule.clearSchedules());
+    fetchData(newDate);
+  };
 
   return (
     <React.Fragment>
-      <TableContent schedule={schedule} odds={odds} />
+      <DateSelector selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+      <div>
+        <label>
+          Biến động Handicap:
+          <select value={selectedHandicap} onChange={(e) => setSelectedHandicap(e.target.value)}>
+            <option value="">All</option>
+            <option value="0.25">0.25</option>
+            <option value="0.5">0.5</option>
+            <option value="0.75">0.75</option>
+            <option value="1">1</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Biến động Odds Handicap:
+          <select value={selectedOddHandicap} onChange={(e) => setSelectedOddHandicap(e.target.value)}>
+            <option value="">All</option>
+            <option value="0.05">0.05</option>
+            <option value="0.10">0.10</option>
+            <option value="0.15">0.15</option>
+            <option value="0.20">0.20</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Biến động Tài / Xỉu:
+          <select value={selectedOver} onChange={(e) => setSelectedOver(e.target.value)}>
+            <option value="">All</option>
+            <option value="0.25">0.25</option>
+            <option value="0.5">0.5</option>
+            <option value="0.75">0.75</option>
+            <option value="1">1</option>
+          </select>
+        </label>
+      </div>
+      <div>
+        <label>
+          Biến động Odds Tài / Xỉu :
+          <select value={selectedOddOver} onChange={(e) => setSelectedOddOver(e.target.value)}>
+            <option value="">All</option>
+            <option value="0.05">0.05</option>
+            <option value="0.10">0.10</option>
+            <option value="0.15">0.15</option>
+            <option value="0.20">0.20</option>
+          </select>
+        </label>
+      </div>
+      {/* onSelectDate={handleDateSelect} */}
+      <TableContent schedule={schedule} oddsRedux={oddsRedux} statusRedux={statusRedux} odds={odds} selectedOddHandicap={selectedOddHandicap} selectedHandicap={selectedHandicap} selectedOddOver={selectedOddOver} selectedOver={selectedOver} />
     </React.Fragment>
   );
 };
 
 export default CaoThu;
 
-const TableContent = ({ schedule, odds }) => {
+const TableContent = ({ schedule, odds, selectedHandicap, selectedOddHandicap, selectedOddOver, selectedOver, oddsRedux, statusRedux }) => {
   const sortedMatches = useMemo(() => {
     return schedule.data.sort((a, b) => {
       const timeA = new Date(a.MATCH_TIME);
@@ -194,7 +266,7 @@ const TableContent = ({ schedule, odds }) => {
       <thead>
         <tr>
           <td rowSpan="2" className="td-time">Time</td>
-          <td rowSpan="2" className="td-timestart">Thời gian<br />mở kèo</td>
+          {/* <td rowSpan="2" className="td-timestart">Thời gian<br />mở kèo</td> */}
           <td rowSpan="2" className="td-league">League</td>
           <td rowSpan="2" className="td-match">Match</td>
           <td colSpan="7" className="td-handicap">Kèo Handicap</td>
@@ -222,22 +294,63 @@ const TableContent = ({ schedule, odds }) => {
         <React.Fragment>
           {sortedMatches.filter((match) => match.STATUS >= 1).map((e) => {
             const oddsItemData = odds.data?.ODDS_DATA?.ODDS_ITEM;
-            const matchedOddsItem = oddsItemData?.find(item => item.$?.MATCH_ID === e.MATCH_ID);
+            const matchedOddsItem = oddsItemData?.find(item => item?.$?.MATCH_ID === e.MATCH_ID);
+
+            const oddsItemDataRT = oddsRedux.data?.ODDS_DATA?.ODDS_ITEM;
+            const scheduleItemDataRT = statusRedux.data?.SCHEDULE_DATA?.SCHEDULE_ITEM;
+            const matchedOddsItemRT = oddsItemDataRT?.find(item => item.$?.MATCH_ID === e.MATCH_ID);
+            const matchedScheduleItemRT = scheduleItemDataRT?.find(item => item.$?.MATCH_ID === e.MATCH_ID);
+
+            const bdCellInsertUpOdd = document.getElementById("insertUpOdd_" + e.MATCH_ID);
+            const bdCellInsertGoal = document.getElementById("insertGoal_" + e.MATCH_ID);
+            const bdCellInsertGoal_t1 = document.getElementById("insertGoal_t1_" + e.MATCH_ID);
+            const bdCellInsertUpodds_t = document.getElementById("insertUpodds_t_" + e.MATCH_ID);
+            const bdValueInsertUpOdd = bdCellInsertUpOdd?.textContent;
+            const bdValueInsertGoal = bdCellInsertGoal?.textContent;
+            const bdValueInsertGoal_t1 = bdCellInsertGoal_t1?.textContent;
+            const bdValueInsertUpodds_t = bdCellInsertUpodds_t?.textContent;
 
             if (matchedOddsItem) {
-              return <DataTable key={e.MATCH_ID} e={e} odds={matchedOddsItem} />;
+              if ((!selectedHandicap || (bdValueInsertGoal && parseFloat(bdValueInsertGoal) <= parseFloat(selectedHandicap))) &&
+                (!selectedOddHandicap || (bdValueInsertUpOdd && parseFloat(bdValueInsertUpOdd) <= parseFloat(selectedOddHandicap))) &&
+                (!selectedOver || (bdValueInsertGoal_t1 && parseFloat(bdValueInsertGoal_t1) <= parseFloat(selectedOver))) &&
+                (!selectedOddOver || (bdValueInsertUpodds_t && parseFloat(bdValueInsertUpodds_t) <= parseFloat(selectedOddOver)))) {
+                return <DataTable key={e.MATCH_ID} e={e} odds={matchedOddsItem} oddsRedux={matchedOddsItemRT} statusRedux={matchedScheduleItemRT} />;
+              }
             }
+
             return null;
           })}
-          {sortedMatches.filter((match) => match.STATUS < 1).map((e) => {
+
+          {sortedMatches.filter((match) => match.STATUS <= 0).map((e) => {
             const oddsItemData = odds.data?.ODDS_DATA?.ODDS_ITEM;
-            const matchedOddsItem = oddsItemData?.find(item => item.$?.MATCH_ID === e.MATCH_ID);
+            const matchedOddsItem = oddsItemData?.find(item => item?.$?.MATCH_ID === e.MATCH_ID);
+
+            const oddsItemDataRT = oddsRedux.data?.ODDS_DATA?.ODDS_ITEM;
+            const scheduleItemDataRT = statusRedux.data?.SCHEDULE_DATA?.SCHEDULE_ITEM;
+            const matchedOddsItemRT = oddsItemDataRT?.find(item => item.$?.MATCH_ID === e.MATCH_ID);
+            const matchedScheduleItemRT = scheduleItemDataRT?.find(item => item.$?.MATCH_ID === e.MATCH_ID);
+
+            const bdCellInsertUpOdd = document.getElementById("insertUpOdd_" + e.MATCH_ID);
+            const bdCellInsertGoal = document.getElementById("insertGoal_" + e.MATCH_ID);
+            const bdCellInsertGoal_t1 = document.getElementById("insertGoal_t1_" + e.MATCH_ID);
+            const bdCellInsertUpodds_t = document.getElementById("insertUpodds_t_" + e.MATCH_ID);
+            const bdValueInsertUpOdd = bdCellInsertUpOdd?.textContent;
+            const bdValueInsertGoal = bdCellInsertGoal?.textContent;
+            const bdValueInsertGoal_t1 = bdCellInsertGoal_t1?.textContent;
+            const bdValueInsertUpodds_t = bdCellInsertUpodds_t?.textContent;
 
             if (matchedOddsItem) {
-              return <DataTable key={e.MATCH_ID} e={e} odds={matchedOddsItem} />;
+              if ((!selectedHandicap || (bdValueInsertGoal && parseFloat(bdValueInsertGoal) <= parseFloat(selectedHandicap))) &&
+                (!selectedOddHandicap || (bdValueInsertUpOdd && parseFloat(bdValueInsertUpOdd) <= parseFloat(selectedOddHandicap))) &&
+                (!selectedOver || (bdValueInsertGoal_t1 && parseFloat(bdValueInsertGoal_t1) <= parseFloat(selectedOver))) &&
+                (!selectedOddOver || (bdValueInsertUpodds_t && parseFloat(bdValueInsertUpodds_t) <= parseFloat(selectedOddOver)))) {
+                return <DataTable key={e.MATCH_ID} e={e} odds={matchedOddsItem} oddsRedux={matchedOddsItemRT} statusRedux={matchedScheduleItemRT} />;
+              }
             }
             return null;
           })}
+
         </React.Fragment>
       </tbody>
     </table>

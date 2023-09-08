@@ -15,3 +15,7 @@ export const oddsAllSingleState$ = (state) => state.oddsAllsingle;
 export const h2hState$ = (state) => state.h2h;
 export const oddDetailHistoryState$ = (state) => state.oddschangedetailhistory;
 export const userState$ = (state) => state.user;
+export const usersState$ = (state) => state.users;
+
+export const categoryState$ = (state) => state.category;
+export const postsState$ = (state) => state.posts;

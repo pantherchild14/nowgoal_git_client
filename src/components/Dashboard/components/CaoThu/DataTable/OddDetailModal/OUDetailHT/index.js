@@ -4,7 +4,7 @@ const OddsOUDetailHT = (props) => {
     const { parsedOdds } = props;
 
     try {
-        const JsonData = JSON.parse(parsedOdds.ODDS_DATA);
+        const JsonData = parsedOdds['OU'];
 
         const style = {
             scroll: {
@@ -44,14 +44,14 @@ const OddsOUDetailHT = (props) => {
                         {JsonData.map((data, index) => (
                             <tr key={index}>
                                 <td className="rb">
-                                    {data['HT_HT'] ? data['HT_HT'] : 'Live'}
+                                    {data['OU']['ht'] ? data['OU']['ht'] : 'Live'}
                                 </td>
-                                <td className="rb"></td>
-                                <td><span data-o="1.13" className="up2">{data['ODDS_HT']['u']}</span></td>
-                                <td><span data-o="0" className="">{data['ODDS_HT']['g']}</span></td>
-                                <td><span data-o="0.76" className="down2">{data['ODDS_HT']['d']}</span></td>
-                                <td className="lb time" name="timeData" data-t={data['TIME_CHANGE_HT']} data-tf="6">
-                                    {convertTime(data['TIME_CHANGE_HT'])}
+                                <td className="rb">{data['OU']['gs']}-{data['OU']['hs']}</td>
+                                <td><span data-o="1.13" className="up2">{data['OU']['odds']['u']}</span></td>
+                                <td><span data-o="0" className="">{data['OU']['odds']['g']}</span></td>
+                                <td><span data-o="0.76" className="down2">{data['OU']['odds']['d']}</span></td>
+                                <td className="lb time" name="timeData" data-t={data['OU']['mt']} data-tf="6">
+                                    {convertTime(data['OU']['mt'])}
                                 </td>
                             </tr>
                         ))}

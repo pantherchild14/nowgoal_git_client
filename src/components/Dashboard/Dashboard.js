@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -23,7 +23,14 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SportsSoccerOutlinedIcon from '@mui/icons-material/SportsSoccerOutlined';
+import PostAddIcon from '@mui/icons-material/PostAdd';
 import CaoThu from './components/CaoThu';
+import Category from './components/Category';
+import Users from './components/Users';
+import NewPost from './components/Posts/NewPost';
+import AllPosts from './components/Posts/AllPosts';
+import UpdatePost from './components/Posts/UpdatePost';
+import Widget from './components/Widgets';
 
 function Copyright(props) {
   return (
@@ -57,7 +64,6 @@ function TabPanel(props) {
     </div>
   );
 }
-
 
 function a11yProps(index) {
   return {
@@ -116,8 +122,10 @@ const defaultTheme = createTheme();
 
 export default function Dashboard() {
   const [open, setOpen] = React.useState(true);
-  const [selectedTab, setSelectedTab] = React.useState(0); 
+  const [selectedTab, setSelectedTab] = React.useState(6);
   const [drawerOpen, setDrawerOpen] = React.useState(true);
+  const [getIdPost, setGetIdPost] = React.useState(null);
+  const [updatePostClicked, setUpdatePostClicked] = React.useState(false);
 
   const handleTabChange = (event, newValue) => {
     setSelectedTab(newValue);
@@ -135,7 +143,7 @@ export default function Dashboard() {
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
-              pr: '24px', 
+              pr: '24px',
             }}
           >
             <IconButton
@@ -175,7 +183,7 @@ export default function Dashboard() {
               px: [1],
             }}
           >
-            <IconButton onClick={handleDrawerToggle}> 
+            <IconButton onClick={handleDrawerToggle}>
               <ChevronLeftIcon />
             </IconButton>
           </Toolbar>
@@ -187,12 +195,20 @@ export default function Dashboard() {
             centered
           >
             <Tab label={drawerOpen ? "Dashboard" : ""} {...a11yProps(0)} icon={<DashboardIcon />} />
-            <Tab label={drawerOpen ? "Soccer Tip" : ""} {...a11yProps(1)} icon={<SportsSoccerOutlinedIcon />} />
-            <Tab label={drawerOpen ? "Predictions" : ""} {...a11yProps(2)} icon={<SportsSoccerOutlinedIcon />}/>
-            <Tab label={drawerOpen ? "Source Tips" : ""} {...a11yProps(3)} icon={<BarChartIcon />}/>
-            <Tab label={drawerOpen ? "User" : ""} {...a11yProps(4)} icon={<PersonIcon />}/>
-            <Tab label={drawerOpen ? "Isport Setting" : ""} {...a11yProps(5)} icon={<SettingsIcon />}/>
+            <Tab label={drawerOpen ? "Category" : ""} {...a11yProps(1)} icon={<PostAddIcon />} />
+            <Tab label={drawerOpen ? "Predictions" : ""} {...a11yProps(2)} icon={<SportsSoccerOutlinedIcon />} />
+            <Tab label={drawerOpen ? "Source Tips" : ""} {...a11yProps(3)} icon={<BarChartIcon />} />
+            <Tab label={drawerOpen ? "User" : ""} {...a11yProps(4)} icon={<PersonIcon />} />
+            <Tab label={drawerOpen ? "Isport Setting" : ""} {...a11yProps(5)} icon={<SettingsIcon />} />
             <Tab label={drawerOpen ? "Cao Thu Setting" : ""} {...a11yProps(6)} icon={<SportsSoccerOutlinedIcon />} />
+            <Tab label={drawerOpen ? "New Posts" : ""} {...a11yProps(7)} icon={<PostAddIcon />} />
+            <Tab label={drawerOpen ? "All Posts" : ""} {...a11yProps(8)} icon={<PostAddIcon />} />
+            <Tab
+              label={drawerOpen ? "Update Post" : ""}
+              {...a11yProps(9)}
+              icon={<PostAddIcon />}
+              style={{ display: updatePostClicked ? "block" : "none" }}
+            />
           </Tabs>
         </Drawer>
         <Box
@@ -208,54 +224,61 @@ export default function Dashboard() {
           }}
         >
           <Toolbar />
-          {/* <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}> */}
-            <Grid container spacing={3} >
-              <Grid item xs={12}>
-                <TabPanel value={selectedTab} index={0}>
-                  Content of Dashboard
-                </TabPanel>
-                <TabPanel value={selectedTab} index={1}>
-                  <Grid item xs={12}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                      Content of Tab 2
-                    </Paper>
-                  </Grid>
-                </TabPanel>
-                <TabPanel value={selectedTab} index={2}>
-                  <Grid item xs={12}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+          <Grid container spacing={3} >
+            <Grid item xs={12}>
+              <TabPanel value={selectedTab} index={0}>
+                <Widget />
+              </TabPanel>
+              <TabPanel value={selectedTab} index={1}>
+                <Grid item xs={12}>
+                  <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                    <Category />
+                  </Paper>
+                </Grid>
+              </TabPanel>
+              <TabPanel value={selectedTab} index={2}>
+                <Grid item xs={12}>
+                  <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                     Content of Tab 3
-                    </Paper>
-                  </Grid>
-                </TabPanel>
-                <TabPanel value={selectedTab} index={3}>
-                  <Grid item xs={12}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                  </Paper>
+                </Grid>
+              </TabPanel>
+              <TabPanel value={selectedTab} index={3}>
+                <Grid item xs={12}>
+                  <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                     Content of Tab 4
-                    </Paper>
-                  </Grid>
-                </TabPanel>
-                <TabPanel value={selectedTab} index={4}>
-                  <Grid item xs={12}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                    Content of Tab 5
-                    </Paper>
-                  </Grid>
-                </TabPanel>
-                <TabPanel value={selectedTab} index={5}>
-                  <Grid item xs={12}>
-                    <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                  </Paper>
+                </Grid>
+              </TabPanel>
+              <TabPanel value={selectedTab} index={4}>
+                <Grid item xs={12}>
+                  <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
+                    <Users />
+                  </Paper>
+                </Grid>
+              </TabPanel>
+              <TabPanel value={selectedTab} index={5}>
+                <Grid item xs={12}>
+                  <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                     Content of Tab 6
-                    </Paper>
-                  </Grid>
-                </TabPanel>
-                <TabPanel value={selectedTab} index={6}>
-                  <CaoThu />
-                </TabPanel>
-              </Grid>
+                  </Paper>
+                </Grid>
+              </TabPanel>
+              <TabPanel value={selectedTab} index={6}>
+                <CaoThu />
+              </TabPanel>
+              <TabPanel value={selectedTab} index={7}>
+                <NewPost />
+              </TabPanel>
+              <TabPanel value={selectedTab} index={8}>
+                <AllPosts setSelectedTab={setSelectedTab} setGetIdPost={setGetIdPost} />
+              </TabPanel>
+              <TabPanel value={selectedTab} index={9}>
+                <UpdatePost getIdPost={getIdPost} />
+              </TabPanel>
             </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          {/* </Container> */}
+          </Grid>
+          <Copyright sx={{ pt: 4 }} />
         </Box>
       </Box>
     </ThemeProvider>

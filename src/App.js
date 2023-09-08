@@ -8,6 +8,8 @@ import SignUp from './components/auth/SignUp';
 import ChangePassword from './components/auth/ChangePassword';
 import Profile from './components/auth/Profile';
 import Dashboard from './components/Dashboard/Dashboard';
+import LiveScore from './pages/LiveScore';
+import SinglePage from './pages/Single';
 
 function App() {
     const location = useLocation();
@@ -15,13 +17,15 @@ function App() {
     // Check if the current location is the dashboard route
     const isDashboardRoute = location.pathname === '/profile/dashboard';
 
-    return ( 
-        <>  
+    return (
+        <>
             {/* Main routes */}
-            <Container maxWidth="lg" className="container"> 
-                {isDashboardRoute ? null : <Header />}
+            {isDashboardRoute ? null : <Header />}
+            <Container maxWidth="xl" className="container">
                 <Routes>
                     <Route path='/' element={<HomePage />} />
+
+                    <Route path='/live-score' element={<LiveScore />} />
                     <Route path='/match/:id' element={<MatchPage />} />
 
                     {/* Auth  */}
@@ -29,6 +33,12 @@ function App() {
                     <Route path='/sign-up' element={<SignUp />} />
                     <Route path='/profile/change-password' element={<ChangePassword />} />
                     <Route path='/profile' element={<Profile />} />
+
+                    {/* Post  */}
+                    <Route path='/post/:postTitle' element={<SinglePage />} />
+
+                    {/* Catch-all route for unspecified paths */}
+                    {/* <Route path='*' element={<HomePage />} /> */}
                 </Routes>
             </Container>
 

@@ -43,6 +43,18 @@ export const INIT_STATE = {
         isLoading: false,
         data: [],
     },
+    users: {
+        isLoading: false,
+        data: [],
+    },
+    category: {
+        isLoading: false,
+        data: [],
+    },
+    posts: {
+        isLoading: false,
+        data: [],
+    },
     modal: {
         isShow: false,
     }

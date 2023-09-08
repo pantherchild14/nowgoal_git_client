@@ -1,28 +1,23 @@
 import { INIT_STATE } from "../../constant";
-import { getSchedule, getType } from "../actions";
+import { getPosts, getType } from "../actions";
 
-export default function scheduleReducers(state = INIT_STATE.schedule, action) {
+export default function categoryReducers(state = INIT_STATE.posts, action) {
     switch (action.type) {
-        case getType(getSchedule.getSchedulesRequest):
+        case getType(getPosts.getPostsRequest):
             return {
                 ...state,
                 isLoading: true,
             };
-        case getType(getSchedule.getScheduleSuccess):
+        case getType(getPosts.getPostsSuccess):
             return {
                 ...state,
                 isLoading: false,
                 data: action.payload,
             };
-        case getType(getSchedule.getScheduleFailure):
+        case getType(getPosts.getPostsFailure):
             return {
                 ...state,
                 isLoading: false,
-            };
-        case getType(getSchedule.clearSchedules):
-            return {
-                ...state,
-                data: [],
             };
         default:
             return state;
