@@ -29,6 +29,7 @@ function* fetchOddsAllSaga(action) {
     try {
         const rt = yield call(api.fetchOddAllRT);
         yield put(actions.getOddsAllRT.getOddsAllRTSuccess(rt.data));
+        // yield delay(3000);
     } catch (error) {
         console.error("Error fetching rt:", error);
     }

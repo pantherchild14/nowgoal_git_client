@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 import * as actions from "../../../../../redux/actions";
 import { oddDetailHistoryState$ } from "../../../../../redux/selectors";
@@ -11,12 +10,11 @@ import OddDetailModal from "./OddDetailModal";
 import { UTCtoLocalTime } from "../../../../../helpers";
 
 const DataTable = (props) => {
-    const { e, odds, oddsRedux, statusRedux } = props;
+    const { e, odds, statusRedux } = props;
     const dispatch = useDispatch();
     const [open, setOpen] = React.useState(false);
     const oddDetailHistory = useSelector(oddDetailHistoryState$);
 
-    const oddRT = oddsRedux?.$;
     const scheduleRT = statusRedux?.$;
     const isLocalTimeZone = localStorage.getItem('TIME_ZONE')
 
@@ -41,13 +39,77 @@ const DataTable = (props) => {
         };
 
         const insertData = (tr, data) => {
-            const { elementId, sumData } = data;
+            const { elementId, sumData, tip, tipOU, checkTipsDataHome, checkTipsDataAway, checkTipsDataOU, awayID, homeID, oddHome, oddAway, oddOU } = data;
             const insertElement = tr.querySelector(elementId);
+            const insertTips = tr.querySelector(tip);
+            const insertTipsOU = tr.querySelector(tipOU);
+            const home = tr.querySelector(homeID);
+            const away = tr.querySelector(awayID);
+
             if (insertElement) {
-                insertElement.innerHTML = sumData.toFixed(2);
+                let iconColor = 'transparent';
+                let icon = '';
+                let absSumData = '0';
+
+                if (sumData > 0) {
+                    iconColor = 'green';
+                    icon = '▲';
+                } else if (sumData < 0) {
+                    iconColor = 'red';
+                    icon = '▼';
+                }
+
+                if (sumData !== 0) {
+                    absSumData = Math.abs(sumData).toFixed(2);
+                }
+
+                const iconElement = document.createElement('span');
+                iconElement.style.color = iconColor;
+                iconElement.textContent = icon;
+
+                const absSumDataText = document.createTextNode(absSumData);
+
+                insertElement.innerHTML = '';
+                insertElement.appendChild(absSumDataText);
+
+                if (icon !== '') {
+                    insertElement.appendChild(iconElement);
+                }
             }
+
+
+            if (insertTips) {
+                let checkTip = '';
+
+                if (checkTipsDataHome > 0) {
+                    checkTip = `${home.textContent}  ${oddHome}`;
+                } else if (checkTipsDataAway > 0) {
+                    checkTip = `${away.textContent}  ${oddAway}`;
+                }
+
+                insertTips.innerHTML = checkTip;
+            }
+
+            if (insertTipsOU) {
+                const checkTip = checkTipsDataOU > 0 ? `Over ${oddOU}` : checkTipsDataOU < 0 ? `Under ${oddOU}` : '';
+
+                insertTipsOU.innerHTML = checkTip;
+            }
+
+
         };
 
+        // const insertData = (tr, data) => {
+        //     const { elementId, sumData } = data;
+        //     const insertElement = tr.querySelector(elementId);
+
+        //     if (insertElement) {
+        //         const icon = sumData < 0 ? `${<ArrowDropUpIcon />}` : `${<ArrowDropDownIcon />}`;
+        //         const absSumData = Math.abs(sumData).toFixed(2);
+
+        //         insertElement.innerHTML = absSumData + icon;
+        //     }
+        // };
 
         const Odd = async () => {
             const tr = document.getElementById("tr_" + e.MATCH_ID);
@@ -60,55 +122,59 @@ const DataTable = (props) => {
                     {
                         elementId: `#insertGoal_${e.MATCH_ID}`,
                         sumData: await sreachOdd(`#goalEarly_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_${e.MATCH_ID}`, tr),
+
                     },
                     {
                         elementId: `#insertGoalLive_${e.MATCH_ID}`,
-                        sumData: await sreachOdd(`#goalEarlyLive_${e.MATCH_ID}`, tr) - await sreachOdd(`#goalLive_${e.MATCH_ID}`, tr)
+                        sumData: await sreachOdd(`#goalEarlyLive_${e.MATCH_ID}`, tr) - await sreachOdd(`#goalLive_${e.MATCH_ID}`, tr),
+
                     },
                     {
                         elementId: `#insertUpOdd_${e.MATCH_ID}`,
-                        sumData: await sreachOdd(`#upoddsEarly_${e.MATCH_ID}`, tr) - await sreachOdd(`#upodds_${e.MATCH_ID}`, tr)
+                        sumData: await sreachOdd(`#upoddsEarly_${e.MATCH_ID}`, tr) - await sreachOdd(`#upodds_${e.MATCH_ID}`, tr),
                     },
                     {
                         elementId: `#insertDownOdd_${e.MATCH_ID}`,
-                        sumData: await sreachOdd(`#downoddsEarly_${e.MATCH_ID}`, tr) - await sreachOdd(`#downodds_${e.MATCH_ID}`, tr)
+                        sumData: await sreachOdd(`#downoddsEarly_${e.MATCH_ID}`, tr) - await sreachOdd(`#downodds_${e.MATCH_ID}`, tr),
                     },
                     /* Over/Under */
                     {
                         elementId: `#insertGoal_t1_${e.MATCH_ID}`,
-                        sumData: await sreachOdd(`#goalEarly_t1_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_t1_${e.MATCH_ID}`, tr)
+                        sumData: await sreachOdd(`#goalEarly_t1_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_t1_${e.MATCH_ID}`, tr),
+                        // checkTipsData: await sreachOdd(`#goalEarly_t1_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_t1_${e.MATCH_ID}`, tr),
                     },
                     {
                         elementId: `#insertUpodds_t_${e.MATCH_ID}`,
-                        sumData: await sreachOdd(`#upoddsEarly_t_${e.MATCH_ID}`, tr) - await sreachOdd(`#upodds_t_${e.MATCH_ID}`, tr)
+                        sumData: await sreachOdd(`#upoddsEarly_t_${e.MATCH_ID}`, tr) - await sreachOdd(`#upodds_t_${e.MATCH_ID}`, tr),
                     },
                     {
                         elementId: `#insertDownodds_t_${e.MATCH_ID}`,
-                        sumData: await sreachOdd(`#downoddsEarly_t_${e.MATCH_ID}`, tr) - await sreachOdd(`#downodds_t_${e.MATCH_ID}`, tr)
+                        sumData: await sreachOdd(`#downoddsEarly_t_${e.MATCH_ID}`, tr) - await sreachOdd(`#downodds_t_${e.MATCH_ID}`, tr),
                     },
+                    {
+                        tip: `#tip_${e.MATCH_ID}`,
+                        homeID: `#home_${e.MATCH_ID}`,
+                        awayID: `#away_${e.MATCH_ID}`,
+                        oddHome: await sreachOdd(`#goal_${e.MATCH_ID}`, tr),
+                        oddAway: await sreachOdd(`#goalLive_${e.MATCH_ID}`, tr),
+                        checkTipsDataHome: await sreachOdd(`#goalEarly_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_${e.MATCH_ID}`, tr),
+                        checkTipsDataAway: await sreachOdd(`#goalEarlyLive_${e.MATCH_ID}`, tr) - await sreachOdd(`#goalLive_${e.MATCH_ID}`, tr),
+                    },
+                    {
+                        tipOU: `#tipOU_${e.MATCH_ID}`,
+                        oddOU: await sreachOdd(`#goal_t1_${e.MATCH_ID}`, tr),
+                        checkTipsDataOU: await sreachOdd(`#goalEarly_t1_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_t1_${e.MATCH_ID}`, tr),
+                    }
                 ];
 
                 for (const data of dataToInsert) {
-                    const liveElement = tr.querySelector(data.liveElementIdGoalLive);
-                    const element = tr.querySelector(data.elementIdGoal);
-
-                    if (element && liveElement) {
-                        const value = parseFloat(element.textContent);
-
-                        if (value < 0) {
-                            liveElement.textContent = -value;
-                        } else {
-                            liveElement.textContent = -value;
-                        }
-                    }
-
                     await insertData(tr, data);
                 }
             }
         }
 
         Odd();
-        const intervalIdOdds = setInterval(Odd, 3000);
+        const intervalIdOdds = setInterval(Odd, 30000);
 
         return () => {
             clearInterval(intervalIdOdds);
@@ -129,38 +195,38 @@ const DataTable = (props) => {
         acc[key] = parseJSON(odds.$[key]);
         return acc;
     }, {});
-
-    const { ODDS_AH_FT, ODDS_AH_HT, ODDS_EURO_FT, ODDS_EURO_HT, ODDS_OU_FT, ODDS_OU_HT } = parsedOdds;
-
-    const timestamp = new Date(e.TIME_STAMP);
-    const hours = timestamp.getUTCHours().toString().padStart(2, "0");
-    const minutes = timestamp.getUTCMinutes().toString().padStart(2, "0");
-    const day = timestamp.getUTCDate();
-    const month = (timestamp.getUTCMonth() + 1).toString().padStart(2, "0");
-    const formattedTime = `${hours}:${minutes} <br/> ${day}/${month}`;
+    const { ODDS_AH_FT, ODDS_OU_FT } = parsedOdds;
 
     return (
         <tr matchid={e.MATCH_ID} id={`tr_${e.MATCH_ID}`} odds={JSON.stringify(e)} chOdds={ODDS_AH_FT.f.g} data-s={scheduleRT?.STATUS ? scheduleRT?.STATUS : e?.STATUS} data-t={JSON.stringify(scheduleRT) ? JSON.stringify(scheduleRT) : ""} >
             <td className="td-time" style={{ width: '5%' }} dangerouslySetInnerHTML={{ __html: UTCtoLocalTime(e.TIME_STAMP, isLocalTimeZone) }}></td>
-            {/* <td className="td-timestart" dangerouslySetInnerHTML={{ __html: formattedTime }}></td> */}
             <td className="td-league">{e.LEAGUE_NAME}</td>
-            <td className="td-match"><div><p className="">{e.HOME_NAME}</p> <p className="">{e.AWAY_NAME}</p></div></td>
+            <td className="td-match">
+                <div>
+                    <p id={`home_${e.MATCH_ID}`}>{e.HOME_NAME}</p>
+                    <p id={`away_${e.MATCH_ID}`}>{e.AWAY_NAME}</p>
+                </div>
+            </td>
             <td className="td-handicap-live">
                 <div className="tr__row">
-                    <div className="tr__col handicap.instantHandicap" id={`goal_${e.MATCH_ID}`}><span>{oddRT && oddRT.Handicap !== undefined ? oddRT.Handicap : ODDS_AH_FT.r.g}</span></div>
-                    <div className="tr__col handicap.instantHandicap" id={`goalLive_${e.MATCH_ID}`}><span>{oddRT && oddRT.Handicap !== undefined ? oddRT.Handicap : ODDS_AH_FT.r.g}</span></div>
+                    <div className="tr__col handicap.instantHandicap" id={`goal_${e.MATCH_ID}`}>
+                        <span>{ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g : -ODDS_AH_FT.l.g}</span>
+                    </div>
+                    <div className="tr__col handicap.instantHandicap" id={`goalLive_${e.MATCH_ID}`}>
+                        <span>{ODDS_AH_FT.l.g < 0 ? ODDS_AH_FT.l.g : ODDS_AH_FT.l.g}</span>
+                    </div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col handicap.instantHome" id={`upodds_${e.MATCH_ID}`}>{oddRT && oddRT.HomeHandicap !== undefined ? oddRT.HomeHandicap : ODDS_AH_FT.r.u}</div>
-                    <div className="tr__col handicap.instantAway" id={`downodds_${e.MATCH_ID}`}>{oddRT && oddRT.AwayHandicap !== undefined ? oddRT.AwayHandicap : ODDS_AH_FT.r.d}</div>
+                    <div className="tr__col handicap.instantHome" id={`upodds_${e.MATCH_ID}`}>{ODDS_AH_FT.l.u}</div>
+                    <div className="tr__col handicap.instantAway" id={`downodds_${e.MATCH_ID}`}>{ODDS_AH_FT.l.d}</div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col handicap.initialHandicap" id={`goalEarly_${e.MATCH_ID}`}><span>{ODDS_AH_FT.f.g < 0 ? -ODDS_AH_FT.f.g : ODDS_AH_FT.f.g}</span></div>
-                    <div className="tr__col handicap.initialHandicap" id={`goalEarlyLive_${e.MATCH_ID}`}><span>{ODDS_AH_FT.f.g < 0 ? ODDS_AH_FT.f.g : -ODDS_AH_FT.f.g}</span></div>
+                    <div className="tr__col handicap.initialHandicap" id={`goalEarly_${e.MATCH_ID}`}><span>{ODDS_AH_FT.f.g < 0 ? -ODDS_AH_FT.f.g : -ODDS_AH_FT.f.g}</span></div>
+                    <div className="tr__col handicap.initialHandicap" id={`goalEarlyLive_${e.MATCH_ID}`}><span>{ODDS_AH_FT.f.g < 0 ? ODDS_AH_FT.f.g : ODDS_AH_FT.f.g}</span></div>
                 </div>
             </td>
             <td>
@@ -188,18 +254,18 @@ const DataTable = (props) => {
 
             <td className="td-handicap-tips">
                 <div className="tr__row_remove">
-                    <div className="tr__col handicap.fluctuatingHandicap"><span>Montenegro (W) U19 +0</span></div>
+                    <div className="tr__col handicap.fluctuatingHandicap" id={`tip_${e.MATCH_ID}`}></div>
                 </div>
             </td>
             <td>
                 <div className="tr__row_remove">
-                    <div className="tr__col overUnder.instantHandicap" id={`goal_t1_${e.MATCH_ID}`}>{ODDS_OU_FT.r.g}</div>
+                    <div className="tr__col overUnder.instantHandicap" id={`goal_t1_${e.MATCH_ID}`}>{ODDS_OU_FT.l.g}</div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col overUnder.instantOver" id={`upodds_t_${e.MATCH_ID}`}>{ODDS_OU_FT.r.d}</div>
-                    <div className="tr__col overUnder.instantUnder" id={`downodds_t_${e.MATCH_ID}`}>{ODDS_OU_FT.r.u}</div>
+                    <div className="tr__col overUnder.instantOver" id={`upodds_t_${e.MATCH_ID}`}>{ODDS_OU_FT.l.d}</div>
+                    <div className="tr__col overUnder.instantUnder" id={`downodds_t_${e.MATCH_ID}`}>{ODDS_OU_FT.l.u}</div>
                 </div>
             </td>
             <td>
@@ -229,10 +295,10 @@ const DataTable = (props) => {
                     <div className="tr__col overUnder.initialUnder - overUnder.instantUnder" id={`insertDownodds_t_${e.MATCH_ID}`}></div>
                 </div>
             </td>
-
             {/* live  */}
-
-            <td className="td-overunder-tip"><div className="tr__row_remove"><div className="tr__col overUnder.fluctuatingHandicap"><span><span>-</span></span></div></div></td>
+            <td className="td-overunder-tip">
+                <div className="tr__col handicap.fluctuatingHandicap" id={`tipOU_${e.MATCH_ID}`}></div>
+            </td>
             <td className="td-viewfull">
                 <Button onClick={handleViewClick}>View</Button>
                 <OddDetailModal open={open} handleClose={handleClose} oddDetailHistory={oddDetailHistory} />
