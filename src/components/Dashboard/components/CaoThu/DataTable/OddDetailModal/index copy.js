@@ -80,14 +80,10 @@ const OddDetailModal = (props) => {
 
     let parsedOdds = {};
 
-    // priority for DB 
-    // if (oddDetailHistory?.data && oddDetailHistory?.data && oddDetailHistory?.data?.ODDS) {
-    //     parsedOdds = JSON.parse(oddDetailHistory?.data?.ODDS);
-    // }
+    // console.log(oddDetailHistory);
+    if (oddDetailHistory?.data && oddDetailHistory?.data && oddDetailHistory?.data?._ODDS) {
+        parsedOdds = JSON.parse(oddDetailHistory?.data?._ODDS);
 
-    // priority for xml
-    if (oddDetailHistory?.data && oddDetailHistory?.data?.$ && oddDetailHistory?.data?.$?._ODDS) {
-        parsedOdds = JSON.parse(oddDetailHistory?.data?.$?._ODDS);
     }
 
     return (

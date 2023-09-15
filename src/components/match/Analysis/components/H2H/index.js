@@ -29,12 +29,12 @@ const H2H = (props) => {
                                 <th width="7%">Home</th>
                                 <th width="5%">Score</th>
                                 <th width="7%">Away</th>
-                                <th width="5%">Corner</th>
+                                <th width="5%">W/L</th>
                             </tr>
                             {Array.isArray(data) ? (
                                 data.map((e, index) => (
                                     <tr key={index} name="oddsTr" className="tb-bgcolor1" cid="8">
-                                        <td width="10%" height="30">{e.League }</td>
+                                        <td width="10%" height="30">{e.League}</td>
                                         <td width="10%" height="30">{formatDate(e.Date)}</td>
                                         <td width="7%" height="30">{e.Home}</td>
                                         <td width="5%" height="30">
@@ -42,7 +42,8 @@ const H2H = (props) => {
                                         </td>
                                         <td width="7%" height="30">{e.Away}</td>
                                         <td width="5%" height="30">
-                                            {e.Corner && e.HalfCorner ? `${e.Corner}/${e.HalfCorner}` : '-'}
+                                            {/* {e.Corner && e.HalfCorner ? `${e.Corner}/${e.HalfCorner}` : '-'} */}
+                                            {e.W_L}
                                         </td>
                                     </tr>
                                 ))

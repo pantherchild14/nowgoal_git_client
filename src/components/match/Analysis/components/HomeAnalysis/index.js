@@ -1,7 +1,4 @@
 const styles = {
-    textCenter: {
-        textAlign: 'center',
-    },
     teamHome: {
         backgroundColor: '#de682f',
         color: '#fff',
@@ -12,7 +9,7 @@ const styles = {
 };
 
 const HomeAnalysis = (props) => {
-    const { nameTeam, title, LAST_MATCH_HOME } = props;
+    const { nameTeam, LAST_MATCH_HOME } = props;
     const data = (LAST_MATCH_HOME);
 
     const formatDate = (timestamp) => {
@@ -23,11 +20,10 @@ const HomeAnalysis = (props) => {
         return `${day}-${month}-${year}`;
     };
 
-    
+
     return (
         <>
-            <div  id='porletP5' className='porletP'>
-                <h2 className="team-table-title" style={styles.textCenter}>{title}</h2>
+            <div id='porletP5' className='porletP'>
                 <table width="100%" border="0" align="center" cellPadding="2" cellSpacing="1" className="odds-table-bg" data-t="">
                     <tbody>
                         <tr className="team-home" style={styles.teamHome}>
@@ -41,12 +37,12 @@ const HomeAnalysis = (props) => {
                             <th width="7%">Home</th>
                             <th width="5%">Score</th>
                             <th width="7%">Away</th>
-                            <th width="5%">Corner</th>
+                            <th width="5%">W/L</th>
                         </tr>
                         {Array.isArray(data) ? (
                             data.map((e, index) => (
                                 <tr key={index} name="oddsTr" align="center" className="tb-bgcolor1" cid="8">
-                                    <td width="10%" height="30">{e.League }</td>
+                                    <td width="10%" height="30">{e.League}</td>
                                     <td width="10%" height="30">{formatDate(e.Date)}</td>
                                     <td width="7%" height="30">{e.Home}</td>
                                     <td width="5%" height="30">
@@ -54,7 +50,8 @@ const HomeAnalysis = (props) => {
                                     </td>
                                     <td width="7%" height="30">{e.Away}</td>
                                     <td width="5%" height="30">
-                                        {e.Corner && e.HalfCorner ? `${e.Corner}(${e.HalfCorner})` : '-'}
+                                        {/* {e.Corner && e.HalfCorner ? `${e.Corner}(${e.HalfCorner})` : '-'} */}
+                                        {e.W_L}
                                     </td>
                                 </tr>
                             ))

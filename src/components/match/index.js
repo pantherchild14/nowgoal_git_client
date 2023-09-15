@@ -1,31 +1,47 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { scheduleAllSingleState$, oddsAllSingleState$, h2hState$ } from '../../redux/selectors';
+import { scheduleAllSingleState$, scheduleSingleState$, h2hState$, oddDetailHistoryState$ } from '../../redux/selectors';
 import * as actions from '../../redux/actions';
-import Odds from './Odds';
 import HeaderMatch from './HeaderMatch';
 import Analysis from './Analysis';
+import OddRun from './OddRun';
 
 export default function MatchLive(props) {
-  const { matchID } = props;
+  const { ah, ou, matchID } = props;
+  // Đảm bảo bạn có giá trị mặc định cho ah và ou
+  const ahValue = ah || '-';
+  const ouValue = ou || '-';
+
   const dispatch = useDispatch();
-  const odds = useSelector(oddsAllSingleState$);
   const schedules = useSelector(scheduleAllSingleState$);
+  const scheduleSingle = useSelector(scheduleSingleState$);
   const h2h = useSelector(h2hState$);
-  
+  const oddDetailHistory = useSelector(oddDetailHistoryState$);
+
   useEffect(() => {
-    dispatch(actions.getOddsAllSingleRT.getOddsAllSingleRTRequest(matchID));
     dispatch(actions.getScheduleAllSingleRT.getScheduleAllSingleRTRequest(matchID));
     dispatch(actions.getH2H.getH2HRequest(matchID));
+    dispatch(actions.getOddsChangeDetailHistory.getOddsChangeDetailHistoryRequest(matchID));
+    dispatch(actions.getScheduleSingleRT.getScheduleSingleRTRequest(matchID))
   }, [dispatch, matchID]);
 
-  
+  const styles = {
+    headerMatch: {
+      marginBottom: '20px',
+    }
+  };
 
   return (
     <div className='matchLive'>
-      <HeaderMatch schedules={schedules} />
-      <Odds  odds={odds} schedules={schedules}/>
-      <Analysis schedules={schedules} h2h={h2h}/>
+      <div style={styles.headerMatch} className='headerMatch'>
+        <HeaderMatch ahValue={ahValue} ouValue={ouValue} schedules={schedules} scheduleSingle={scheduleSingle} />
+      </div>
+      <div className='oddRun'>
+        <OddRun oddDetailHistory={oddDetailHistory} />
+      </div>
+      <div className='analysis'>
+        <Analysis schedules={schedules} h2h={h2h} />
+      </div>
     </div>
   );
 }

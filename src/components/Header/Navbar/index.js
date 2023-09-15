@@ -18,10 +18,9 @@ const Navbar = (props) => {
 
     const sections = [
         { title: 'Home', url: '' },
-        { title: 'Live Scores', url: 'live-score' },
-        { title: 'Betting Odds', url: 'betting-odds' },
-        { title: 'Betting Tips', url: 'betting-tips' },
-        { title: 'News', url: 'news' },
+        { title: 'Live Scores', url: '' },
+        { title: 'Betting Odds', url: '' },
+        { title: 'Betting Tips', url: '' },
     ];
 
     const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -56,10 +55,6 @@ const Navbar = (props) => {
     return (
         <React.Fragment>
             <Toolbar sx={{ mb: 3, borderBottom: 1, borderColor: 'divider' }}>
-                <LogoDevIcon
-                    sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
-                    aria-label="Website Logo"
-                />
                 <Typography
                     variant="h6"
                     noWrap
@@ -76,10 +71,7 @@ const Navbar = (props) => {
                     }}
                     aria-label="Website Title"
                 >
-                    <img
-                        src="https://soccertips.net/wp-content/themes/tips/images/logo-soccertips.png"
-                        alt="Website Logo"
-                    />
+                    Admin
                 </Typography>
                 <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
                     <nav className='navbar_headerTips'>

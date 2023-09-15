@@ -265,7 +265,7 @@ tr {
 }
 
 /* modal caothu  */
-div#caothu tbody tr th {
+div#caothu thead tr th {
     color: #888;
     font-weight: normal;
     line-height: 24px;
@@ -523,4 +523,15 @@ div#caothu tbody tr td {
     font-size: 9pt;
     font-weight: 700;
     color: #000;
+}
+
+.bxkeotype span.tip::before {
+    content: "";
+    position: absolute;
+    left: -40px;
+    top: -15px;
+    width: 100px;
+    height: 40px;
+    background: #1a73e8;
+    z-index: -1;
 }

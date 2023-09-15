@@ -1,5 +1,6 @@
-import { Routes, Route, Link, useLocation } from 'react-router-dom'
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
 import { Container } from "@mui/material";
+import { useEffect } from "react"; // Import useEffect
 import HomePage from "./pages/HomePage";
 import MatchPage from "./pages/MatchPage";
 import Header from "./components/Header";
@@ -13,9 +14,19 @@ import SinglePage from './pages/Single';
 
 function App() {
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const isLocalRole = localStorage.getItem('ROLE');
 
     // Check if the current location is the dashboard route
     const isDashboardRoute = location.pathname === '/profile/dashboard';
+
+    // Use useEffect to navigate based on user role
+    useEffect(() => {
+        if (isLocalRole !== 'Administrator' && !isDashboardRoute) {
+            navigate('/sign-in');
+        }
+    }, [isLocalRole, isDashboardRoute, navigate]);
 
     return (
         <>
@@ -23,22 +34,19 @@ function App() {
             {isDashboardRoute ? null : <Header />}
             <Container maxWidth="xl" className="container">
                 <Routes>
-                    <Route path='/' element={<HomePage />} />
-
-                    <Route path='/live-score' element={<LiveScore />} />
-                    <Route path='/match/:id' element={<MatchPage />} />
+                    {isLocalRole === 'Administrator' && (
+                        <>
+                            <Route path='/' element={<HomePage />} />
+                            <Route path='/live-score' element={<LiveScore />} />
+                            <Route path='/match/:id' element={<MatchPage />} />
+                        </>
+                    )}
 
                     {/* Auth  */}
                     <Route path='/sign-in' element={<SignIn />} />
                     <Route path='/sign-up' element={<SignUp />} />
                     <Route path='/profile/change-password' element={<ChangePassword />} />
                     <Route path='/profile' element={<Profile />} />
-
-                    {/* Post  */}
-                    <Route path='/post/:postTitle' element={<SinglePage />} />
-
-                    {/* Catch-all route for unspecified paths */}
-                    {/* <Route path='*' element={<HomePage />} /> */}
                 </Routes>
             </Container>
 

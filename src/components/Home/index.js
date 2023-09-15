@@ -9,6 +9,7 @@ import Posts from './Components/Blog';
 import * as actions from '../../redux/actions';
 import { postsState$ } from '../../redux/selectors';
 import FieldRelatedPost from '../../widgets/fields/RelatedPost';
+import CaoThu from '../Dashboard/components/CaoThu';
 
 export default function Home() {
     const dispatch = useDispatch();
@@ -25,15 +26,6 @@ export default function Home() {
     }, [dispatch]);
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
-            <Grid container spacing={1}>
-                <Grid item xs={6} md={8}>
-                    <Posts post={post} />
-                </Grid>
-                <Grid item xs={6} md={4}>
-                    <FieldRelatedPost post={post} />
-                </Grid>
-            </Grid>
-        </Box>
+        <CaoThu />
     );
 }
