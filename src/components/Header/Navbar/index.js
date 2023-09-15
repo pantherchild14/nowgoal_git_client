@@ -55,7 +55,7 @@ const Navbar = (props) => {
     return (
         <React.Fragment>
             <Toolbar sx={{ mb: 3, borderBottom: 1, borderColor: 'divider' }}>
-                <Typography
+                {/* <Typography
                     variant="h6"
                     noWrap
                     component="a"
@@ -72,9 +72,9 @@ const Navbar = (props) => {
                     aria-label="Website Title"
                 >
                     Admin
-                </Typography>
+                </Typography> */}
                 <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-                    <nav className='navbar_headerTips'>
+                    {/* <nav className='navbar_headerTips'>
                         <ul style={{ display: 'flex', listStyle: 'none', padding: 0 }}>
                             {sections.map((section) => (
                                 <li key={section.title} sx={{ marginRight: '10px' }}>
@@ -89,9 +89,9 @@ const Navbar = (props) => {
                                 </li>
                             ))}
                         </ul>
-                    </nav>
+                    </nav> */}
                 </Box>
-                <select value={timeZoneOffset} onChange={handleTimeZoneChange}>
+                {/* <select value={timeZoneOffset} onChange={handleTimeZoneChange}>
                     <option value={-11}>GMT -11</option>
                     <option value={-10}>GMT -10</option>
                     <option value={-9}>GMT -9</option>
@@ -115,7 +115,7 @@ const Navbar = (props) => {
                     <option value={+9}>GMT +9</option>
                     <option value={+10}>GMT +10</option>
                     <option value={+11}>GMT +11</option>
-                </select>
+                </select> */}
                 {isLoggedIn ? (
                     <>
                         <Box sx={{ flexGrow: 0 }}>

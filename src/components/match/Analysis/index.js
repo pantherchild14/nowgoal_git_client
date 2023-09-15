@@ -35,7 +35,7 @@ const Analysis = (props) => {
 
   return (
     <>
-      <H2H title="Head to Head Statistics" style={styles.paddingTop} H2H={dataH2H} />
+      <H2H league={schedules.data.$.LEAGUE_SHORT_NAME} nameTeam={schedules.data.$.HOME_NAME} awayTeam={schedules.data.$.AWAY_NAME} title="Head to Head Statistics" style={styles.paddingTop} H2H={dataH2H} />
       <Box sx={{ width: '100%' }}>
         <h2 style={styles.title}>Previous Scores Statistics</h2>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>

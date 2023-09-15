@@ -27,12 +27,17 @@ function App() {
             navigate('/sign-in');
         }
     }, [isLocalRole, isDashboardRoute, navigate]);
+    const style = {
+        container: {
+            padding: '0 10px 0 10px',
+        }
+    };
 
     return (
         <>
             {/* Main routes */}
             {isDashboardRoute ? null : <Header />}
-            <Container maxWidth="xl" className="container">
+            <div style={style.container} className="container">
                 <Routes>
                     {isLocalRole === 'Administrator' && (
                         <>
@@ -48,7 +53,7 @@ function App() {
                     <Route path='/profile/change-password' element={<ChangePassword />} />
                     <Route path='/profile' element={<Profile />} />
                 </Routes>
-            </Container>
+            </div>
 
             {/* Dashboard route */}
             <Routes>

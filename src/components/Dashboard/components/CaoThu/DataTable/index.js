@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from 'react-router-dom';
+
 import Button from '@mui/material/Button';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+
 import * as actions from "../../../../../redux/actions";
 import { oddDetailHistoryState$ } from "../../../../../redux/selectors";
 import OddDetailModal from "./OddDetailModal";
@@ -13,10 +16,11 @@ const DataTable = (props) => {
     const dispatch = useDispatch();
     const [tipHandicap, setTipHandicap] = useState("");
     const [tipOU, setTipOU] = useState("");
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = React.useState(false);
     const oddDetailHistory = useSelector(oddDetailHistoryState$);
+
     const scheduleRT = statusRedux?.$;
-    const isLocalTimeZone = localStorage.getItem('TIME_ZONE');
+    const isLocalTimeZone = localStorage.getItem('TIME_ZONE')
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -39,9 +43,13 @@ const DataTable = (props) => {
         window.open(newUrl, '_blank');
     };
 
+    const handleViewClick = () => {
+        dispatch(actions.getOddsChangeDetailHistory.getOddsChangeDetailHistoryRequest(e.MATCH_ID));
+        handleOpen();
+    };
 
     useEffect(() => {
-        const sreachOdd = async (elementId, tr) => {
+        const sreachOdd = (elementId, tr) => {
             const element = tr.querySelector(elementId);
             if (element) {
                 const textContent = element.textContent;
@@ -54,7 +62,6 @@ const DataTable = (props) => {
 
         const insertData = (tr, data) => {
             const { elementId_positive, sumData_positive, elementId_minus, sumData_minus, tip, tipOU, checkTipsDataHome, checkTipsDataAway, checkTipsDataOU, awayID, homeID, oddHome, oddAway, oddOU } = data;
-
             const insertElement_positive = tr.querySelector(elementId_positive);
             const insertElement_minus = tr.querySelector(elementId_minus);
             const insertTips = tr.querySelector(tip);
@@ -62,51 +69,103 @@ const DataTable = (props) => {
             const home = tr.querySelector(homeID);
             const away = tr.querySelector(awayID);
 
-            const createIconElement = (color, icon) => {
-                const iconElement = document.createElement('span');
-                iconElement.style.color = color;
-                iconElement.textContent = icon;
-                return iconElement;
-            };
-
-            const updateElement = (insertElement, sumData, color) => {
-                const icon = sumData > 0 ? '▲' : sumData < 0 ? '▼' : '';
-                const absSumData = Math.abs(sumData).toFixed(2);
-                insertElement.innerHTML = '';
-                insertElement.appendChild(document.createTextNode(absSumData));
-                if (icon) {
-                    insertElement.appendChild(createIconElement(color, icon));
-                }
-            };
-
             if (insertElement_positive) {
-                const iconColor = sumData_positive > 0 ? 'green' : sumData_positive < 0 ? 'red' : 'transparent';
-                updateElement(insertElement_positive, sumData_positive, iconColor);
+                let iconColor = 'transparent';
+                let icon = '';
+                let absSumData = '0';
+
+                if (sumData_positive > 0) {
+                    iconColor = 'green';
+                    icon = '▲';
+                } else if (sumData_positive < 0) {
+                    iconColor = 'red';
+                    icon = '▼';
+                }
+
+                if (sumData_positive !== 0) {
+                    absSumData = Math.abs(sumData_positive).toFixed(2);
+                }
+
+                const iconElement = document.createElement('span');
+                iconElement.style.color = iconColor;
+                iconElement.textContent = icon;
+
+                const absSumDataText = document.createTextNode(absSumData);
+
+                insertElement_positive.innerHTML = '';
+                insertElement_positive.appendChild(absSumDataText);
+
+                if (icon !== '') {
+                    insertElement_positive.appendChild(iconElement);
+                }
             }
 
             if (insertElement_minus) {
-                const iconColor = sumData_minus < 0 ? 'red' : sumData_minus > 0 ? 'green' : 'transparent';
-                updateElement(insertElement_minus, sumData_minus, iconColor);
+                let iconColor = 'transparent';
+                let icon = '';
+                let absSumData = '0';
+
+                if (sumData_minus < 0) {
+                    iconColor = 'green';
+                    icon = '▲';
+                } else if (sumData_minus > 0) {
+                    iconColor = 'red';
+                    icon = '▼';
+                }
+
+                if (sumData_minus !== 0) {
+                    absSumData = Math.abs(sumData_minus).toFixed(2);
+                }
+
+                const iconElement = document.createElement('span');
+                iconElement.style.color = iconColor;
+                iconElement.textContent = icon;
+
+                const absSumDataText = document.createTextNode(absSumData);
+
+                insertElement_minus.innerHTML = '';
+                insertElement_minus.appendChild(absSumDataText);
+
+                if (icon !== '') {
+                    insertElement_minus.appendChild(iconElement);
+                }
             }
+
 
             if (insertTips) {
                 let checkTip = '';
+
                 if (checkTipsDataHome > 0) {
                     checkTip = `${home.textContent}  ${oddHome}`;
                 } else if (checkTipsDataAway > 0) {
                     checkTip = `${away.textContent}  ${oddAway}`;
                 }
+
                 insertTips.innerHTML = checkTip;
                 setTipHandicap(checkTip);
             }
 
             if (insertTipsOU) {
                 const checkTip = checkTipsDataOU > 0 ? `Over ${oddOU}` : checkTipsDataOU < 0 ? `Under ${oddOU}` : '';
+
                 insertTipsOU.innerHTML = checkTip;
                 setTipOU(checkTip)
             }
+
+
         };
 
+        // const insertData = (tr, data) => {
+        //     const { elementId, sumData } = data;
+        //     const insertElement = tr.querySelector(elementId);
+
+        //     if (insertElement) {
+        //         const icon = sumData < 0 ? `${<ArrowDropUpIcon />}` : `${<ArrowDropDownIcon />}`;
+        //         const absSumData = Math.abs(sumData).toFixed(2);
+
+        //         insertElement.innerHTML = absSumData + icon;
+        //     }
+        // };
 
         const Odd = async () => {
             const tr = document.getElementById("tr_" + e.MATCH_ID);
@@ -114,12 +173,18 @@ const DataTable = (props) => {
             if (tr !== null) {
                 const dataToInsert = [
                     {
+                        elementIdGoal: `#goal_${e.MATCH_ID}`,
+                        liveElementIdGoalLive: `#goalLive_${e.MATCH_ID}`
+                    },
+                    {
                         elementId_positive: `#insertGoal_${e.MATCH_ID}`,
                         sumData_positive: await sreachOdd(`#goalEarly_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_${e.MATCH_ID}`, tr),
+
                     },
                     {
                         elementId_positive: `#insertGoalLive_${e.MATCH_ID}`,
                         sumData_positive: await sreachOdd(`#goalEarlyLive_${e.MATCH_ID}`, tr) - await sreachOdd(`#goalLive_${e.MATCH_ID}`, tr),
+
                     },
                     {
                         elementId_minus: `#insertUpOdd_${e.MATCH_ID}`,
@@ -129,9 +194,11 @@ const DataTable = (props) => {
                         elementId_minus: `#insertDownOdd_${e.MATCH_ID}`,
                         sumData_minus: await sreachOdd(`#downoddsEarly_${e.MATCH_ID}`, tr) - await sreachOdd(`#downodds_${e.MATCH_ID}`, tr),
                     },
+                    /* Over/Under */
                     {
                         elementId_positive: `#insertGoal_t1_${e.MATCH_ID}`,
                         sumData_positive: await sreachOdd(`#goalEarly_t1_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_t1_${e.MATCH_ID}`, tr),
+                        // checkTipsData: await sreachOdd(`#goalEarly_t1_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_t1_${e.MATCH_ID}`, tr),
                     },
                     {
                         elementId_minus: `#insertUpodds_t_${e.MATCH_ID}`,
@@ -158,10 +225,10 @@ const DataTable = (props) => {
                 ];
 
                 for (const data of dataToInsert) {
-                    insertData(tr, data);
+                    await insertData(tr, data);
                 }
             }
-        };
+        }
 
         Odd();
         const intervalIdOdds = setInterval(Odd, 30000);
@@ -226,6 +293,7 @@ const DataTable = (props) => {
                 </div>
             </td>
 
+
             <td className="td-handicap-bd-live">
                 <div className="tr__row_remove">
                     <div className="tr__col handicap.initialHandicap-handicap.instantHandicap" id={`insertGoal_${e.MATCH_ID}`}></div>
@@ -234,10 +302,12 @@ const DataTable = (props) => {
             </td>
             <td className="td-handicap-odds-bd">
                 <div className="tr__row">
+
                     <div className="tr__col handicap.initialHome-handicap.instantHome" id={`insertUpOdd_${e.MATCH_ID}`}></div>
                     <div className="tr__col handicap.initialAway-handicap.instantAway" id={`insertDownOdd_${e.MATCH_ID}`}></div>
                 </div>
             </td>
+
 
             <td className="td-handicap-tips">
                 <div className="tr__row_remove">
@@ -267,6 +337,8 @@ const DataTable = (props) => {
                 </div>
             </td>
 
+            {/* live  */}
+
             <td>
                 <div className="tr__row_remove">
                     <div className="tr__col overUnder.initialHandicap - overUnder.instantHandicap" id={`insertGoal_t1_${e.MATCH_ID}`}></div>
@@ -274,11 +346,13 @@ const DataTable = (props) => {
             </td>
             <td>
                 <div className="tr__row">
+
                     <div className="tr__col overUnder.initialOver - overUnder.instantOver" id={`insertUpodds_t_${e.MATCH_ID}`}></div>
+
                     <div className="tr__col overUnder.initialUnder - overUnder.instantUnder" id={`insertDownodds_t_${e.MATCH_ID}`}></div>
                 </div>
             </td>
-
+            {/* live  */}
             <td className="td-overunder-tip">
                 <div className="tr__col handicap.fluctuatingHandicap" id={`tipOU_${e.MATCH_ID}`}></div>
             </td>
