@@ -1,15 +1,17 @@
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
+import { CircularProgress } from '@mui/material';
 
 import H2H from "./components/H2H";
 import HomeAnalysis from "./components/HomeAnalysis";
 import AwayAnalysis from "./components/AwayAnalysis";
 
+
 const Analysis = (props) => {
   const { schedules, h2h } = props;
 
   if (!h2h || !h2h['data'] || !h2h['data'].$ || !schedules || !schedules['data'] || !schedules['data'].$) {
-    return <p>Loading...</p>;
+    return <p><CircularProgress /></p>;
   }
   const dataH2H = h2h.data.$['H2H'];
   const oddsKeys = ['LAST_MATCH_HOME', 'LAST_MATCH_AWAY'];

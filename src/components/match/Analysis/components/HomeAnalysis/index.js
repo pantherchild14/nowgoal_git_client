@@ -1,9 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const HomeAnalysis = (props) => {
     const { nameTeam, LAST_MATCH_HOME } = props;
     const [showTable, setShowTable] = useState(false);
-    const data = (LAST_MATCH_HOME);
+    const [activeFilter, setActiveFilter] = useState("");
+    const [filteredData, setFilteredData] = useState([]);
+    const [filterApplied, setFilterApplied] = useState(false);
+    const [matchCount, setMatchCount] = useState(0);
+    const [winCount, setWinCount] = useState(0);
+    const [drawCount, setDrawCount] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
+
+    useEffect(() => {
+        try {
+            const data = (LAST_MATCH_HOME);
+
+            const applyFilter = () => {
+                if (activeFilter === "Home") {
+                    setFilteredData(data.filter(e => e.Home === nameTeam));
+                } else {
+                    setFilteredData(data);
+                }
+            };
+
+            applyFilter();
+        } catch (error) {
+            console.error("Error parsing JSON data:", error.message);
+        }
+    }, [activeFilter, LAST_MATCH_HOME, nameTeam]);
+
+    useEffect(() => {
+        let matchCount = 0;
+        let winCount = 0;
+        let drawCount = 0;
+
+        const first10FilteredData = filteredData.slice(0, 10);
+
+        first10FilteredData.forEach((data) => {
+            const tdValue = data.W_L;
+            if (tdValue) {
+                matchCount++;
+            }
+            if (tdValue === 'W') {
+                winCount++;
+            } else if (tdValue === 'D') {
+                drawCount++;
+            }
+
+        });
+
+        const totalMatches = winCount + drawCount + (filteredData.length - (winCount + drawCount));
+        setMatchCount(matchCount);
+        setWinCount(winCount);
+        setDrawCount(drawCount);
+        setTotalCount(totalMatches);
+    }, [filteredData]);
 
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
@@ -20,11 +71,14 @@ const HomeAnalysis = (props) => {
         }
     }
 
-    const toggleTable = () => {
+    const handleFilterChange = (filterType) => {
+        if (activeFilter === filterType) {
+            setActiveFilter("");
+        } else {
+            setActiveFilter(filterType);
+        }
         setShowTable(!showTable);
-    };
-
-    const filteredData = data.filter(e => e.Home === nameTeam);
+    }
 
     const style = {
         teamHome: {
@@ -48,9 +102,13 @@ const HomeAnalysis = (props) => {
                         <tr className="team-home" style={style.teamHome}>
                             <td colSpan="16">
                                 <div style={style.title}>
-                                    <label >{nameTeam}</label>
+                                    <label style={{ marginRight: '10px' }}>{nameTeam}</label>
                                     <div>
-                                        <input onClick={toggleTable} type="checkbox"></input>
+                                        <input
+                                            onClick={() => handleFilterChange("Home")}
+                                            type="checkbox"
+                                            checked={activeFilter === "Home"}
+                                        ></input>
                                         <label>Home</label>
                                     </div>
                                 </div>
@@ -81,8 +139,9 @@ const HomeAnalysis = (props) => {
                                             )}
                                         </td>
                                         <td width="10%" height="30" style={{ color: home(e.Away) }}>{e.Away}</td>
-                                        <td width="2%" height="30">
-                                            {e.W_L}
+                                        <td width="2%" height="30" className="HW">
+                                            {/* {e.Corner && e.HalfCorner ? `${e.Corner}/${e.HalfCorner}` : '-'} */}
+                                            <span className={`o-${e.W_L}`}>{e.W_L}</span>
                                         </td>
                                     </tr>
                                 ))
@@ -92,8 +151,8 @@ const HomeAnalysis = (props) => {
                                 </tr>
                             )
                         ) : (
-                            Array.isArray(data) ? (
-                                data.slice(0, 10).map((e, index) => (
+                            Array.isArray(filteredData) ? (
+                                filteredData.slice(0, 10).map((e, index) => (
                                     <tr key={index} name="oddsTr" className="tb-bgcolor1" cid="8" style={{ textAlign: 'center' }}>
                                         <td width="2%" height="30">{e.League}</td>
                                         <td width="5%" height="30">{formatDate(e.Date)}</td>
@@ -108,9 +167,9 @@ const HomeAnalysis = (props) => {
                                             )}
                                         </td>
                                         <td width="10%" height="30" style={{ color: home(e.Away) }}>{e.Away}</td>
-                                        <td width="2%" height="30">
+                                        <td width="2%" height="30" className="HW">
                                             {/* {e.Corner && e.HalfCorner ? `${e.Corner}/${e.HalfCorner}` : '-'} */}
-                                            {e.W_L}
+                                            <span className={`o-${e.W_L}`}>{e.W_L}</span>
                                         </td>
                                     </tr>
                                 ))
@@ -120,6 +179,11 @@ const HomeAnalysis = (props) => {
                                 </tr>
                             )
                         )}
+                        <tr className="tb-stat1">
+                            <td align="center" colSpan="16" id="td_stat1">
+                                Last <font className="red">{matchCount}</font> Matches, {winCount} Win, {drawCount} Draw, {matchCount - (winCount + drawCount)} Loss, Win rate: <font class="red">{((winCount / matchCount) * 100).toFixed(1)}%</font>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

@@ -118,8 +118,29 @@ table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-mi
     display: none;
 }
 
+table.odds-table-bg,
+div#caothu table,
+table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle {
+    border-collapse: collapse;
+    border: none;
+}
+
 .matchLive .tr-title th {
-    border-bottom: 1px solid #e5e5e5;
+    color: #888;
+    font-weight: normal;
+    line-height: 24px;
+    background-color: #eaeaea;
+    border-bottom: 1px solid #d8d8d8;
+    white-space: nowrap;
+}
+
+table.odds-table-bg tbody tr.tb-bgcolor1 {
+    border-bottom: 1px solid indigo;
+    border-color: #e5e5e5;
+}
+
+table.odds-table-bg tbody tr.tb-stat1 {
+    background: #fff;
 }
 
 .matchLive .sb {
@@ -156,6 +177,40 @@ table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-mi
     background-position-y: 12px;
 }
 
+table.odds-table-bg td {
+    font-size: 14px;
+}
+
+td span.o-W,
+td span.o-L,
+td span.o-D {
+    color: #fff;
+    border-radius: 2px;
+    width: 25px;
+    display: inline-block;
+    line-height: 15px;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+td.HW span.o-W,
+td.HW span.o-L,
+td.HW span.o-D {
+    line-height: 25px;
+}
+
+td span.o-D {
+    background-color: #348ce2;
+}
+
+td span.o-W {
+    background-color: #d64444;
+}
+
+td span.o-L {
+    background-color: #71ab49;
+}
 
 /* .up2 {
     background: url(/images/redup.png) no-repeat 43px 5px;
@@ -227,8 +282,8 @@ tr {
 
 .table>:not(caption)>*>* {
     padding: 0.5rem 0.5rem;
-    background-color: var(--bs-table-bg);
-    border-bottom-width: 1px;
+    border-bottom: 1px solid transparent;
+    border-color: #e5e5e5;
     box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
 }
 
@@ -265,6 +320,7 @@ tr {
 }
 
 /* modal caothu  */
+
 div#caothu thead tr th {
     color: #888;
     font-weight: normal;
@@ -278,11 +334,31 @@ div#caothu thead tr th {
     border: 0 !important;
 }
 
+div#caothu tbody tr td.rb {
+    border: 1px solid red;
+}
+
+div#caothu tbody tr td.lb.time {
+    border-right: 1px solid transparent;
+}
+
 div#caothu tbody tr td {
     padding: 5px 0;
     border-bottom: 1px solid transparent;
     border-color: #e5e5e5 !important;
     text-align: center;
+}
+
+div#caothu table thead tr.flexed {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+div#caothu table thead tr.flexed1 {
+    position: sticky;
+    top: 30px;
+    z-index: 1;
 }
 
 /* category  */

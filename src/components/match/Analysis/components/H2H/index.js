@@ -5,7 +5,7 @@ const styles = {
         textAlign: 'center',
     },
     awayHome: {
-        backgroundColor: '#2495da',
+        backgroundColor: '#888',
         color: '#fff',
         textAlign: 'center',
         lineHeight: '28px',
@@ -19,9 +19,14 @@ const styles = {
 const H2H = (props) => {
     const { nameTeam, awayTeam, league, title, style, H2H } = props;
     const [showTable, setShowTable] = useState(false);
-    const [activeFilter, setActiveFilter] = useState("Home");
+    const [activeFilter, setActiveFilter] = useState("");
     const [filteredData, setFilteredData] = useState([]);
     const [filterApplied, setFilterApplied] = useState(false);
+    const [matchCount, setMatchCount] = useState(0);
+    const [winCount, setWinCount] = useState(0);
+    const [drawCount, setDrawCount] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
+
 
     useEffect(() => {
         try {
@@ -32,15 +37,44 @@ const H2H = (props) => {
                     setFilteredData(data.filter(e => e.Home === nameTeam));
                 } else if (activeFilter === "Same League") {
                     setFilteredData(data.filter(e => e.League === league));
+                } else if (activeFilter === "Same League" && activeFilter === "Home") {
+                    setFilteredData(data.filter(e => e.League === league && e.Home === nameTeam));
                 } else {
                     setFilteredData(data);
                 }
             };
+
             applyFilter();
         } catch (error) {
             console.error("Error parsing JSON data:", error.message);
         }
     }, [activeFilter, H2H, nameTeam, league]);
+
+    useEffect(() => {
+        let matchCount = 0;
+        let winCount = 0;
+        let drawCount = 0;
+
+        const first10FilteredData = filteredData.slice(0, 10);
+
+        first10FilteredData.forEach((data) => {
+            const tdValue = data.W_L;
+            if (tdValue) {
+                matchCount++;
+            }
+            if (tdValue === 'W') {
+                winCount++;
+            } else if (tdValue === 'D') {
+                drawCount++;
+            }
+            setMatchCount(matchCount);
+        });
+
+        const totalMatches = winCount + drawCount + (filteredData.length - (winCount + drawCount));
+        setWinCount(winCount);
+        setDrawCount(drawCount);
+        setTotalCount(totalMatches);
+    }, [filteredData]);
 
     const dataJson = JSON.parse(H2H);
 
@@ -63,9 +97,16 @@ const H2H = (props) => {
     }
 
     const handleFilterChange = (filterType) => {
-        setActiveFilter(filterType);
+        if (activeFilter === filterType) {
+            setActiveFilter("");
+        } else {
+            setActiveFilter(filterType);
+        }
         setShowTable(!showTable);
     }
+
+
+
 
     return (
         <React.Fragment>
@@ -76,14 +117,22 @@ const H2H = (props) => {
                         <tr className="team-home" style={styles.awayHome}>
                             <td colSpan="16">
                                 <div style={styles.title}>
-                                    <label >{nameTeam}</label>
-                                    <div>
-                                        <input onClick={() => handleFilterChange("Home")} type="checkbox"></input>
+                                    <label style={{ marginRight: '10px' }}>{nameTeam}</label>
+                                    <div style={{ marginRight: '10px' }}>
+                                        <input
+                                            onClick={() => handleFilterChange("Home")}
+                                            type="checkbox"
+                                            checked={activeFilter === "Home"}
+                                        ></input>
                                         <label>Home</label>
                                     </div>
                                     <div>
-                                        <input onClick={() => handleFilterChange("Same League")} type="checkbox"></input>
-                                        <label>Same League </label>
+                                        <input
+                                            onClick={() => handleFilterChange("Same League")}
+                                            type="checkbox"
+                                            checked={activeFilter === "Same League"}
+                                        ></input>
+                                        <label>Same League</label>
                                     </div>
                                 </div>
                             </td>
@@ -99,7 +148,7 @@ const H2H = (props) => {
                         {filterApplied || showTable ? (
                             Array.isArray(filteredData) ? (
                                 filteredData.slice(0, 10).map((e, index) => (
-                                    <tr key={index} name="oddsTr" className="tb-bgcolor1" cid="8">
+                                    <tr key={index} name={`oddsTr_${index + 1}`} className="tb-bgcolor1" cid="8">
                                         <td width="5%" height="30">{e.League}</td>
                                         <td width="5%" height="30">{formatDate(e.Date)}</td>
                                         <td width="10%" height="30" style={{ color: checkName(e.Home) }}>{e.Home}</td>
@@ -113,8 +162,9 @@ const H2H = (props) => {
                                             )}
                                         </td>
                                         <td width="10%" height="30" style={{ color: checkName(e.Home) }}>{e.Away}</td>
-                                        <td width="2%" height="30">
-                                            {e.W_L}
+                                        <td width="2%" height="30" >
+                                            {/* {e.Corner && e.HalfCorner ? `${e.Corner}/${e.HalfCorner}` : '-'} */}
+                                            <span className={`o-${e.W_L}`}>{e.W_L}</span>
                                         </td>
                                     </tr>
                                 ))
@@ -124,9 +174,9 @@ const H2H = (props) => {
                                 </tr>
                             )
                         ) : (
-                            Array.isArray(dataJson) ? (
-                                dataJson.slice(0, 10).map((e, index) => (
-                                    <tr key={index} name="oddsTr" className="tb-bgcolor1" cid="8" style={{ textAlign: 'center' }}>
+                            Array.isArray(filteredData) ? (
+                                filteredData.slice(0, 10).map((e, index) => (
+                                    <tr key={index} name={`oddsTr_${index + 1}`} className="tb-bgcolor1" cid="8" style={{ textAlign: 'center' }}>
                                         <td width="2%" height="30">{e.League}</td>
                                         <td width="5%" height="30">{formatDate(e.Date)}</td>
                                         <td width="10%" height="30" style={{ color: checkName(e.Home) }}>{e.Home}</td>
@@ -140,9 +190,9 @@ const H2H = (props) => {
                                             )}
                                         </td>
                                         <td width="10%" height="30" style={{ color: checkName(e.Away) }}>{e.Away}</td>
-                                        <td width="2%" height="30">
+                                        <td width="2%" height="30" >
                                             {/* {e.Corner && e.HalfCorner ? `${e.Corner}/${e.HalfCorner}` : '-'} */}
-                                            {e.W_L}
+                                            <span className={`o-${e.W_L}`}>{e.W_L}</span>
                                         </td>
                                     </tr>
                                 ))
@@ -152,6 +202,11 @@ const H2H = (props) => {
                                 </tr>
                             )
                         )}
+                        <tr className="tb-stat1">
+                            <td align="center" colSpan="16" id="td_stat1">
+                                Last <font className="red">{matchCount}</font> Matches, {winCount} Win, {drawCount} Draw, {matchCount - (winCount + drawCount)} Loss, Win rate: <font class="red">{((winCount / matchCount) * 100).toFixed(1)}%</font>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

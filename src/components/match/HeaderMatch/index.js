@@ -7,7 +7,6 @@ const HeaderMatch = (props) => {
         return <p>Loading...</p>;
     }
 
-    console.log(scheduleSingle);
     const { HOME_NAME, SCORE_HOME, STATUS, SCORE_AWAY, AWAY_NAME, H_T, F_T } = schedules.data.$ || {};
     const { WHEATHER } = scheduleSingle.data.$ || {};
     const styles = {

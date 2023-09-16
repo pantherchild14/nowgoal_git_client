@@ -13,13 +13,6 @@ const OverUnderRun = (props) => {
             caothu: {
                 height: '460px',
             },
-            scroll: {
-                maxHeight: '460px',
-                // marginTop: '10px',
-                padding: '0 5px',
-                overflowY: 'auto',
-                position: 'absolute',
-            }
         };
 
         const convertTime = (time) => {
@@ -40,7 +33,10 @@ const OverUnderRun = (props) => {
             <div id='caothu' className='caothu-comp' style={style.caothu}>
                 <table width="100%" border="0" align="center" cellPadding="2" cellSpacing="1">
                     <thead>
-                        <tr align="center">
+                        <tr align="center" className="flexed" height="30">
+                            <th colspan="6">Over/Under Odds</th>
+                        </tr>
+                        <tr align="center" className="flexed1">
                             <th width="16%">Time</th>
                             <th width="16%">Score</th>
                             <th width="16%">Home</th>
@@ -49,7 +45,7 @@ const OverUnderRun = (props) => {
                             <th width="20%">Update</th>
                         </tr>
                     </thead>
-                    <tbody style={style.scroll}>
+                    <tbody>
                         {JsonData.map((data, index) => (
                             <tr key={index}>
                                 <td width="16%" className="rb">

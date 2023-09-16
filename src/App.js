@@ -29,7 +29,7 @@ function App() {
     }, [isLocalRole, isDashboardRoute, navigate]);
     const style = {
         container: {
-            padding: '0 10px 0 10px',
+            padding: '0 10px 70px 10px',
         }
     };
 

@@ -2,6 +2,8 @@ import React, { useLayoutEffect, useMemo, useEffect, useCallback, useState } fro
 import { useDispatch, useSelector } from "react-redux";
 import io from "socket.io-client";
 
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import * as actions from "../../../../redux/actions";
@@ -86,62 +88,77 @@ const CaoThu = () => {
     fetchData();
   }, []);
 
-
   if (schedule.data.length === 0 || odds.data.length === 0) {
     return <div style={{ textAlign: 'center' }}><CircularProgress /></div>;
   }
 
   return (
     <React.Fragment>
-      <DateSelector selectedDate={selectedDate} onSelectDate={setSelectedDate} />
-      <div>
-        <label>
-          Biến động Handicap:
-          <select value={selectedHandicap} onChange={(e) => setSelectedHandicap(e.target.value)}>
-            <option value="">All</option>
-            <option value="0.25">0.25</option>
-            <option value="0.5">0.5</option>
-            <option value="0.75">0.75</option>
-            <option value="1">1</option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>
-          Biến động Odds Handicap:
-          <select value={selectedOddHandicap} onChange={(e) => setSelectedOddHandicap(e.target.value)}>
-            <option value="">All</option>
-            <option value="0.05">0.05</option>
-            <option value="0.10">0.10</option>
-            <option value="0.15">0.15</option>
-            <option value="0.20">0.20</option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>
-          Biến động Tài / Xỉu:
-          <select value={selectedOver} onChange={(e) => setSelectedOver(e.target.value)}>
-            <option value="">All</option>
-            <option value="0.25">0.25</option>
-            <option value="0.5">0.5</option>
-            <option value="0.75">0.75</option>
-            <option value="1">1</option>
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>
-          Biến động Odds Tài / Xỉu :
-          <select value={selectedOddOver} onChange={(e) => setSelectedOddOver(e.target.value)}>
-            <option value="">All</option>
-            <option value="0.05">0.05</option>
-            <option value="0.10">0.10</option>
-            <option value="0.15">0.15</option>
-            <option value="0.20">0.20</option>
-          </select>
-        </label>
-      </div>
+      <Box style={{ paddingBottom: '30px' }}>
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 1 }}>
+          <Grid item xs={2}>
+            <DateSelector selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+          </Grid>
+          <Grid item xs={2}>
+            <div>
+              <label>
+                Biến động Handicap:
+                <select value={selectedHandicap} onChange={(e) => setSelectedHandicap(e.target.value)}>
+                  <option value="">All</option>
+                  <option value="0.25">0.25</option>
+                  <option value="0.5">0.5</option>
+                  <option value="0.75">0.75</option>
+                  <option value="1">1</option>
+                </select>
+              </label>
+            </div>
+          </Grid>
+          <Grid item xs={8}>
+            <div>
+              <label>
+                Biến động Tài / Xỉu:
+                <select value={selectedOver} onChange={(e) => setSelectedOver(e.target.value)}>
+                  <option value="">All</option>
+                  <option value="0.25">0.25</option>
+                  <option value="0.5">0.5</option>
+                  <option value="0.75">0.75</option>
+                  <option value="1">1</option>
+                </select>
+              </label>
+            </div>
+          </Grid>
+          <Grid item xs={2}></Grid>
+          <Grid item xs={2}>
+            <div>
+              <label>
+                Biến động Odds Handicap:
+                <select value={selectedOddHandicap} onChange={(e) => setSelectedOddHandicap(e.target.value)}>
+                  <option value="">All</option>
+                  <option value="0.05">0.05</option>
+                  <option value="0.10">0.10</option>
+                  <option value="0.15">0.15</option>
+                  <option value="0.20">0.20</option>
+                </select>
+              </label>
+            </div>
+          </Grid>
+          <Grid item xs={2}>
+            <div>
+              <label>
+                Biến động Odds Tài / Xỉu :
+                <select value={selectedOddOver} onChange={(e) => setSelectedOddOver(e.target.value)}>
+                  <option value="">All</option>
+                  <option value="0.05">0.05</option>
+                  <option value="0.10">0.10</option>
+                  <option value="0.15">0.15</option>
+                  <option value="0.20">0.20</option>
+                </select>
+              </label>
+            </div>
+          </Grid>
+        </Grid>
+      </Box>
+
       <TableContent schedule={schedule} statusRedux={statusRedux} odds={odds} selectedOddHandicap={selectedOddHandicap} selectedHandicap={selectedHandicap} selectedOddOver={selectedOddOver} selectedOver={selectedOver} />
     </React.Fragment>
   );
