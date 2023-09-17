@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 const HomeAnalysis = (props) => {
-    const { nameTeam, LAST_MATCH_HOME } = props;
+    const { nameTeam, LAST_MATCH_HOME, updateStatisticsHome } = props;
     const [showTable, setShowTable] = useState(false);
     const [activeFilter, setActiveFilter] = useState("");
     const [filteredData, setFilteredData] = useState([]);
@@ -10,6 +10,16 @@ const HomeAnalysis = (props) => {
     const [winCount, setWinCount] = useState(0);
     const [drawCount, setDrawCount] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
+    const [total3MatchFirst, setTotal3MatchFirst] = useState(0);
+    const [total3MatchMedium, setTotal3MatchMedium] = useState(0);
+
+    const statistics = () => {
+        let score3MatchFirst = total3MatchFirst;
+        let score3MatchMedium = total3MatchMedium;
+        let analysisWin = `${((winCount / matchCount) * 100).toFixed(1)}%`;
+
+        props.updateStatisticsHome(score3MatchFirst, score3MatchMedium, analysisWin);
+    };
 
     useEffect(() => {
         try {
@@ -22,7 +32,7 @@ const HomeAnalysis = (props) => {
                     setFilteredData(data);
                 }
             };
-
+            statistics();
             applyFilter();
         } catch (error) {
             console.error("Error parsing JSON data:", error.message);
@@ -55,6 +65,45 @@ const HomeAnalysis = (props) => {
         setDrawCount(drawCount);
         setTotalCount(totalMatches);
     }, [filteredData]);
+
+    useEffect(() => {
+        try {
+            const data = (LAST_MATCH_HOME);
+            let totalScore3MatchFirstAllTeams = 0;
+            const first3FilteredDataAllTeams = data.slice(0, 3);
+            first3FilteredDataAllTeams.forEach((data) => {
+                const tdValue = data.Score;
+                if (tdValue) {
+                    const scoreParts = tdValue.split('-');
+                    if (scoreParts.length === 2) {
+                        const beforeDash = parseInt(scoreParts[0], 10);
+                        const afterDash = parseInt(scoreParts[1], 10);
+                        totalScore3MatchFirstAllTeams += beforeDash + afterDash;
+                    }
+                }
+            });
+
+            const dataTotalMedium = data.filter(e => e.Home === nameTeam);
+            let totalScore3MatchFirstNameTeam = 0;
+            const first3FilteredDataNameTeam = dataTotalMedium.slice(0, 3);
+            first3FilteredDataNameTeam.forEach((data) => {
+                const tdValue = data.Score;
+                if (tdValue) {
+                    const scoreParts = tdValue.split('-');
+                    if (scoreParts.length === 2) {
+                        const beforeDash = parseInt(scoreParts[0], 10);
+                        totalScore3MatchFirstNameTeam += beforeDash;
+                    }
+                }
+            });
+
+            setTotal3MatchFirst(totalScore3MatchFirstAllTeams);
+            setTotal3MatchMedium(totalScore3MatchFirstNameTeam);
+
+        } catch (error) {
+            console.error("Error parsing JSON data:", error.message);
+        }
+    }, []);
 
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);

@@ -1,7 +1,20 @@
 import { Box, Grid } from '@mui/material';
 
 const HeaderMatch = (props) => {
-    const { ahValue, ouValue, schedules, scheduleSingle } = props;
+    const { ahValue,
+        ouValue,
+        schedules,
+        scheduleSingle,
+        score3MatchFirstH2H,
+        score3MatchMediumH2H,
+        analysisWinH2H,
+        score3MatchFirstHome,
+        score3MatchMediumHome,
+        analysisWinHome,
+        score3MatchFirstAway,
+        score3MatchMediumAway,
+        analysisWinAway,
+    } = props;
 
     if (!schedules || !schedules['data'] || !schedules['data'].$) {
         return <p>Loading...</p>;
@@ -121,7 +134,59 @@ const HeaderMatch = (props) => {
                     </div>
                 </div>
             </Box>
-            <Box gridColumn="span 2">WHEATHER: {WHEATHER !== "" ? WHEATHER : "-"}</Box>
+            <Box gridColumn="span 6">WHEATHER: {WHEATHER !== "" ? WHEATHER : "-"}</Box>
+            <Box gridColumn="span 2"></Box>
+            <Box gridColumn="span 6">
+                <div className="bxkeotype" style={styles.bxkeotype}>
+                    <div style={styles.predictionSoccerResult}>
+                        <div style={styles.txtPrediction}>
+                            Tổng số bàn thắng trung bình 3 trận gần nhất H2H: <span style={styles.txtPredictionSpan}>{score3MatchFirstH2H}</span>
+                        </div>
+                    </div>
+                    <div style={styles.predictionSoccerResult}>
+                        <div style={styles.txtPrediction}>
+                            Tổng số bàn thắng trung bình 3 trận gần nhất H2H: <span style={styles.txtPredictionSpan}>{score3MatchMediumH2H}</span>
+                        </div>
+                    </div>
+                    <div style={styles.predictionSoccerResult}>
+                        <div style={styles.txtPrediction}>
+                            Tỉ lệ win của chủ nhà H2H: <span style={styles.txtPredictionSpan}>{analysisWinH2H}</span>
+                        </div>
+                    </div>
+
+                    <div style={styles.predictionSoccerResult}>
+                        <div style={styles.txtPrediction}>
+                            Tổng số bàn thắng trung bình 3 trận gần nhất Home: <span style={styles.txtPredictionSpan}>{score3MatchFirstHome}</span>
+                        </div>
+                    </div>
+                    <div style={styles.predictionSoccerResult}>
+                        <div style={styles.txtPrediction}>
+                            Tổng số bàn thắng trung bình 3 trận gần nhất Home: <span style={styles.txtPredictionSpan}>{score3MatchMediumHome}</span>
+                        </div>
+                    </div>
+                    <div style={styles.predictionSoccerResult}>
+                        <div style={styles.txtPrediction}>
+                            Tỉ lệ win của chủ nhà Home: <span style={styles.txtPredictionSpan}>{analysisWinHome}</span>
+                        </div>
+                    </div>
+
+                    <div style={styles.predictionSoccerResult}>
+                        <div style={styles.txtPrediction}>
+                            Tổng số bàn thắng trung bình 3 trận gần nhất Away: <span style={styles.txtPredictionSpan}>{score3MatchFirstAway}</span>
+                        </div>
+                    </div>
+                    <div style={styles.predictionSoccerResult}>
+                        <div style={styles.txtPrediction}>
+                            Tổng số bàn thắng trung bình 3 trận gần nhất Away: <span style={styles.txtPredictionSpan}>{score3MatchMediumAway}</span>
+                        </div>
+                    </div>
+                    <div style={styles.predictionSoccerResult}>
+                        <div style={styles.txtPrediction}>
+                            Tỉ lệ win của chủ nhà Away: <span style={styles.txtPredictionSpan}>{analysisWinAway}</span>
+                        </div>
+                    </div>
+                </div>
+            </Box>
         </Box>
     );
 }

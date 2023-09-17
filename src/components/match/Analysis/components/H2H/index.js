@@ -17,7 +17,7 @@ const styles = {
 };
 
 const H2H = (props) => {
-    const { nameTeam, awayTeam, league, title, style, H2H } = props;
+    const { nameTeam, awayTeam, league, title, style, H2H, updateStatistics } = props;
     const [showTable, setShowTable] = useState(false);
     const [activeFilter, setActiveFilter] = useState("");
     const [filteredData, setFilteredData] = useState([]);
@@ -25,8 +25,16 @@ const H2H = (props) => {
     const [matchCount, setMatchCount] = useState(0);
     const [winCount, setWinCount] = useState(0);
     const [drawCount, setDrawCount] = useState(0);
-    const [totalCount, setTotalCount] = useState(0);
+    const [total3MatchFirst, setTotal3MatchFirst] = useState(0);
+    const [total3MatchMedium, setTotal3MatchMedium] = useState(0);
 
+    const statistics = () => {
+        let score3MatchFirst = total3MatchFirst;
+        let score3MatchMedium = total3MatchMedium;
+        let analysisWin = `${((winCount / matchCount) * 100).toFixed(1)}%`;
+
+        props.updateStatistics(score3MatchFirst, score3MatchMedium, analysisWin);
+    };
 
     useEffect(() => {
         try {
@@ -43,7 +51,7 @@ const H2H = (props) => {
                     setFilteredData(data);
                 }
             };
-
+            statistics();
             applyFilter();
         } catch (error) {
             console.error("Error parsing JSON data:", error.message);
@@ -70,13 +78,50 @@ const H2H = (props) => {
             setMatchCount(matchCount);
         });
 
-        const totalMatches = winCount + drawCount + (filteredData.length - (winCount + drawCount));
         setWinCount(winCount);
         setDrawCount(drawCount);
-        setTotalCount(totalMatches);
     }, [filteredData]);
 
-    const dataJson = JSON.parse(H2H);
+    useEffect(() => {
+        try {
+            const data = JSON.parse(H2H);
+            let totalScore3MatchFirstAllTeams = 0;
+            const first3FilteredDataAllTeams = data.slice(0, 3);
+            first3FilteredDataAllTeams.forEach((data) => {
+                const tdValue = data.Score;
+                if (tdValue) {
+                    const scoreParts = tdValue.split('-');
+                    if (scoreParts.length === 2) {
+                        const beforeDash = parseInt(scoreParts[0], 10);
+                        const afterDash = parseInt(scoreParts[1], 10);
+                        totalScore3MatchFirstAllTeams += beforeDash + afterDash;
+                    }
+                }
+            });
+
+            const dataTotalMedium = data.filter((e) => e.Home === nameTeam);
+            let totalScore3MatchFirstNameTeam = 0;
+            const first3FilteredDataNameTeam = dataTotalMedium.slice(0, 3);
+            first3FilteredDataNameTeam.forEach((data) => {
+                const tdValue = data.Score;
+                if (tdValue) {
+                    const scoreParts = tdValue.split('-');
+                    if (scoreParts.length === 2) {
+                        const beforeDash = parseInt(scoreParts[0], 10);
+                        // const afterDash = parseInt(scoreParts[1], 10);
+                        totalScore3MatchFirstNameTeam += beforeDash;
+                    }
+                }
+            });
+
+            setTotal3MatchFirst(totalScore3MatchFirstAllTeams);
+            setTotal3MatchMedium(totalScore3MatchFirstNameTeam);
+
+        } catch (error) {
+            console.error("Error parsing JSON data:", error.message);
+        }
+    }, []);
+
 
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
@@ -161,7 +206,7 @@ const H2H = (props) => {
                                                 '-'
                                             )}
                                         </td>
-                                        <td width="10%" height="30" style={{ color: checkName(e.Home) }}>{e.Away}</td>
+                                        <td width="10%" height="30" style={{ color: checkName(e.Away) }}>{e.Away}</td>
                                         <td width="2%" height="30" >
                                             {/* {e.Corner && e.HalfCorner ? `${e.Corner}/${e.HalfCorner}` : '-'} */}
                                             <span className={`o-${e.W_L}`}>{e.W_L}</span>
