@@ -236,6 +236,7 @@ const DataTable = (props) => {
         return () => {
             clearInterval(intervalIdOdds);
         };
+
     }, []);
 
     const oddsKeys = ['ODDS_AH_FT', 'ODDS_AH_HT', 'ODDS_EURO_FT', 'ODDS_EURO_HT', 'ODDS_OU_FT', 'ODDS_OU_HT'];
@@ -267,10 +268,15 @@ const DataTable = (props) => {
             <td className="td-handicap-live">
                 <div className="tr__row">
                     <div className="tr__col handicap.instantHandicap" id={`goal_${e.MATCH_ID}`}>
-                        <span>{ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g : -ODDS_AH_FT.l.g}</span>
+                        <span>
+                            {(ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g : -ODDS_AH_FT.l.g)}
+                        </span>
                     </div>
+
                     <div className="tr__col handicap.instantHandicap" id={`goalLive_${e.MATCH_ID}`}>
-                        <span>{ODDS_AH_FT.l.g < 0 ? ODDS_AH_FT.l.g : ODDS_AH_FT.l.g}</span>
+                        <span>
+                            {(ODDS_AH_FT.l.g < 0 ? ODDS_AH_FT.l.g : ODDS_AH_FT.l.g)}
+                        </span>
                     </div>
                 </div>
             </td>

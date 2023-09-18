@@ -17,7 +17,10 @@ const Navbar = (props) => {
     const [timeZoneOffset, setTimeZoneOffset] = useState(0);
 
     const sections = [
-        { title: 'Home', url: '/' },
+        { title: 'Drop Odds', url: '/' },
+        { title: 'Over 2.75', url: '/tooltaixiu2' },
+        { title: 'Chấp -1', url: '/tooltaixiu3' },
+        { title: 'Đâm ngược', url: '/tooldanhnguoc' },
     ];
 
     const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];

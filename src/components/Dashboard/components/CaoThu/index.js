@@ -22,6 +22,7 @@ const CaoThu = () => {
   const [selectedOddHandicap, setSelectedOddHandicap] = useState("");
   const [selectedOver, setSelectedOver] = useState("");
   const [selectedOddOver, setSelectedOddOver] = useState("");
+  const [bfRefresh, SetBfRefresh] = useState([]);
 
   useLayoutEffect(() => {
     fetchData(selectedDate);
@@ -59,11 +60,66 @@ const CaoThu = () => {
   }, []);
 
   useEffect(() => {
+    var length = 0;
+    length = bfRefresh?.length || 0;
+
+
+    for (var i = 0; i < length; i++) {
+      var D;
+      D = bfRefresh?.[i]?.$;
+
+      if (!D) continue;
+      var tr = document.getElementById("tr_" + D.MATCH_ID);
+      if (tr === null) continue;
+      try {
+        var DHandicapJson = JSON.parse(D.ODDS_AH_FT);
+        var DOuJson = JSON.parse(D.ODDS_OU_FT);
+        /* Asian Handicap */
+        var upodds = tr.querySelector("#upodds_" + D.MATCH_ID);
+        var downodds = tr.querySelector("#downodds_" + D.MATCH_ID);
+        var goal = tr.querySelector("#goal_" + D.MATCH_ID);
+        var goalLive = tr.querySelector("#goalLive_" + D.MATCH_ID);
+
+        /* Over/Under */
+        var goal_t1 = tr.querySelector("#goal_t1_" + D.MATCH_ID);
+        var upodds_t = tr.querySelector("#upodds_t_" + D.MATCH_ID);
+        var downodds_t = tr.querySelector("#downodds_t_" + D.MATCH_ID);
+
+        updateElement(DHandicapJson.l.u, upodds);
+        updateElement(DHandicapJson.l.g < 0 ? -DHandicapJson.l.g : -DHandicapJson.l.g, goal);
+        updateElement(DHandicapJson.l.g < 0 ? DHandicapJson.l.g : DHandicapJson.l.g, goalLive);
+        updateElement(DHandicapJson.l.d, downodds);
+
+        updateElement(DOuJson.l.u, upodds_t);
+        updateElement(DOuJson.l.g, downodds_t);
+        updateElement(DOuJson.l.d, goal_t1);
+
+        function updateElement(newValue, element) {
+          element.innerHTML = newValue;
+        }
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+      }
+    }
+  }, [bfRefresh])
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const socket = io.connect(`${process.env.REACT_APP_URL_SERVER}`);
         socket.on("connect", () => {
           console.log("con ws");
+        });
+
+        socket.on("XML_ODDS", async (data) => {
+          try {
+            const dataJson = JSON.parse(data);
+            if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
+              SetBfRefresh(dataJson['ODDS_DATA']['ODDS_ITEM']);
+            }
+          } catch (error) {
+            console.error("Error while parsing JSON data:", error.message);
+          }
         });
 
         socket.on("SCHEDULE", async (data) => {

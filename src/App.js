@@ -11,6 +11,7 @@ import Profile from './components/auth/Profile';
 import Dashboard from './components/Dashboard/Dashboard';
 import LiveScore from './pages/LiveScore';
 import SinglePage from './pages/Single';
+import PageToolTaiXiu2 from './pages/ToolTaiXiu2';
 
 function App() {
     const location = useLocation();
@@ -42,6 +43,7 @@ function App() {
                     {isLocalRole === 'Administrator' && (
                         <>
                             <Route path='/' element={<HomePage />} />
+                            <Route path='/tooltaixiu2' element={<PageToolTaiXiu2 />} />
                             <Route path='/live-score' element={<LiveScore />} />
                             <Route path='/match/:id' element={<MatchPage />} />
                         </>
