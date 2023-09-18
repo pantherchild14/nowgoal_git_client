@@ -16,25 +16,42 @@ const styles = {
     }
 };
 
+const OU = (score) => {
+    if (score) {
+        const scoreParts = score.split('-');
+        if (scoreParts.length === 2) {
+            const beforeDash = parseInt(scoreParts[0], 10);
+            const afterDash = parseInt(scoreParts[1], 10);
+            const OU = beforeDash + afterDash;
+            if (OU >= 2.5) {
+                return "O";
+            } else {
+                return "U";
+            }
+        }
+    }
+};
+
 const H2H = (props) => {
-    const { nameTeam, awayTeam, league, title, style, H2H, updateStatistics } = props;
+    // updateStatistics
+    const { nameTeam, awayTeam, league, title, style, H2H } = props;
     const [showTable, setShowTable] = useState(false);
     const [activeFilter, setActiveFilter] = useState("");
     const [filteredData, setFilteredData] = useState([]);
-    const [filterApplied, setFilterApplied] = useState(false);
     const [matchCount, setMatchCount] = useState(0);
     const [winCount, setWinCount] = useState(0);
     const [drawCount, setDrawCount] = useState(0);
+    const [winOUCount, setWinOUCount] = useState(0);
     const [total3MatchFirst, setTotal3MatchFirst] = useState(0);
     const [total3MatchMedium, setTotal3MatchMedium] = useState(0);
 
-    const statistics = () => {
-        let score3MatchFirst = total3MatchFirst;
-        let score3MatchMedium = total3MatchMedium;
-        let analysisWin = `${((winCount / matchCount) * 100).toFixed(1)}%`;
+    // const statistics = () => {
+    //     let score3MatchFirst = total3MatchFirst;
+    //     let score3MatchMedium = total3MatchMedium;
+    //     let analysisWin = `${((winCount / matchCount) * 100).toFixed(1)}%`;
 
-        props.updateStatistics(score3MatchFirst, score3MatchMedium, analysisWin);
-    };
+    //     props.updateStatistics(score3MatchFirst, score3MatchMedium, analysisWin);
+    // };
 
     useEffect(() => {
         try {
@@ -51,7 +68,6 @@ const H2H = (props) => {
                     setFilteredData(data);
                 }
             };
-            statistics();
             applyFilter();
         } catch (error) {
             console.error("Error parsing JSON data:", error.message);
@@ -62,11 +78,15 @@ const H2H = (props) => {
         let matchCount = 0;
         let winCount = 0;
         let drawCount = 0;
+        let totalOU = 0;
 
         const first10FilteredData = filteredData.slice(0, 10);
 
         first10FilteredData.forEach((data) => {
             const tdValue = data.W_L;
+            const tdScore = data.Score;
+
+
             if (tdValue) {
                 matchCount++;
             }
@@ -75,9 +95,22 @@ const H2H = (props) => {
             } else if (tdValue === 'D') {
                 drawCount++;
             }
-            setMatchCount(matchCount);
-        });
 
+            if (tdScore) {
+                const scoreParts = tdScore.split('-');
+                if (scoreParts.length === 2) {
+                    const beforeDash = parseInt(scoreParts[0], 10);
+                    const afterDash = parseInt(scoreParts[1], 10);
+                    const Over = beforeDash + afterDash;
+                    if (Over >= 2.5) {
+                        totalOU++;
+                    }
+                }
+            }
+
+        });
+        setWinOUCount(totalOU);
+        setMatchCount(matchCount);
         setWinCount(winCount);
         setDrawCount(drawCount);
     }, [filteredData]);
@@ -122,7 +155,6 @@ const H2H = (props) => {
         }
     }, []);
 
-
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
         const day = date.getDate().toString().padStart(2, '0');
@@ -149,8 +181,6 @@ const H2H = (props) => {
         }
         setShowTable(!showTable);
     }
-
-
 
 
     return (
@@ -189,8 +219,9 @@ const H2H = (props) => {
                             <th width="5%">Score</th>
                             <th width="10%">Away</th>
                             <th width="2%">W/L</th>
+                            <th width="2%">O/U</th>
                         </tr>
-                        {filterApplied || showTable ? (
+                        {showTable ? (
                             Array.isArray(filteredData) ? (
                                 filteredData.slice(0, 10).map((e, index) => (
                                     <tr key={index} name={`oddsTr_${index + 1}`} className="tb-bgcolor1" cid="8">
@@ -210,6 +241,11 @@ const H2H = (props) => {
                                         <td width="2%" height="30" >
                                             {/* {e.Corner && e.HalfCorner ? `${e.Corner}/${e.HalfCorner}` : '-'} */}
                                             <span className={`o-${e.W_L}`}>{e.W_L}</span>
+                                        </td>
+                                        <td width="2%" height="30">
+                                            <span className={`o-${OU(e.Score)}`}>
+                                                {OU(e.Score)}
+                                            </span>
                                         </td>
                                     </tr>
                                 ))
@@ -239,6 +275,11 @@ const H2H = (props) => {
                                             {/* {e.Corner && e.HalfCorner ? `${e.Corner}/${e.HalfCorner}` : '-'} */}
                                             <span className={`o-${e.W_L}`}>{e.W_L}</span>
                                         </td>
+                                        <td width="2%" height="30" >
+                                            <span className={`o-${OU(e.Score)}`}>
+                                                {OU(e.Score)}
+                                            </span>
+                                        </td>
                                     </tr>
                                 ))
                             ) : (
@@ -249,7 +290,15 @@ const H2H = (props) => {
                         )}
                         <tr className="tb-stat1">
                             <td align="center" colSpan="16" id="td_stat1">
-                                Last <font className="red">{matchCount}</font> Matches, {winCount} Win, {drawCount} Draw, {matchCount - (winCount + drawCount)} Loss, Win rate: <font class="red">{((winCount / matchCount) * 100).toFixed(1)}%</font>
+                                Last <font className="red">{matchCount}</font>
+                                Matches, {winCount} Win,
+                                {drawCount} Draw,
+                                {matchCount - (winCount + drawCount)} Loss,
+                                Win rate: <font class="red">{((winCount / matchCount) * 100).toFixed(1)}%</font>,
+                                Over rate：<font class="red">{((winOUCount / matchCount) * 100).toFixed(1)}%</font>
+                                <br />
+                                Goals in the last 3 matches: <font class="red">{total3MatchFirst}</font>,
+                                The average goals in the last 3 matches: <font class="red">{total3MatchMedium}</font>
                             </td>
                         </tr>
                     </tbody>

@@ -183,7 +183,9 @@ table.odds-table-bg td {
 
 td span.o-W,
 td span.o-L,
-td span.o-D {
+td span.o-D,
+td span.o-O,
+td span.o-U {
     color: #fff;
     border-radius: 2px;
     width: 25px;
@@ -196,7 +198,9 @@ td span.o-D {
 
 td.HW span.o-W,
 td.HW span.o-L,
-td.HW span.o-D {
+td.HW span.o-D,
+td.HW span.o-O,
+td.HW span.o-U {
     line-height: 25px;
 }
 
@@ -204,11 +208,13 @@ td span.o-D {
     background-color: #348ce2;
 }
 
-td span.o-W {
+td span.o-W,
+td span.o-O {
     background-color: #d64444;
 }
 
-td span.o-L {
+td span.o-L,
+td span.o-U {
     background-color: #71ab49;
 }
 
