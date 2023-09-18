@@ -38,25 +38,19 @@ const H2H = (props) => {
     const [showTable, setShowTable] = useState(false);
     const [activeFilter, setActiveFilter] = useState("");
     const [filteredData, setFilteredData] = useState([]);
+    const [listData, setListData] = useState([]);
     const [matchCount, setMatchCount] = useState(0);
     const [winCount, setWinCount] = useState(0);
     const [drawCount, setDrawCount] = useState(0);
     const [winOUCount, setWinOUCount] = useState(0);
     const [total3MatchFirst, setTotal3MatchFirst] = useState(0);
     const [total3MatchMedium, setTotal3MatchMedium] = useState(0);
-
-    // const statistics = () => {
-    //     let score3MatchFirst = total3MatchFirst;
-    //     let score3MatchMedium = total3MatchMedium;
-    //     let analysisWin = `${((winCount / matchCount) * 100).toFixed(1)}%`;
-
-    //     props.updateStatistics(score3MatchFirst, score3MatchMedium, analysisWin);
-    // };
+    const [selectMatchCount, setSelectMatchCount] = useState(10);
 
     useEffect(() => {
         try {
             const data = JSON.parse(H2H);
-
+            setListData(data);
             const applyFilter = () => {
                 if (activeFilter === "Home") {
                     setFilteredData(data.filter(e => e.Home === nameTeam));
@@ -80,7 +74,7 @@ const H2H = (props) => {
         let drawCount = 0;
         let totalOU = 0;
 
-        const first10FilteredData = filteredData.slice(0, 10);
+        const first10FilteredData = filteredData.slice(0, selectMatchCount);
 
         first10FilteredData.forEach((data) => {
             const tdValue = data.W_L;
@@ -113,14 +107,14 @@ const H2H = (props) => {
         setMatchCount(matchCount);
         setWinCount(winCount);
         setDrawCount(drawCount);
-    }, [filteredData]);
+    }, [filteredData, selectMatchCount]);
 
     useEffect(() => {
         try {
-            const data = JSON.parse(H2H);
             let totalScore3MatchFirstAllTeams = 0;
-            const first3FilteredDataAllTeams = data.slice(0, 3);
-            first3FilteredDataAllTeams.forEach((data) => {
+            let totalScore3MatchFirstNameTeam = 0;
+            const first10FilteredData = filteredData.slice(0, 3);
+            first10FilteredData.forEach((data) => {
                 const tdValue = data.Score;
                 if (tdValue) {
                     const scoreParts = tdValue.split('-');
@@ -128,21 +122,7 @@ const H2H = (props) => {
                         const beforeDash = parseInt(scoreParts[0], 10);
                         const afterDash = parseInt(scoreParts[1], 10);
                         totalScore3MatchFirstAllTeams += beforeDash + afterDash;
-                    }
-                }
-            });
-
-            const dataTotalMedium = data.filter((e) => e.Home === nameTeam);
-            let totalScore3MatchFirstNameTeam = 0;
-            const first3FilteredDataNameTeam = dataTotalMedium.slice(0, 3);
-            first3FilteredDataNameTeam.forEach((data) => {
-                const tdValue = data.Score;
-                if (tdValue) {
-                    const scoreParts = tdValue.split('-');
-                    if (scoreParts.length === 2) {
-                        const beforeDash = parseInt(scoreParts[0], 10);
-                        // const afterDash = parseInt(scoreParts[1], 10);
-                        totalScore3MatchFirstNameTeam += beforeDash;
+                        totalScore3MatchFirstNameTeam += (beforeDash / 3);
                     }
                 }
             });
@@ -153,7 +133,7 @@ const H2H = (props) => {
         } catch (error) {
             console.error("Error parsing JSON data:", error.message);
         }
-    }, []);
+    }, [filteredData]);
 
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
@@ -164,23 +144,19 @@ const H2H = (props) => {
     };
 
     const checkName = (name) => {
-        let color;
-        if (awayTeam === name) {
-            color = "blue";
-        } else {
-            color = "red";
-        }
-        return color;
+        return awayTeam === name ? "blue" : "red";
     }
 
     const handleFilterChange = (filterType) => {
-        if (activeFilter === filterType) {
-            setActiveFilter("");
-        } else {
-            setActiveFilter(filterType);
-        }
+        setActiveFilter(activeFilter === filterType ? "" : filterType);
         setShowTable(!showTable);
     }
+
+    const handleSelectMatch = (event) => {
+        const selected = parseInt(event.target.value, 10);
+        setSelectMatchCount(selected);
+    };
+
 
 
     return (
@@ -201,7 +177,7 @@ const H2H = (props) => {
                                         ></input>
                                         <label>Home</label>
                                     </div>
-                                    <div>
+                                    <div style={{ marginRight: '10px' }}>
                                         <input
                                             onClick={() => handleFilterChange("Same League")}
                                             type="checkbox"
@@ -209,6 +185,13 @@ const H2H = (props) => {
                                         ></input>
                                         <label>Same League</label>
                                     </div>
+                                    <select value={selectMatchCount} onChange={handleSelectMatch}>
+                                        {listData.map((e, index) => (
+                                            <option key={index} value={index + 1}>
+                                                Last {index + 1}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                             </td>
                         </tr>
@@ -223,7 +206,7 @@ const H2H = (props) => {
                         </tr>
                         {showTable ? (
                             Array.isArray(filteredData) ? (
-                                filteredData.slice(0, 10).map((e, index) => (
+                                filteredData.slice(0, selectMatchCount).map((e, index) => (
                                     <tr key={index} name={`oddsTr_${index + 1}`} className="tb-bgcolor1" cid="8">
                                         <td width="5%" height="30">{e.League}</td>
                                         <td width="5%" height="30">{formatDate(e.Date)}</td>
@@ -256,7 +239,7 @@ const H2H = (props) => {
                             )
                         ) : (
                             Array.isArray(filteredData) ? (
-                                filteredData.slice(0, 10).map((e, index) => (
+                                filteredData.slice(0, selectMatchCount).map((e, index) => (
                                     <tr key={index} name={`oddsTr_${index + 1}`} className="tb-bgcolor1" cid="8" style={{ textAlign: 'center' }}>
                                         <td width="2%" height="30">{e.League}</td>
                                         <td width="5%" height="30">{formatDate(e.Date)}</td>
@@ -290,15 +273,14 @@ const H2H = (props) => {
                         )}
                         <tr className="tb-stat1">
                             <td align="center" colSpan="16" id="td_stat1">
-                                Last <font className="red">{matchCount}</font>
-                                Matches, {winCount} Win,
+                                Last <font className="red">{matchCount}</font> Matches,
+                                {winCount} Win,
                                 {drawCount} Draw,
                                 {matchCount - (winCount + drawCount)} Loss,
                                 Win rate: <font class="red">{((winCount / matchCount) * 100).toFixed(1)}%</font>,
-                                Over rate：<font class="red">{((winOUCount / matchCount) * 100).toFixed(1)}%</font>
-                                <br />
-                                Goals in the last 3 matches: <font class="red">{total3MatchFirst}</font>,
-                                The average goals in the last 3 matches: <font class="red">{total3MatchMedium}</font>
+                                Over rate: <font class="red">{((winOUCount / matchCount) * 100).toFixed(1)}%</font>,
+                                Total the goals: <font class="red">{total3MatchFirst}</font>,
+                                Total the average goals: <font class="red">{total3MatchMedium.toFixed(2)}</font>
                             </td>
                         </tr>
                     </tbody>

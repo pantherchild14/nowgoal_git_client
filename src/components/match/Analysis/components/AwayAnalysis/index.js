@@ -21,17 +21,19 @@ const AwayAnalysis = (props) => {
     const [showTable, setShowTable] = useState(false);
     const [activeFilter, setActiveFilter] = useState("");
     const [filteredData, setFilteredData] = useState([]);
+    const [listData, setListData] = useState([]);
     const [matchCount, setMatchCount] = useState(0);
     const [winCount, setWinCount] = useState(0);
     const [drawCount, setDrawCount] = useState(0);
     const [winOUCount, setWinOUCount] = useState(0);
     const [total3MatchFirst, setTotal3MatchFirst] = useState(0);
     const [total3MatchMedium, setTotal3MatchMedium] = useState(0);
+    const [selectMatchCount, setSelectMatchCount] = useState(10);
 
     useEffect(() => {
         try {
-            const data = (LAST_MATCH_AWAY);
-
+            const data = LAST_MATCH_AWAY;
+            setListData(data)
             const applyFilter = () => {
                 if (activeFilter === "Away") {
                     setFilteredData(data.filter(e => e.Home === awayTeam));
@@ -51,7 +53,7 @@ const AwayAnalysis = (props) => {
         let drawCount = 0;
         let totalOU = 0;
 
-        const first10FilteredData = filteredData.slice(0, 10);
+        const first10FilteredData = filteredData.slice(0, selectMatchCount);
 
         first10FilteredData.forEach((data) => {
             const tdValue = data.W_L;
@@ -77,7 +79,6 @@ const AwayAnalysis = (props) => {
                     }
                 }
             }
-
         });
         setWinOUCount(totalOU);
         setMatchCount(matchCount);
@@ -87,9 +88,9 @@ const AwayAnalysis = (props) => {
 
     useEffect(() => {
         try {
-            const data = (LAST_MATCH_AWAY);
             let totalScore3MatchFirstAllTeams = 0;
-            const first3FilteredDataAllTeams = data.slice(0, 3);
+            let totalScore3MatchFirstNameTeam = 0;
+            const first3FilteredDataAllTeams = filteredData.slice(0, 3);
             first3FilteredDataAllTeams.forEach((data) => {
                 const tdValue = data.Score;
                 if (tdValue) {
@@ -98,31 +99,17 @@ const AwayAnalysis = (props) => {
                         const beforeDash = parseInt(scoreParts[0], 10);
                         const afterDash = parseInt(scoreParts[1], 10);
                         totalScore3MatchFirstAllTeams += beforeDash + afterDash;
-                    }
-                }
-            });
-
-            const dataTotalMedium = data.filter(e => e.Home === awayTeam);
-            let totalScore3MatchFirstNameTeam = 0;
-            const first3FilteredDataNameTeam = dataTotalMedium.slice(0, 3);
-            first3FilteredDataNameTeam.forEach((data) => {
-                const tdValue = data.Score;
-                if (tdValue) {
-                    const scoreParts = tdValue.split('-');
-                    if (scoreParts.length === 2) {
-                        const beforeDash = parseInt(scoreParts[0], 10);
-                        totalScore3MatchFirstNameTeam += beforeDash;
+                        totalScore3MatchFirstNameTeam += beforeDash / 3;
                     }
                 }
             });
 
             setTotal3MatchFirst(totalScore3MatchFirstAllTeams);
             setTotal3MatchMedium(totalScore3MatchFirstNameTeam);
-
         } catch (error) {
             console.error("Error parsing JSON data:", error.message);
         }
-    }, []);
+    }, [filteredData]);
 
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
@@ -140,13 +127,14 @@ const AwayAnalysis = (props) => {
     }
 
     const handleFilterChange = (filterType) => {
-        if (activeFilter === filterType) {
-            setActiveFilter("");
-        } else {
-            setActiveFilter(filterType);
-        }
+        setActiveFilter((prevFilter) => (prevFilter === filterType ? "" : filterType));
         setShowTable(!showTable);
     }
+
+    const handleSelectMatch = (event) => {
+        const selected = parseInt(event.target.value, 10);
+        setSelectMatchCount(selected);
+    };
 
     const style = {
         textCenter: {
@@ -173,7 +161,7 @@ const AwayAnalysis = (props) => {
                             <td colSpan="16">
                                 <div style={style.title}>
                                     <label style={{ marginRight: '10px' }}>{awayTeam}</label>
-                                    <div>
+                                    <div style={{ marginRight: '10px' }}>
                                         <input
                                             onClick={() => handleFilterChange("Away")}
                                             type="checkbox"
@@ -181,6 +169,13 @@ const AwayAnalysis = (props) => {
                                         ></input>
                                         <label>Away</label>
                                     </div>
+                                    <select value={selectMatchCount} onChange={handleSelectMatch}>
+                                        {listData.map((e, index) => (
+                                            <option key={index} value={index + 1}>
+                                                Last {index + 1}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
                             </td>
                         </tr>
@@ -195,7 +190,7 @@ const AwayAnalysis = (props) => {
                         </tr>
                         {showTable ? (
                             Array.isArray(filteredData) ? (
-                                filteredData.slice(0, 10).map((e, index) => (
+                                filteredData.slice(0, selectMatchCount).map((e, index) => (
                                     <tr key={index} name="oddsTr" className="tb-bgcolor1" cid="8" style={{ textAlign: 'center' }}>
                                         <td width="2%" height="30">{e.League}</td>
                                         <td width="5%" height="30">{formatDate(e.Date)}</td>
@@ -211,7 +206,6 @@ const AwayAnalysis = (props) => {
                                         </td>
                                         <td width="10%" height="30" style={{ color: away(e.Away) }}>{e.Away}</td>
                                         <td width="2%" height="30" className="HW">
-                                            {/* {e.Corner && e.HalfCorner ? `${e.Corner}/${e.HalfCorner}` : '-'} */}
                                             <span className={`o-${e.W_L}`}>{e.W_L}</span>
                                         </td>
                                         <td width="2%" height="30" className="HW">
@@ -228,7 +222,7 @@ const AwayAnalysis = (props) => {
                             )
                         ) : (
                             Array.isArray(filteredData) ? (
-                                filteredData.slice(0, 10).map((e, index) => (
+                                filteredData.slice(0, selectMatchCount).map((e, index) => (
                                     <tr key={index} name="oddsTr" className="tb-bgcolor1" cid="8" style={{ textAlign: 'center' }}>
                                         <td width="2%" height="30">{e.League}</td>
                                         <td width="5%" height="30">{formatDate(e.Date)}</td>
@@ -244,7 +238,6 @@ const AwayAnalysis = (props) => {
                                         </td>
                                         <td width="10%" height="30" style={{ color: away(e.Away) }}>{e.Away}</td>
                                         <td width="2%" height="30" className="HW">
-                                            {/* {e.Corner && e.HalfCorner ? `${e.Corner}/${e.HalfCorner}` : '-'} */}
                                             <span className={`o-${e.W_L}`}>{e.W_L}</span>
                                         </td>
                                         <td width="2%" height="30" className="HW">
@@ -262,15 +255,14 @@ const AwayAnalysis = (props) => {
                         )}
                         <tr className="tb-stat1">
                             <td align="center" colSpan="16" id="td_stat1">
-                                Last <font className="red">{matchCount}</font>
-                                Matches, {winCount} Win,
+                                Last <font className="red">{matchCount}</font> Matches,
+                                {winCount} Win,
                                 {drawCount} Draw,
                                 {matchCount - (winCount + drawCount)} Loss,
-                                Win rate: <font class="red">{((winCount / matchCount) * 100).toFixed(1)}%</font>,
-                                Over rate：<font class="red">{((winOUCount / matchCount) * 100).toFixed(1)}%</font>
-                                <br />
-                                Goals in the last 3 matches: <font class="red">{total3MatchFirst}</font>,
-                                The average goals in the last 3 matches: <font class="red">{total3MatchMedium}</font>
+                                Win rate: <font className="red">{((winCount / matchCount) * 100).toFixed(1)}%</font>,
+                                Over rate: <font className="red">{((winOUCount / matchCount) * 100).toFixed(1)}%</font>,
+                                Total the goals: <font className="red">{total3MatchFirst}</font>,
+                                Total the average goals: <font className="red">{total3MatchMedium.toFixed(2)}</font>
                             </td>
                         </tr>
                     </tbody>
