@@ -22,7 +22,10 @@ const CaoThu = () => {
   const [selectedOddHandicap, setSelectedOddHandicap] = useState("");
   const [selectedOver, setSelectedOver] = useState("");
   const [selectedOddOver, setSelectedOddOver] = useState("");
+  const [selectedTimeRun, setSelectedTimeRun] = useState("");
+  const [selectedTeamUp, setSelectedTeamUp] = useState("");
   const [bfRefresh, SetBfRefresh] = useState([]);
+  const [threeIn1, Set3In1] = useState([]);
 
   useLayoutEffect(() => {
     fetchData(selectedDate);
@@ -63,7 +66,6 @@ const CaoThu = () => {
     var length = 0;
     length = bfRefresh?.length || 0;
 
-
     for (var i = 0; i < length; i++) {
       var D;
       D = bfRefresh?.[i]?.$;
@@ -91,8 +93,8 @@ const CaoThu = () => {
         updateElement(DHandicapJson.l.d, downodds);
 
         updateElement(DOuJson.l.u, upodds_t);
-        updateElement(DOuJson.l.g, downodds_t);
-        updateElement(DOuJson.l.d, goal_t1);
+        updateElement(DOuJson.l.g, goal_t1);
+        updateElement(DOuJson.l.d, downodds_t);
 
         function updateElement(newValue, element) {
           element.innerHTML = newValue;
@@ -101,7 +103,83 @@ const CaoThu = () => {
         console.error("Error parsing JSON:", error);
       }
     }
+
+
   }, [bfRefresh])
+
+  useEffect(() => {
+    const get3In1 = () => {
+      var length = 0;
+      length = threeIn1?.length || 0;
+      for (var i = 0; i < length; i++) {
+        var D;
+        D = threeIn1?.[i]?.$;
+
+        if (!D) continue;
+
+        var tr = document.getElementById("tr_" + D._MATCH_ID);
+        if (tr === null) continue;
+        try {
+          var odds = JSON.parse(D._ODDS);
+          var oddAH_ft = odds.ODDS_FT.AH
+          var oddOU_ft = odds.ODDS_FT.OU
+
+          if (selectedTimeRun != "") {
+            if (oddAH_ft && oddAH_ft.length > 0) {
+              for (var j = 0; j < oddAH_ft.length; j++) {
+                var odd = oddAH_ft[j];
+                var mtInSeconds = odd.AH.mt;
+                var mtInMilliseconds = mtInSeconds * 1000;
+                var mtDate = new Date(mtInMilliseconds);
+
+                var mtHours = mtDate.getHours();
+                if (mtHours <= selectedTimeRun) {
+                  var upodds = tr.querySelector("#upodds_" + D._MATCH_ID);
+                  var downodds = tr.querySelector("#downodds_" + D._MATCH_ID);
+                  var goal = tr.querySelector("#goal_" + D._MATCH_ID);
+                  var goalLive = tr.querySelector("#goalLive_" + D._MATCH_ID);
+
+                  updateElement(odd.AH.odds.u, upodds);
+                  updateElement(odd.AH.odds.g < 0 ? -odd.AH.odds.g : -odd.AH.odds.g, goal);
+                  updateElement(odd.AH.odds.g < 0 ? odd.AH.odds.g : odd.AH.odds.g, goalLive);
+                  updateElement(odd.AH.odds.d, downodds);
+                }
+              }
+            }
+
+            if (oddOU_ft && oddOU_ft.length > 0) {
+              for (var k = 0; k < oddOU_ft.length; k++) {
+                var odd = oddOU_ft[k];
+                var mtInSeconds = odd.OU.mt;
+                var mtInMilliseconds = mtInSeconds * 1000;
+                var mtDate = new Date(mtInMilliseconds);
+
+                var mtHours = mtDate.getHours();
+                if (mtHours <= selectedTimeRun) {
+                  var goal_t1 = tr.querySelector("#goal_t1_" + D._MATCH_ID);
+                  var upodds_t = tr.querySelector("#upodds_t_" + D._MATCH_ID);
+                  var downodds_t = tr.querySelector("#downodds_t_" + D._MATCH_ID);
+
+                  updateElement(odd.OU.odds.u, upodds_t);
+                  updateElement(odd.OU.odds.g, goal_t1);
+                  updateElement(odd.OU.odds.d, downodds_t);
+                }
+              }
+            }
+
+            function updateElement(newValue, element) {
+              element.innerHTML = newValue;
+            }
+          }
+
+
+        } catch (error) {
+          console.error("Error parsing JSON:", error);
+        }
+      }
+    }
+    get3In1();
+  }, [threeIn1, selectedTimeRun]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -115,7 +193,7 @@ const CaoThu = () => {
           try {
             const dataJson = JSON.parse(data);
             if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
-              SetBfRefresh(dataJson['ODDS_DATA']['ODDS_ITEM']);
+              SetBfRefresh(dataJson);
             }
           } catch (error) {
             console.error("Error while parsing JSON data:", error.message);
@@ -127,6 +205,17 @@ const CaoThu = () => {
             const dataJson = JSON.parse(data);
             if (dataJson && dataJson['SCHEDULE_DATA'] && dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM']) {
               tb_refresh(dataJson['SCHEDULE_DATA']['SCHEDULE_ITEM'], 1);
+            }
+          } catch (error) {
+            console.error("Error while parsing JSON data:", error.message);
+          }
+        });
+
+        socket.on("3IN1", async (data) => {
+          try {
+            const dataJson = JSON.parse(data);
+            if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
+              Set3In1(dataJson['ODDS_DATA']['ODDS_ITEM']);
             }
           } catch (error) {
             console.error("Error while parsing JSON data:", error.message);
@@ -148,12 +237,40 @@ const CaoThu = () => {
     return <div style={{ textAlign: 'center' }}><CircularProgress /></div>;
   }
 
+  const handleReset = () => {
+    setSelectedDate(new Date().toISOString().split('T')[0]);
+    setSelectedHandicap("");
+    setSelectedOddHandicap("");
+    setSelectedOver("");
+    setSelectedOddOver("");
+    setSelectedTimeRun("");
+    setSelectedTeamUp("");
+    SetBfRefresh([]);
+    Set3In1([]);
+  };
+
   return (
     <React.Fragment>
       <Box style={{ paddingBottom: '30px' }}>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 1 }}>
           <Grid item xs={2}>
             <DateSelector selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+          </Grid>
+          <Grid item xs={2}>
+            <div>
+              <label>
+                Thời gian biến động kèo::
+                <select value={selectedTimeRun} onChange={(e) => setSelectedTimeRun(e.target.value)} >
+                  <option value="">All</option>
+                  <option value="3">3H</option>
+                  <option value="6">6H</option>
+                  <option value="12">12H</option>
+                  <option value="24">1 Ngày</option>
+                  <option value="48">2 Ngày</option>
+                  <option value="52">3 Ngày</option>
+                </select>
+              </label>
+            </div>
           </Grid>
           <Grid item xs={2}>
             <div>
@@ -169,7 +286,8 @@ const CaoThu = () => {
               </label>
             </div>
           </Grid>
-          <Grid item xs={8}>
+
+          <Grid item xs={6}>
             <div>
               <label>
                 Biến động Tài / Xỉu:
@@ -184,6 +302,18 @@ const CaoThu = () => {
             </div>
           </Grid>
           <Grid item xs={2}></Grid>
+          <Grid item xs={2}>
+            <div>
+              <label>
+                Đội kèo trên:
+                <select value={selectedTeamUp} onChange={(e) => setSelectedTeamUp(e.target.value)} >
+                  <option value="">All</option>
+                  <option value="home">Home</option>
+                  <option value="away">Away</option>
+                </select>
+              </label>
+            </div>
+          </Grid>
           <Grid item xs={2}>
             <div>
               <label>
@@ -212,17 +342,25 @@ const CaoThu = () => {
               </label>
             </div>
           </Grid>
+          <Grid item xs={2}>
+            <div>
+              <label>
+                Reset Tất Cả:
+                <button onClick={handleReset}>Reset</button>
+              </label>
+            </div>
+          </Grid>
         </Grid>
       </Box>
 
-      <TableContent schedule={schedule} statusRedux={statusRedux} odds={odds} selectedOddHandicap={selectedOddHandicap} selectedHandicap={selectedHandicap} selectedOddOver={selectedOddOver} selectedOver={selectedOver} />
+      <TableContent schedule={schedule} statusRedux={statusRedux} odds={odds} selectedOddHandicap={selectedOddHandicap} selectedHandicap={selectedHandicap} selectedOddOver={selectedOddOver} selectedOver={selectedOver} selectedTeamUp={selectedTeamUp} />
     </React.Fragment>
   );
 };
 
 export default CaoThu;
 
-const TableContent = ({ schedule, odds, selectedHandicap, selectedOddHandicap, selectedOddOver, selectedOver, statusRedux }) => {
+const TableContent = ({ schedule, odds, selectedHandicap, selectedOddHandicap, selectedOddOver, selectedOver, statusRedux, selectedTeamUp }) => {
   const sortedMatches = useMemo(() => {
     return schedule.data.sort((a, b) => {
       const timeA = new Date(a.MATCH_TIME);
@@ -283,7 +421,7 @@ const TableContent = ({ schedule, odds, selectedHandicap, selectedOddHandicap, s
                 (!selectedOver || (bdValueInsertGoal_t1 && parseFloat(bdValueInsertGoal_t1) <= parseFloat(selectedOver))) &&
                 (!selectedOddOver || (bdValueInsertUpodds_t && parseFloat(bdValueInsertUpodds_t) <= parseFloat(selectedOddOver)))) {
 
-                return <DataTable key={e.MATCH_ID} e={e} odds={matchedOddsItem} statusRedux={matchedScheduleItemRT} />;
+                return <DataTable key={e.MATCH_ID} selectedTeamUp={selectedTeamUp} e={e} odds={matchedOddsItem} statusRedux={matchedScheduleItemRT} />;
               }
             }
 
@@ -312,7 +450,7 @@ const TableContent = ({ schedule, odds, selectedHandicap, selectedOddHandicap, s
                 (!selectedOver || (bdValueInsertGoal_t1 && parseFloat(bdValueInsertGoal_t1) <= parseFloat(selectedOver))) &&
                 (!selectedOddOver || (bdValueInsertUpodds_t && parseFloat(bdValueInsertUpodds_t) <= parseFloat(selectedOddOver)))) {
 
-                return <DataTable key={e.MATCH_ID} e={e} odds={matchedOddsItem} statusRedux={matchedScheduleItemRT} />;
+                return <DataTable key={e.MATCH_ID} selectedTeamUp={selectedTeamUp} e={e} odds={matchedOddsItem} statusRedux={matchedScheduleItemRT} />;
               }
             }
             return null;

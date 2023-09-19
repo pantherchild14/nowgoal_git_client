@@ -307,6 +307,10 @@ tr {
     padding: 4px 1px;
 }
 
+.dntable-list tbody td p.me_color {
+    color: red;
+}
+
 .dntable-list .tr__row {
     display: flex;
     flex-direction: column;

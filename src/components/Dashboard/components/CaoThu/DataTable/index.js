@@ -12,7 +12,7 @@ import { UTCtoLocalTime } from "../../../../../helpers";
 import MatchPage from "../../../../../pages/MatchPage";
 
 const DataTable = (props) => {
-    const { e, odds, statusRedux } = props;
+    const { e, odds, statusRedux, selectedTeamUp } = props;
     const dispatch = useDispatch();
     const [tipHandicap, setTipHandicap] = useState("");
     const [tipOU, setTipOU] = useState("");
@@ -47,6 +47,25 @@ const DataTable = (props) => {
         dispatch(actions.getOddsChangeDetailHistory.getOddsChangeDetailHistoryRequest(e.MATCH_ID));
         handleOpen();
     };
+    useEffect(() => {
+        var tr = document.getElementById("tr_" + e.MATCH_ID);
+        var teamValue = tr.attributes["team"].value;
+
+        if (selectedTeamUp === 'away') {
+            if (teamValue === `meHome_${e.MATCH_ID}` || teamValue === "") {
+                tr.style.display = 'none';
+            }
+        } else if (selectedTeamUp === 'home') {
+            if (teamValue === `meAway_${e.MATCH_ID}` || teamValue === "") {
+                tr.style.display = 'none';
+            }
+        } else {
+            //   tr.style.display = 'table-row'; // Hiển thị tất cả khi không có lựa chọn
+        }
+    }, [selectedTeamUp]);
+
+
+
 
     useEffect(() => {
         const sreachOdd = (elementId, tr) => {
@@ -256,13 +275,21 @@ const DataTable = (props) => {
     const { ODDS_AH_FT, ODDS_OU_FT } = parsedOdds;
 
     return (
-        <tr matchid={e.MATCH_ID} id={`tr_${e.MATCH_ID}`} odds={JSON.stringify(e)} chOdds={ODDS_AH_FT.f.g} data-s={scheduleRT?.STATUS ? scheduleRT?.STATUS : e?.STATUS} data-t={JSON.stringify(scheduleRT) ? JSON.stringify(scheduleRT) : ""} >
+        <tr
+            matchid={e.MATCH_ID}
+            id={`tr_${e.MATCH_ID}`}
+            odds={JSON.stringify(e)}
+            chOdds={ODDS_AH_FT.f.g}
+            data-s={scheduleRT?.STATUS ? scheduleRT?.STATUS : e?.STATUS}
+            data-t={JSON.stringify(scheduleRT) ? JSON.stringify(scheduleRT) : ""}
+            team={(ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g ? `meAway_${e.MATCH_ID}` : "" : -ODDS_AH_FT.l.g ? `meHome_${e.MATCH_ID}` : "")}
+        >
             <td className="td-time" style={{ width: '5%' }} dangerouslySetInnerHTML={{ __html: UTCtoLocalTime(e.TIME_STAMP, isLocalTimeZone) }}></td>
             <td className="td-league">{e.LEAGUE_NAME}</td>
             <td className="td-match">
                 <div>
-                    <p id={`home_${e.MATCH_ID}`}>{e.HOME_NAME}</p>
-                    <p id={`away_${e.MATCH_ID}`}>{e.AWAY_NAME}</p>
+                    <p id={`home_${e.MATCH_ID}`} className={(ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g : -ODDS_AH_FT.l.g ? `me_color` : "")} >{e.HOME_NAME}</p>
+                    <p id={`away_${e.MATCH_ID}`} className={(ODDS_AH_FT.l.g < 0 ? ODDS_AH_FT.l.g ? `me_color` : "" : ODDS_AH_FT.l.g)} >{e.AWAY_NAME}</p>
                 </div>
             </td>
             <td className="td-handicap-live">
