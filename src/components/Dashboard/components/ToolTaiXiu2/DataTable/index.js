@@ -1,71 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
-import Button from '@mui/material/Button';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+// import Button from '@mui/material/Button';
+// import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+// import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-import * as actions from "../../../../../redux/actions";
-import { oddDetailHistoryState$ } from "../../../../../redux/selectors";
-import OddDetailModal from "./OddDetailModal";
 import { UTCtoLocalTime } from "../../../../../helpers";
-import MatchPage from "../../../../../pages/MatchPage";
 
 const DataTable = (props) => {
-    const { e, odds, statusRedux, selectedTeamUp } = props;
-    const dispatch = useDispatch();
-    const [tipHandicap, setTipHandicap] = useState("");
-    const [tipOU, setTipOU] = useState("");
-    const [open, setOpen] = React.useState(false);
-    const oddDetailHistory = useSelector(oddDetailHistoryState$);
+    const { e, odds, statusRedux } = props;
 
     const scheduleRT = statusRedux?.$;
     const isLocalTimeZone = localStorage.getItem('TIME_ZONE')
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
-
     const handleViewClickButton = () => {
         let params = '';
 
-        if (tipHandicap !== '') {
-            params += `ah=${tipHandicap}`;
-        }
+        // if (tipHandicap !== '') {
+        //     params += `ah=${tipHandicap}`;
+        // }
 
-        if (tipOU !== '') {
-            if (params !== '') {
-                params += '&';
-            }
-            params += `ou=${tipOU}`;
-        }
+        // if (tipOU !== '') {
+        //     if (params !== '') {
+        //         params += '&';
+        //     }
+        //     params += `ou=${tipOU}`;
+        // }
 
         const newUrl = `/match/${e.MATCH_ID}${params !== '' ? `?${params}` : ''}`;
         window.open(newUrl, '_blank');
     };
-
-    const handleViewClick = () => {
-        dispatch(actions.getOddsChangeDetailHistory.getOddsChangeDetailHistoryRequest(e.MATCH_ID));
-        handleOpen();
-    };
-    useEffect(() => {
-        var tr = document.getElementById("tr_" + e.MATCH_ID);
-        var teamValue = tr.attributes["team"].value;
-
-        if (selectedTeamUp === 'away') {
-            if (teamValue === `meHome_${e.MATCH_ID}` || teamValue === "") {
-                tr.style.display = 'none';
-            }
-        } else if (selectedTeamUp === 'home') {
-            if (teamValue === `meAway_${e.MATCH_ID}` || teamValue === "") {
-                tr.style.display = 'none';
-            }
-        } else {
-            //   tr.style.display = 'table-row'; // Hiển thị tất cả khi không có lựa chọn
-        }
-    }, [selectedTeamUp]);
-
-
-
 
     useEffect(() => {
         const sreachOdd = (elementId, tr) => {
@@ -161,14 +124,14 @@ const DataTable = (props) => {
                 }
 
                 insertTips.innerHTML = checkTip;
-                setTipHandicap(checkTip);
+                // setTipHandicap(checkTip);
             }
 
             if (insertTipsOU) {
                 const checkTip = checkTipsDataOU > 0 ? `Over ${oddOU}` : checkTipsDataOU < 0 ? `Under ${oddOU}` : '';
 
                 insertTipsOU.innerHTML = checkTip;
-                setTipOU(checkTip)
+                // setTipOU(checkTip)
             }
 
 
@@ -282,7 +245,7 @@ const DataTable = (props) => {
             chOdds={ODDS_AH_FT.f.g}
             data-s={scheduleRT?.STATUS ? scheduleRT?.STATUS : e?.STATUS}
             data-t={JSON.stringify(scheduleRT) ? JSON.stringify(scheduleRT) : ""}
-            team={(ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g ? `meAway_${e.MATCH_ID}` : "" : -ODDS_AH_FT.l.g ? `meHome_${e.MATCH_ID}` : "")}
+            odds_rt=""
         >
             <td className="td-time" style={{ width: '5%' }} dangerouslySetInnerHTML={{ __html: UTCtoLocalTime(e.TIME_STAMP, isLocalTimeZone) }}></td>
             <td className="td-league">{e.LEAGUE_NAME}</td>
@@ -292,6 +255,8 @@ const DataTable = (props) => {
                     <p id={`away_${e.MATCH_ID}`} className={(ODDS_AH_FT.l.g < 0 ? ODDS_AH_FT.l.g ? `me_color` : "" : ODDS_AH_FT.l.g)} >{e.AWAY_NAME}</p>
                 </div>
             </td>
+            {/* ***************************************************  Handicap  ***************************************************** */}
+
             <td className="td-handicap-live">
                 <div className="tr__row">
                     <div className="tr__col handicap.instantHandicap" id={`goal_${e.MATCH_ID}`}>
@@ -341,12 +306,8 @@ const DataTable = (props) => {
                 </div>
             </td>
 
+            {/* ***************************************************  Over/Under  ***************************************************** */}
 
-            <td className="td-handicap-tips">
-                <div className="tr__row_remove">
-                    <div className="tr__col handicap.fluctuatingHandicap" id={`tip_${e.MATCH_ID}`}></div>
-                </div>
-            </td>
             <td>
                 <div className="tr__row_remove">
                     <div className="tr__col overUnder.instantHandicap" id={`goal_t1_${e.MATCH_ID}`}>{ODDS_OU_FT.l.g}</div>
@@ -370,8 +331,6 @@ const DataTable = (props) => {
                 </div>
             </td>
 
-            {/* live  */}
-
             <td>
                 <div className="tr__row_remove">
                     <div className="tr__col overUnder.initialHandicap - overUnder.instantHandicap" id={`insertGoal_t1_${e.MATCH_ID}`}></div>
@@ -385,11 +344,44 @@ const DataTable = (props) => {
                     <div className="tr__col overUnder.initialUnder - overUnder.instantUnder" id={`insertDownodds_t_${e.MATCH_ID}`}></div>
                 </div>
             </td>
-            {/* live  */}
+
+            {/* ***************************************************  Tips  ***************************************************** */}
+
             <td className="td-overunder-tip">
                 <div className="tr__col handicap.fluctuatingHandicap" id={`tipOU_${e.MATCH_ID}`}></div>
             </td>
-            <td className="td-viewfull"><button onClick={handleViewClickButton}>View</button></td>
+
+            {/* ***************************************************  Handicap Run   ***************************************************** */}
+
+            <td className="td-handicap-run">
+                <div className="tr__row_remove">
+                    <div className="tr__col handicap.instantHandicap" id={`goalRun_${e.MATCH_ID}`}>{ODDS_AH_FT.r.g}</div>
+                </div>
+            </td>
+            <td>
+                <div className="tr__row">
+                    <div className="tr__col handicap.instantHome" id={`upoddsRun_${e.MATCH_ID}`}>{ODDS_AH_FT.r.u}</div>
+                    <div className="tr__col handicap.instantAway" id={`downoddsRun_${e.MATCH_ID}`}>{ODDS_AH_FT.r.d}</div>
+                </div>
+            </td>
+
+            {/* ***************************************************  Over/Under Run   ***************************************************** */}
+
+            <td>
+                <div className="tr__row_remove">
+                    <div className="tr__col overUnder.instantHandicap" id={`goalRun_t1_${e.MATCH_ID}`}>{ODDS_OU_FT.r.g}</div>
+                </div>
+            </td>
+            <td>
+                <div className="tr__row">
+                    <div className="tr__col overUnder.instantOver" id={`upoddsRun_t_${e.MATCH_ID}`}>{ODDS_OU_FT.r.u}</div>
+                    <div className="tr__col overUnder.instantUnder" id={`downoddsRun_t_${e.MATCH_ID}`}>{ODDS_OU_FT.r.d}</div>
+                </div>
+            </td>
+
+            {/* ***************************************************  View   ***************************************************** */}
+            {/* onClick={handleViewClickButton} */}
+            <td className="td-viewfull"><button >View</button></td>
         </tr>
     );
 };

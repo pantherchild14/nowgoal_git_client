@@ -97,7 +97,7 @@ const CaoThu = () => {
         updateElement(DOuJson.l.d, downodds_t);
 
         function updateElement(newValue, element) {
-          element.innerHTML = newValue;
+          element.textContent = newValue;
         }
       } catch (error) {
         console.error("Error parsing JSON:", error);
@@ -193,7 +193,7 @@ const CaoThu = () => {
           try {
             const dataJson = JSON.parse(data);
             if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
-              SetBfRefresh(dataJson);
+              SetBfRefresh(dataJson['ODDS_DATA']['ODDS_ITEM']);
             }
           } catch (error) {
             console.error("Error while parsing JSON data:", error.message);
