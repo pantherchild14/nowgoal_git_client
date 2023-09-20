@@ -247,7 +247,21 @@ const DataTable = (props) => {
             data-t={JSON.stringify(scheduleRT) ? JSON.stringify(scheduleRT) : ""}
             odds_rt=""
         >
-            <td className="td-time" style={{ width: '5%' }} dangerouslySetInnerHTML={{ __html: UTCtoLocalTime(e.TIME_STAMP, isLocalTimeZone) }}></td>
+            <td className="td-time" style={{ width: '5%' }} >
+                {/* {UTCtoLocalTime(e.TIME_STAMP, isLocalTimeZone)} */}
+                <span id={'t_' + e.MATCH_ID} name="timeData" style={{ fontSize: '13px' }}>
+                    {UTCtoLocalTime(e.MATCH_TIME, isLocalTimeZone)}
+                </span>
+                <br />
+                <span id={'tos_' + e.MATCH_ID} style={{ fontSize: '13px' }} className="red" sx={{ display: 'grid' }}>
+                    {scheduleRT?.STATUS === "2nd Half" || scheduleRT?.STATUS === "1st Half" ? (
+                        <div className="live-score">Live </div>
+                    ) : (
+                        ""
+                    )}
+                    <span>{scheduleRT?.STATUS}</span>
+                </span>
+            </td>
             <td className="td-league">{e.LEAGUE_NAME}</td>
             <td className="td-match">
                 <div>

@@ -108,6 +108,8 @@ div#\36 in1 table[data-t *="Abd"],
 div#\36 in1 table[data-t *="Postp"],
 div#\36 in1 table[data-t *="Pause"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-s="-1"],
+table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-s="-10"],
+table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-s="-11"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[chodds=""],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Finished"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Pend"],
@@ -298,8 +300,15 @@ tr {
     color: #212529;
 }
 
+table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-s="1st Half"],
+table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-s="2nd Half"] {
+    --bs-table-accent-bg: #FFDDD1;
+    color: #212529;
+}
+
 .dntable-list.-td-0 tbody td {
     padding: 0;
+    border-color: #0000005e !important;
 }
 
 .dntable-list tbody td {
@@ -352,12 +361,14 @@ div#caothu tbody tr td.lb.time {
     border-right: 1px solid transparent;
 }
 
-div#caothu tbody tr td {
+table.tooltaixiu2 tbody tr td {
     padding: 5px 0;
     border-bottom: 1px solid transparent;
-    border-color: #e5e5e5 !important;
+    border-color: #e5e5e5;
     text-align: center;
 }
+
+
 
 div#caothu table thead tr.flexed {
     position: sticky;

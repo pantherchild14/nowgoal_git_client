@@ -227,7 +227,7 @@ const TableContent = ({ schedule, odds, statusRedux }) => {
     }, [schedule.data]);
 
     return (
-        <table className="dntable-list -td-0 table table-hover table-striped table-bordered align-middle">
+        <table className="tooltaixiu2 dntable-list -td-0 table table-hover table-striped table-bordered align-middle">
             <thead>
                 <tr>
                     <td rowSpan="2" className="td-time">Time</td>
