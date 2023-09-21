@@ -20,7 +20,19 @@ const ToolTaiXiu2 = () => {
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [bfRefresh, SetBfRefresh] = useState([]);
     const [oddRealTime, setOddRealTime] = useState([]);
+    const [selectedTips, setSelectedTips] = useState(false);
+    const [selectedOver, setSelectedOver] = useState(false);
+    const [selectedTeamUp, setSelectedTeamUp] = useState("");
+    const [selectedOddOver, setSelectedOddOver] = useState("");
+    const [selectedOddOverRun, setSelectedOddOverRun] = useState("");
 
+    const handleTipsCheckboxChange = (e) => {
+        setSelectedTips(e.target.checked);
+    };
+
+    const handleOverCheckChange = (e) => {
+        setSelectedOver(e.target.checked);
+    }
 
     useEffect(() => {
         const fetchData = async (date) => {
@@ -60,8 +72,13 @@ const ToolTaiXiu2 = () => {
                 var downodds_t = tr.querySelector("#downodds_t_" + D.MATCH_ID);
 
                 updateElement(DHandicapJson.l.u, upodds);
-                updateElement(DHandicapJson.l.g < 0 ? -DHandicapJson.l.g : -DHandicapJson.l.g, goal);
-                updateElement(DHandicapJson.l.g < 0 ? DHandicapJson.l.g : DHandicapJson.l.g, goalLive);
+
+                updateElemenAttribute(DHandicapJson.l.g < 0 ? -DHandicapJson.l.g : -DHandicapJson.l.g, goal, "odd_goal")
+                updateElemenAttribute(DHandicapJson.l.g < 0 ? DHandicapJson.l.g : DHandicapJson.l.g, goalLive, "odd_goallive")
+
+                // updateElement(DHandicapJson.l.g < 0 ? -DHandicapJson.l.g : -DHandicapJson.l.g, goal);
+                // updateElement(DHandicapJson.l.g < 0 ? DHandicapJson.l.g : DHandicapJson.l.g, goalLive);
+
                 updateElement(DHandicapJson.l.d, downodds);
 
                 updateElement(DOuJson.l.u, upodds_t);
@@ -70,6 +87,9 @@ const ToolTaiXiu2 = () => {
 
                 function updateElement(newValue, element) {
                     element.textContent = newValue;
+                }
+                function updateElemenAttribute(newValue, trElement, attributeName) {
+                    trElement.setAttribute(attributeName, newValue);
                 }
             } catch (error) {
                 console.error("Error parsing JSON:", error);
@@ -201,6 +221,7 @@ const ToolTaiXiu2 = () => {
         return <div style={{ textAlign: 'center' }}><CircularProgress /></div>;
     }
 
+
     return (
         <React.Fragment>
             <Box style={{ paddingBottom: '30px' }}>
@@ -208,16 +229,94 @@ const ToolTaiXiu2 = () => {
                     <Grid item xs={2}>
                         <DateSelector selectedDate={selectedDate} onSelectDate={setSelectedDate} />
                     </Grid>
+                    <Grid item xs={2}>
+                        <div>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedTips}
+                                    onChange={handleTipsCheckboxChange}
+                                />
+                                Handicap 0.25 vs Over {'>'}= 2.75
+                            </label>
+                        </div>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <div>
+                            <label>
+                                Đội kèo trên:
+                                <select
+                                    value={selectedTeamUp}
+                                    onChange={(e) => setSelectedTeamUp(e.target.value)}
+                                    disabled={selectedTips === true ? "" : "disabled"}
+                                >
+                                    <option value="">All</option>
+                                    <option value="home">Home</option>
+                                    <option value="away">Away</option>
+                                </select>
+                            </label>
+                        </div>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <div>
+                            <label>
+                                Lọc Odds Over:
+                                <select
+                                    value={selectedOddOver}
+                                    onChange={(e) => setSelectedOddOver(e.target.value)}
+                                    disabled={selectedTips === true ? "" : "disabled"}
+                                >
+                                    <option value="">All</option>
+                                    <option value="1">1.00</option>
+                                    <option value="0.95">0.95</option>
+                                    <option value="0.90">0.90</option>
+                                    <option value="0.85">0.85</option>
+                                    <option value="0.80">0.80</option>
+                                </select>
+                            </label>
+                        </div>
+                    </Grid>
+                    <Grid item xs={4}></Grid>
+                    <Grid item xs={2}>
+                        <div>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={selectedOver}
+                                    onChange={handleOverCheckChange}
+                                    disabled={selectedTips === true ? "" : "disabled"}
+                                />
+                                OVER 2.75
+                            </label>
+                        </div>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <div>
+                            <label>
+                                Lọc Odds Cược Chấp:
+                                <select
+                                    value={selectedOddOverRun}
+                                    onChange={(e) => setSelectedOddOverRun(e.target.value)}
+                                    disabled={selectedTips === true ? "" : "disabled"}
+                                >
+                                    <option value="">All</option>
+                                    <option value="1">1.00</option>
+                                    <option value="0.95">0.95</option>
+                                    <option value="0.90">0.90</option>
+                                </select>
+                            </label>
+                        </div>
+                    </Grid>
                 </Grid>
             </Box>
-            <TableContent schedule={schedule} statusRedux={statusRedux} odds={odds} />
+            <TableContent schedule={schedule} statusRedux={statusRedux} odds={odds} selectedTips={selectedTips} selectedTeamUp={selectedTeamUp} selectedOver={selectedOver} selectedOddOver={selectedOddOver} selectedOddOverRun={selectedOddOverRun} />
         </React.Fragment>
     );
 };
 
 export default ToolTaiXiu2;
 
-const TableContent = ({ schedule, odds, statusRedux }) => {
+const TableContent = ({ schedule, odds, statusRedux, selectedTips, selectedTeamUp, selectedOver, selectedOddOver, selectedOddOverRun }) => {
     const sortedMatches = useMemo(() => {
         return schedule.data.sort((a, b) => {
             const timeA = new Date(a.MATCH_TIME);
@@ -233,6 +332,7 @@ const TableContent = ({ schedule, odds, statusRedux }) => {
                     <td rowSpan="2" className="td-time">Time</td>
                     <td rowSpan="2" className="td-league">League</td>
                     <td rowSpan="2" className="td-match">Match</td>
+                    <td rowSpan="2" className="td-match">Score</td>
                     <td colSpan="6" className="td-handicap">Kèo Handicap</td>
                     <td colSpan="6" className="td-overunder">Over/Under</td>
                     <td rowSpan="2" className="td-handicap">Tips</td>
@@ -273,7 +373,7 @@ const TableContent = ({ schedule, odds, statusRedux }) => {
                         const matchedScheduleItemRT = scheduleItemDataRT?.find(item => item.$?.MATCH_ID === e.MATCH_ID);
 
                         if (matchedOddsItem) {
-                            return <DataTable key={e.MATCH_ID} e={e} odds={matchedOddsItem} statusRedux={matchedScheduleItemRT} />;
+                            return <DataTable key={e.MATCH_ID} e={e} odds={matchedOddsItem} statusRedux={matchedScheduleItemRT} selectedTips={selectedTips} selectedTeamUp={selectedTeamUp} selectedOver={selectedOver} selectedOddOver={selectedOddOver} selectedOddOverRun={selectedOddOverRun} />;
                         }
 
                         return null;
@@ -287,7 +387,7 @@ const TableContent = ({ schedule, odds, statusRedux }) => {
                         const matchedScheduleItemRT = scheduleItemDataRT?.find(item => item.$?.MATCH_ID === e.MATCH_ID);
 
                         if (matchedOddsItem) {
-                            return <DataTable key={e.MATCH_ID} e={e} odds={matchedOddsItem} statusRedux={matchedScheduleItemRT} />;
+                            return <DataTable key={e.MATCH_ID} e={e} odds={matchedOddsItem} statusRedux={matchedScheduleItemRT} selectedTips={selectedTips} selectedTeamUp={selectedTeamUp} selectedOver={selectedOver} selectedOddOver={selectedOddOver} selectedOddOverRun={selectedOddOverRun} />;
                         }
                         return null;
                     })}

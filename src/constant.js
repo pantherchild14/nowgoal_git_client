@@ -57,5 +57,9 @@ export const INIT_STATE = {
     },
     modal: {
         isShow: false,
+    },
+    nowgoal: {
+        url: "https://www.nowgoal8.com/oddscomp"
     }
 }
+

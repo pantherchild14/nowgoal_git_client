@@ -11,8 +11,15 @@ export const parseJSON = (jsonString) => {
 export const UTCtoLocalTime = (utcTimeString, timeZoneOffset) => {
     const utcDate = new Date(utcTimeString);
     const localDate = new Date(utcDate.getTime() + timeZoneOffset * 3600000);
-    return localDate.toLocaleString();
+
+    const day = localDate.getDate().toString().padStart(2, '0');
+    const month = (localDate.getMonth() + 1).toString().padStart(2, '0');
+    const hours = localDate.getHours().toString().padStart(2, '0');
+    const minutes = localDate.getMinutes().toString().padStart(2, '0');
+
+    return `${day}-${month} <br> ${hours}:${minutes}`;
 };
+
 
 export const createHtmlExcerpt = (htmlContent, maxLength) => {
     const parser = new DOMParser();
