@@ -66,6 +66,7 @@ const ToolTaiXiu2 = () => {
                 var goal = tr.querySelector("#goal_" + D.MATCH_ID);
                 var goalLive = tr.querySelector("#goalLive_" + D.MATCH_ID);
 
+
                 /* Over/Under */
                 var goal_t1 = tr.querySelector("#goal_t1_" + D.MATCH_ID);
                 var upodds_t = tr.querySelector("#upodds_t_" + D.MATCH_ID);
@@ -76,8 +77,9 @@ const ToolTaiXiu2 = () => {
                 updateElemenAttribute(DHandicapJson.l.g < 0 ? -DHandicapJson.l.g : -DHandicapJson.l.g, goal, "odd_goal")
                 updateElemenAttribute(DHandicapJson.l.g < 0 ? DHandicapJson.l.g : DHandicapJson.l.g, goalLive, "odd_goallive")
 
-                // updateElement(DHandicapJson.l.g < 0 ? -DHandicapJson.l.g : -DHandicapJson.l.g, goal);
-                // updateElement(DHandicapJson.l.g < 0 ? DHandicapJson.l.g : DHandicapJson.l.g, goalLive);
+
+                updateElement(DHandicapJson.l.g < 0 ? "" : -DHandicapJson.l.g, goal);
+                updateElement(DHandicapJson.l.g < 0 ? DHandicapJson.l.g : "", goalLive);
 
                 updateElement(DHandicapJson.l.d, downodds);
 
@@ -127,7 +129,7 @@ const ToolTaiXiu2 = () => {
                 if (oddsValue && oddsValue.trim() !== "") {
                     const old = JSON.parse(oddsValue);
                     updateElement(D.HomeHandicap, old.HomeHandicap, "upoddsRun_", upodds);
-                    updateElement(D.Handicap, old.Handicap, "goalRun_", goal);
+                    updateElement(D.Handicap < 0 ? -D.Handicap : D.Handicap, old.Handicap < 0 ? -old.Handicap : old.Handicap, "goalRun_", goal);
                     updateElement(D.AwayHandicap, old.AwayHandicap, "downoddsRun_", downodds);
 
                     updateElement(D.Over, old.Over, "upoddsRun_t_", upodds_t);

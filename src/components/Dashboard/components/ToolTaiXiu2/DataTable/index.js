@@ -33,7 +33,7 @@ const DataTable = (props) => {
     };
 
     const handleLinkNowgGoal = () => {
-        const newUrl = `${INIT_STATE.nowgoal.url}/${e.MATCH_ID}`;
+        const newUrl = `${INIT_STATE.nowgoal.url}${e.MATCH_ID}`;
         window.open(newUrl, '_blank');
     };
 
@@ -82,6 +82,8 @@ const DataTable = (props) => {
 
                 if (sumData_positive !== 0) {
                     absSumData = Math.abs(sumData_positive).toFixed(2);
+                } else {
+                    absSumData = ""
                 }
 
                 const iconElement = document.createElement('span');
@@ -113,6 +115,8 @@ const DataTable = (props) => {
 
                 if (sumData_minus !== 0) {
                     absSumData = Math.abs(sumData_minus).toFixed(2);
+                } else {
+                    absSumData = ""
                 }
 
                 const iconElement = document.createElement('span');
@@ -176,9 +180,12 @@ const DataTable = (props) => {
                     },
                     /* Over/Under */
                     {
-                        elementId_positive: `#insertGoal_t1_${e.MATCH_ID}`,
-                        sumData_positive: await sreachOdd(`#goalEarly_t1_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_t1_${e.MATCH_ID}`, tr),
+                        // elementId_positive: `#insertGoal_t1_${e.MATCH_ID}`,
+                        // sumData_positive: await sreachOdd(`#goalEarly_t1_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_t1_${e.MATCH_ID}`, tr),
                         // checkTipsData: await sreachOdd(`#goalEarly_t1_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_t1_${e.MATCH_ID}`, tr),
+
+                        elementId_minus: `#insertGoal_t1_${e.MATCH_ID}`,
+                        sumData_minus: await sreachOdd(`#goalEarly_t1_${e.MATCH_ID}`, tr) - await sreachOdd(`#goal_t1_${e.MATCH_ID}`, tr),
                     },
                     {
                         elementId_minus: `#insertUpodds_t_${e.MATCH_ID}`,
@@ -226,6 +233,8 @@ const DataTable = (props) => {
         var checkHome = getOdds(home, "odd_goal");
         var checkAway = getOdds(away, "odd_goallive");
 
+        var oddOver = tr.querySelector("#upodds_t_" + e.MATCH_ID);
+
         var tipValue = tr.attributes["tip"].value;
         var teamValue = tr.attributes["team"].value;
         var overValue = tr.attributes["tp"].value;
@@ -251,18 +260,18 @@ const DataTable = (props) => {
                 }
 
 
-                if (selectedOver === true) {
-                    if (overValue !== "Over 2.75") {
-                        tr.style.display = 'none';
-                    } else {
-                        tr.style.display = 'revert';
-                    }
-                }
+
 
                 if (selectedTeamUp === 'away') {
                     if (selectedOddOverRun) {
                         if (checkAway < 0) {
                             if (oddAway.textContent <= selectedOddOverRun) {
+                                tr.style.display = 'revert';
+                            } else {
+                                tr.style.display = 'none';
+                            }
+
+                            if (oddOver.textContent <= selectedOddOver) {
                                 tr.style.display = 'revert';
                             } else {
                                 tr.style.display = 'none';
@@ -274,6 +283,12 @@ const DataTable = (props) => {
                     if (selectedOddOverRun) {
                         if (checkHome < 0) {
                             if (oddHome.textContent <= selectedOddOverRun) {
+                                tr.style.display = 'revert';
+                            } else {
+                                tr.style.display = 'none';
+                            }
+
+                            if (oddOver.textContent <= selectedOddOver) {
                                 tr.style.display = 'revert';
                             } else {
                                 tr.style.display = 'none';
@@ -296,6 +311,22 @@ const DataTable = (props) => {
                             } else {
                                 tr.style.display = 'none';
                             }
+                        }
+                    }
+
+                    if (selectedOddOver) {
+                        if (oddOver.textContent <= selectedOddOver) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
+                    if (selectedOver === true) {
+                        if (overValue !== "Over 2.75") {
+                            tr.style.display = 'none';
+                        } else {
+                            tr.style.display = 'revert';
                         }
                     }
                 }
@@ -525,8 +556,26 @@ const DataTable = (props) => {
             {/* ***************************************************  Handicap Run   ***************************************************** */}
 
             <td className="td-handicap-run">
-                <div className="tr__row_remove">
+                {/* <div className="tr__row_remove">
                     <div className="tr__col handicap.instantHandicap" id={`goalRun_${e.MATCH_ID}`}>{ODDS_AH_FT.r.g}</div>
+                </div> */}
+                <div className="tr__row">
+                    {ODDS_AH_FT.l.g < 0 ? (
+                        " ") : (
+                        <React.Fragment>
+                            <div className="tr__col handicap.instantHandicap" odd_over={ODDS_AH_FT.r.g} id={`goalRun_${e.MATCH_ID}`}>{ODDS_AH_FT.r.g < 0 ? -ODDS_AH_FT.r.g : ODDS_AH_FT.r.g}</div>
+                            <div className="tr__col handicap.instantHandicap" id={`goalRunDemo_${e.MATCH_ID}`}></div>
+                        </React.Fragment>
+                    )}
+
+                    {ODDS_AH_FT.l.g < 0 ? (
+                        <React.Fragment>
+                            <div className="tr__col handicap.instantHandicap" id={`goalRunDemo_${e.MATCH_ID}`}></div>
+                            <div className="tr__col handicap.instantHandicap" id={`goalRun_${e.MATCH_ID}`}>{ODDS_AH_FT.r.g < 0 ? -ODDS_AH_FT.r.g : ODDS_AH_FT.r.g}</div>
+                        </React.Fragment>
+                    ) : (
+                        ""
+                    )}
                 </div>
             </td>
             <td>

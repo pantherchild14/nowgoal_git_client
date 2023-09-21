@@ -59,7 +59,7 @@ export const INIT_STATE = {
         isShow: false,
     },
     nowgoal: {
-        url: "https://www.nowgoal8.com/oddscomp"
+        url: "https://www.nowgoal8.com/match/h2h-"
     }
 }
 
