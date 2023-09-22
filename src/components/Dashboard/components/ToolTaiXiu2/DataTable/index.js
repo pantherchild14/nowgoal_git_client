@@ -372,8 +372,9 @@ const DataTable = (props) => {
                 {/* {UTCtoLocalTime(e.TIME_STAMP, isLocalTimeZone)} */}
                 <span id={'t_' + e.MATCH_ID} name="timeData" style={{ fontSize: '13px' }} >
                     {/* {UTCtoLocalTime(e.MATCH_TIME, isLocalTimeZone)} */}
-                    <div dangerouslySetInnerHTML={{ __html: UTCtoLocalTime(e.MATCH_TIME, isLocalTimeZone) }} />
+                    <div dangerouslySetInnerHTML={{ __html: UTCtoLocalTime(e.TIME_STAMP, isLocalTimeZone) }} />
                 </span>
+
                 <br />
                 <span id={'tos_' + e.MATCH_ID} style={{ fontSize: '13px' }} className="red" sx={{ display: 'grid' }}>
                     {scheduleRT?.STATUS === "2nd Half" || scheduleRT?.STATUS === "1st Half" ? (

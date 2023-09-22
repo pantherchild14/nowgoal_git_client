@@ -17,7 +17,7 @@ const OU = (score) => {
 };
 
 const HomeAnalysis = (props) => {
-    const { nameTeam, LAST_MATCH_HOME, updateStatisticsHome } = props;
+    const { nameTeam, LAST_MATCH_HOME, updateStatisticsHome, LAST_MATCH_HOME_IO } = props;
     const [showTable, setShowTable] = useState(false);
     const [activeFilter, setActiveFilter] = useState("");
     const [filteredData, setFilteredData] = useState([]);
@@ -32,7 +32,14 @@ const HomeAnalysis = (props) => {
 
     useEffect(() => {
         try {
-            const data = LAST_MATCH_HOME;
+            // const data = LAST_MATCH_HOME;
+            let data;
+            if (LAST_MATCH_HOME_IO) {
+                data = (LAST_MATCH_HOME_IO);
+            } else {
+                data = LAST_MATCH_HOME;
+            }
+
             setListData(data);
             const applyFilter = () => {
                 if (activeFilter === "Home") {

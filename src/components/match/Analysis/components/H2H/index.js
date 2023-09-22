@@ -34,7 +34,7 @@ const OU = (score) => {
 
 const H2H = (props) => {
     // updateStatistics
-    const { nameTeam, awayTeam, league, title, style, H2H } = props;
+    const { nameTeam, awayTeam, league, title, style, H2H, H2H_IO } = props;
     const [showTable, setShowTable] = useState(false);
     const [activeFilter, setActiveFilter] = useState("");
     const [filteredData, setFilteredData] = useState([]);
@@ -49,7 +49,13 @@ const H2H = (props) => {
 
     useEffect(() => {
         try {
-            const data = JSON.parse(H2H);
+            let data;
+            if (H2H_IO) {
+                data = (H2H_IO);
+            } else {
+                data = (JSON.parse(H2H));
+            }
+
             setListData(data);
             const applyFilter = () => {
                 if (activeFilter === "Home") {

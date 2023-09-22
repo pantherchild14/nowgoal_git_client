@@ -21,6 +21,7 @@ export default function MatchLive(props) {
   const oddDetailHistory = useSelector(oddDetailHistoryState$);
 
   const [threeIn1, Set3In1] = useState([]);
+  const [h2hIO, setH2H] = useState([]);
 
   useEffect(() => {
     dispatch(actions.getScheduleAllSingleRT.getScheduleAllSingleRTRequest(matchID));
@@ -67,6 +68,30 @@ export default function MatchLive(props) {
           }
         });
 
+        socket.on("H2H", async (data) => {
+          try {
+            const dataJson = JSON.parse(data);
+            if (dataJson && dataJson['H2H_DATA'] && dataJson['H2H_DATA']['H2H_ITEM']) {
+              const data = (dataJson['H2H_DATA']['H2H_ITEM']);
+              const length = data?.length || 0;
+              const matchingDs = [];
+
+              for (var i = 0; i < length; i++) {
+                const D = data?.[i]?.$;
+
+                if (D.MATCH_ID === matchID) {
+                  matchingDs.push(D);
+                }
+
+              }
+              setH2H(matchingDs[0]);
+
+            }
+          } catch (error) {
+            console.error("Error while parsing JSON data:", error.message);
+          }
+        });
+
         return () => {
           socket.disconnect();
         };
@@ -97,6 +122,7 @@ export default function MatchLive(props) {
         <Analysis
           schedules={schedules}
           h2h={h2h}
+          h2hIO={h2hIO}
         />
       </div>
     </div>

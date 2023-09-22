@@ -17,7 +17,7 @@ const OU = (score) => {
 };
 
 const AwayAnalysis = (props) => {
-    const { awayTeam, title, LAST_MATCH_AWAY } = props;
+    const { awayTeam, title, LAST_MATCH_AWAY, LAST_MATCH_AWAY_IO } = props;
     const [showTable, setShowTable] = useState(false);
     const [activeFilter, setActiveFilter] = useState("");
     const [filteredData, setFilteredData] = useState([]);
@@ -32,7 +32,12 @@ const AwayAnalysis = (props) => {
 
     useEffect(() => {
         try {
-            const data = LAST_MATCH_AWAY;
+            let data;
+            if (LAST_MATCH_AWAY_IO) {
+                data = (LAST_MATCH_AWAY_IO);
+            } else {
+                data = LAST_MATCH_AWAY;
+            }
             setListData(data)
             const applyFilter = () => {
                 if (activeFilter === "Away") {
