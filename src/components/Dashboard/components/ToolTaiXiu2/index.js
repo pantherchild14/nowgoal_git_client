@@ -78,8 +78,8 @@ const ToolTaiXiu2 = () => {
                 updateElemenAttribute(DHandicapJson.l.g < 0 ? DHandicapJson.l.g : DHandicapJson.l.g, goalLive, "odd_goallive")
 
 
-                updateElement(DHandicapJson.l.g < 0 ? "" : -DHandicapJson.l.g, goal);
-                updateElement(DHandicapJson.l.g < 0 ? DHandicapJson.l.g : "", goalLive);
+                updateElement(DHandicapJson.l.g < 0 ? "" : DHandicapJson.l.g, goal);
+                updateElement(DHandicapJson.l.g < 0 ? -DHandicapJson.l.g : "", goalLive);
 
                 updateElement(DHandicapJson.l.d, downodds);
 
@@ -377,7 +377,6 @@ const TableContent = ({ schedule, odds, statusRedux, selectedTips, selectedTeamU
                         if (matchedOddsItem) {
                             return <DataTable key={e.MATCH_ID} e={e} odds={matchedOddsItem} statusRedux={matchedScheduleItemRT} selectedTips={selectedTips} selectedTeamUp={selectedTeamUp} selectedOver={selectedOver} selectedOddOver={selectedOddOver} selectedOddOverRun={selectedOddOverRun} />;
                         }
-
                         return null;
                     })}
 

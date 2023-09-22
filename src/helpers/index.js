@@ -10,14 +10,43 @@ export const parseJSON = (jsonString) => {
 
 export const UTCtoLocalTime = (utcTimeString, timeZoneOffset) => {
     const utcDate = new Date(utcTimeString);
-    const localDate = new Date(utcDate.getTime() + timeZoneOffset * 3600000);
+    // const localDate = new Date(utcDate.getTime() + timeZoneOffset * 3600000);
+    const localDate = new Date(utcDate.getTime() + 7 * 3600000);
 
     const day = localDate.getDate().toString().padStart(2, '0');
     const month = (localDate.getMonth() + 1).toString().padStart(2, '0');
     const hours = localDate.getHours().toString().padStart(2, '0');
     const minutes = localDate.getMinutes().toString().padStart(2, '0');
 
-    return `${day}-${month} <br> ${hours}:${minutes}`;
+    return `${day}-${month} ${hours}:${minutes}`;
+};
+
+export const convertTime = (time) => {
+    const timestamp = time * 1000;
+    const dt_object = new Date(timestamp);
+
+    // Thêm 7 giờ vào thời gian
+    dt_object.setHours(dt_object.getHours() - 1);
+
+    const year = dt_object.getFullYear();
+    const month = (dt_object.getMonth() + 1).toString().padStart(2, '0');
+    const day = dt_object.getDate().toString().padStart(2, '0');
+    const hours = dt_object.getHours().toString().padStart(2, '0');
+    const minutes = dt_object.getMinutes().toString().padStart(2, '0');
+
+    const formattedTime = `${day}-${month} ${hours}:${minutes}`;
+    return formattedTime;
+};
+
+export const convertTimeSelectOddRun = (time) => {
+    const timestamp = time * 1000;
+    const dt_object = new Date(timestamp);
+
+    // Thêm 7 giờ vào thời gian
+    dt_object.setHours(dt_object.getHours() - 1);
+    const hours = dt_object.getHours().toString().padStart(2, '0');
+    const formattedTime = hours;
+    return formattedTime;
 };
 
 

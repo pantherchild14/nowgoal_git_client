@@ -10,6 +10,7 @@ import * as actions from "../../../../redux/actions";
 import { scheduleState$, oddsallState$, statusrtState$ } from "../../../../redux/selectors";
 import DataTable from "./DataTable";
 import DateSelector from "./Functions/DateSelector";
+import { convertTime, convertTimeSelectOddRun } from "../../../../helpers";
 
 const CaoThu = () => {
   const dispatch = useDispatch();
@@ -109,75 +110,85 @@ const CaoThu = () => {
 
   useEffect(() => {
     const get3In1 = () => {
-      var length = 0;
-      length = threeIn1?.length || 0;
-      for (var i = 0; i < length; i++) {
-        var D;
-        D = threeIn1?.[i]?.$;
+      const length = threeIn1?.length || 0;
+
+      for (let i = 0; i < length; i++) {
+        const D = threeIn1?.[i]?.$;
 
         if (!D) continue;
 
-        var tr = document.getElementById("tr_" + D._MATCH_ID);
-        if (tr === null) continue;
+        const tr = document.getElementById("tr_" + D._MATCH_ID);
+        if (!tr) continue;
+
         try {
-          var odds = JSON.parse(D._ODDS);
-          var oddAH_ft = odds.ODDS_FT.AH
-          var oddOU_ft = odds.ODDS_FT.OU
+          const odds = JSON.parse(D._ODDS);
+          const oddAH_ft = odds.ODDS_FT.AH;
+          const oddOU_ft = odds.ODDS_FT.OU;
 
-          if (selectedTimeRun != "") {
-            if (oddAH_ft && oddAH_ft.length > 0) {
-              for (var j = 0; j < oddAH_ft.length; j++) {
-                var odd = oddAH_ft[j];
-                var mtInSeconds = odd.AH.mt;
-                var mtInMilliseconds = mtInSeconds * 1000;
-                var mtDate = new Date(mtInMilliseconds);
-
-                var mtHours = mtDate.getHours();
-                if (mtHours <= selectedTimeRun) {
-                  var upodds = tr.querySelector("#upodds_" + D._MATCH_ID);
-                  var downodds = tr.querySelector("#downodds_" + D._MATCH_ID);
-                  var goal = tr.querySelector("#goal_" + D._MATCH_ID);
-                  var goalLive = tr.querySelector("#goalLive_" + D._MATCH_ID);
-
-                  updateElement(odd.AH.odds.u, upodds);
-                  updateElement(odd.AH.odds.g < 0 ? -odd.AH.odds.g : -odd.AH.odds.g, goal);
-                  updateElement(odd.AH.odds.g < 0 ? odd.AH.odds.g : odd.AH.odds.g, goalLive);
-                  updateElement(odd.AH.odds.d, downodds);
-                }
-              }
-            }
-
-            if (oddOU_ft && oddOU_ft.length > 0) {
-              for (var k = 0; k < oddOU_ft.length; k++) {
-                var odd = oddOU_ft[k];
-                var mtInSeconds = odd.OU.mt;
-                var mtInMilliseconds = mtInSeconds * 1000;
-                var mtDate = new Date(mtInMilliseconds);
-
-                var mtHours = mtDate.getHours();
-                if (mtHours <= selectedTimeRun) {
-                  var goal_t1 = tr.querySelector("#goal_t1_" + D._MATCH_ID);
-                  var upodds_t = tr.querySelector("#upodds_t_" + D._MATCH_ID);
-                  var downodds_t = tr.querySelector("#downodds_t_" + D._MATCH_ID);
-
-                  updateElement(odd.OU.odds.u, upodds_t);
-                  updateElement(odd.OU.odds.g, goal_t1);
-                  updateElement(odd.OU.odds.d, downodds_t);
-                }
-              }
-            }
-
-            function updateElement(newValue, element) {
-              element.innerHTML = newValue;
-            }
+          if (selectedTimeRun !== "") {
+            updateAHOdds(tr, D, oddAH_ft);
+            updateOUOdds(tr, D, oddOU_ft);
           }
-
-
         } catch (error) {
           console.error("Error parsing JSON:", error);
         }
       }
     }
+
+    // Hàm cập nhật AH odds
+    const updateAHOdds = (tr, D, oddAH_ft) => {
+      if (oddAH_ft && oddAH_ft.length > 0) {
+
+        oddAH_ft.sort((a, b) => Math.abs(hourse(a.AH.mt) - selectedTimeRun) - Math.abs(hourse(b.AH.mt) - selectedTimeRun));
+        const nearestOdd = oddAH_ft.find(odd => hourse(odd.AH.mt) <= selectedTimeRun);
+
+        if (nearestOdd) {
+          const upodds = tr.querySelector("#upodds_" + D._MATCH_ID);
+          const downodds = tr.querySelector("#downodds_" + D._MATCH_ID);
+          const goal = tr.querySelector("#goal_" + D._MATCH_ID);
+          const goalLive = tr.querySelector("#goalLive_" + D._MATCH_ID);
+
+          updateElement(nearestOdd.AH.odds.u, upodds);
+          updateElement(nearestOdd.AH.odds.g < 0 ? -nearestOdd.AH.odds.g : -nearestOdd.AH.odds.g, goal);
+          updateElement(nearestOdd.AH.odds.g < 0 ? nearestOdd.AH.odds.g : nearestOdd.AH.odds.g, goalLive);
+          updateElement(nearestOdd.AH.odds.d, downodds);
+        }
+      }
+    }
+
+    // Hàm cập nhật OU odds
+    const updateOUOdds = (tr, D, oddOU_ft) => {
+      if (oddOU_ft && oddOU_ft.length > 0) {
+        oddOU_ft.sort((a, b) => Math.abs(hourse(a.OU.mt) - selectedTimeRun) - Math.abs(hourse(b.OU.mt) - selectedTimeRun));
+        const nearestOdd = oddOU_ft.find(odd => hourse(odd.OU.mt) <= selectedTimeRun);
+
+        if (nearestOdd) {
+          const goal_t1 = tr.querySelector("#goal_t1_" + D._MATCH_ID);
+          const upodds_t = tr.querySelector("#upodds_t_" + D._MATCH_ID);
+          const downodds_t = tr.querySelector("#downodds_t_" + D._MATCH_ID);
+
+          updateElement(nearestOdd.OU.odds.u, upodds_t);
+          updateElement(nearestOdd.OU.odds.g, goal_t1);
+          updateElement(nearestOdd.OU.odds.d, downodds_t);
+        }
+      }
+    }
+
+    const hourse = (time) => {
+      var mtInSeconds = time;
+      var mtInMilliseconds = mtInSeconds * 1000;
+      var mtDate = new Date(mtInMilliseconds);
+
+      var mtHours = mtDate.getHours();
+      return mtHours;
+    }
+
+
+    // Hàm cập nhật phần tử HTML
+    const updateElement = (newValue, element) => {
+      element.innerHTML = newValue;
+    }
+
     get3In1();
   }, [threeIn1, selectedTimeRun]);
 

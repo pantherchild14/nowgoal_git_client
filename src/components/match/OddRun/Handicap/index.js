@@ -1,31 +1,27 @@
+import { UTCtoLocalTime, convertTime } from "../../../../helpers";
+
 const HandicapRun = (props) => {
 
-    const { parsedOdds } = props;
+    const { parsedOdds, parsedOddsRun } = props;
 
     if (!parsedOdds || !parsedOdds['AH']) {
         return null;
     }
 
+
     try {
-        const JsonData = (parsedOdds['AH']);
+        let JsonData;
+        if (parsedOddsRun && parsedOddsRun['AH']) {
+            JsonData = (parsedOddsRun['AH']);
+        } else {
+            JsonData = (parsedOdds['AH']);
+        }
+
+
         const style = {
             caothu: {
                 height: '460px',
             },
-        };
-
-        const convertTime = (time) => {
-            const timestamp = time * 1000;
-            const dt_object = new Date(timestamp);
-
-            const year = dt_object.getFullYear();
-            const month = (dt_object.getMonth() + 1).toString().padStart(2, '0');
-            const day = dt_object.getDate().toString().padStart(2, '0');
-            const hours = dt_object.getHours().toString().padStart(2, '0');
-            const minutes = dt_object.getMinutes().toString().padStart(2, '0');
-
-            const formattedTime = `${day}-${month} ${hours}:${minutes}`;
-            return formattedTime;
         };
 
         return (
