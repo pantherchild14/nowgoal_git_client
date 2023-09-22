@@ -10,7 +10,7 @@ import * as actions from "../../../../redux/actions";
 import { scheduleState$, oddsallState$, statusrtState$ } from "../../../../redux/selectors";
 import DataTable from "./DataTable";
 import DateSelector from "./Functions/DateSelector";
-import { convertTime, convertTimeSelectOddRun } from "../../../../helpers";
+import { convertTime, convertTimeSelectOddRun, formatNumber } from "../../../../helpers";
 
 const CaoThu = () => {
   const dispatch = useDispatch();
@@ -88,14 +88,14 @@ const CaoThu = () => {
         var upodds_t = tr.querySelector("#upodds_t_" + D.MATCH_ID);
         var downodds_t = tr.querySelector("#downodds_t_" + D.MATCH_ID);
 
-        updateElement(DHandicapJson.l.u, upodds);
-        updateElement(DHandicapJson.l.g < 0 ? -DHandicapJson.l.g : -DHandicapJson.l.g, goal);
-        updateElement(DHandicapJson.l.g < 0 ? DHandicapJson.l.g : DHandicapJson.l.g, goalLive);
-        updateElement(DHandicapJson.l.d, downodds);
+        updateElement(formatNumber(DHandicapJson.l.u), upodds);
+        updateElement(formatNumber(DHandicapJson.l.g) < 0 ? formatNumber(-DHandicapJson.l.g) : formatNumber(-DHandicapJson.l.g), goal);
+        updateElement(formatNumber(DHandicapJson.l.g) < 0 ? formatNumber(DHandicapJson.l.g) : formatNumber(DHandicapJson.l.g), goalLive);
+        updateElement(formatNumber(DHandicapJson.l.d), downodds);
 
-        updateElement(DOuJson.l.u, upodds_t);
-        updateElement(DOuJson.l.g, goal_t1);
-        updateElement(DOuJson.l.d, downodds_t);
+        updateElement(formatNumber(DOuJson.l.u), upodds_t);
+        updateElement(formatNumber(DOuJson.l.g), goal_t1);
+        updateElement(formatNumber(DOuJson.l.d), downodds_t);
 
         function updateElement(newValue, element) {
           element.textContent = newValue;
@@ -148,10 +148,10 @@ const CaoThu = () => {
           const goal = tr.querySelector("#goal_" + D._MATCH_ID);
           const goalLive = tr.querySelector("#goalLive_" + D._MATCH_ID);
 
-          updateElement(nearestOdd.AH.odds.u, upodds);
-          updateElement(nearestOdd.AH.odds.g < 0 ? -nearestOdd.AH.odds.g : -nearestOdd.AH.odds.g, goal);
-          updateElement(nearestOdd.AH.odds.g < 0 ? nearestOdd.AH.odds.g : nearestOdd.AH.odds.g, goalLive);
-          updateElement(nearestOdd.AH.odds.d, downodds);
+          updateElement(formatNumber(nearestOdd.AH.odds.u), upodds);
+          updateElement(formatNumber(nearestOdd.AH.odds.g) < 0 ? formatNumber(-nearestOdd.AH.odds.g) : formatNumber(-nearestOdd.AH.odds.g), goal);
+          updateElement(formatNumber(nearestOdd.AH.odds.g) < 0 ? formatNumber(nearestOdd.AH.odds.g) : formatNumber(nearestOdd.AH.odds.g), goalLive);
+          updateElement(formatNumber(nearestOdd.AH.odds.d), downodds);
         }
       }
     }
@@ -167,9 +167,9 @@ const CaoThu = () => {
           const upodds_t = tr.querySelector("#upodds_t_" + D._MATCH_ID);
           const downodds_t = tr.querySelector("#downodds_t_" + D._MATCH_ID);
 
-          updateElement(nearestOdd.OU.odds.u, upodds_t);
-          updateElement(nearestOdd.OU.odds.g, goal_t1);
-          updateElement(nearestOdd.OU.odds.d, downodds_t);
+          updateElement(formatNumber(nearestOdd.OU.odds.u), upodds_t);
+          updateElement(formatNumber(nearestOdd.OU.odds.g), goal_t1);
+          updateElement(formatNumber(nearestOdd.OU.odds.d), downodds_t);
         }
       }
     }

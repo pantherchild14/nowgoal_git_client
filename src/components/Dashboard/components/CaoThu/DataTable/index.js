@@ -8,7 +8,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import * as actions from "../../../../../redux/actions";
 import { oddDetailHistoryState$ } from "../../../../../redux/selectors";
 import OddDetailModal from "./OddDetailModal";
-import { UTCtoLocalTime } from "../../../../../helpers";
+import { UTCtoLocalTime, formatNumber } from "../../../../../helpers";
 import MatchPage from "../../../../../pages/MatchPage";
 
 const DataTable = (props) => {
@@ -268,6 +268,8 @@ const DataTable = (props) => {
         }
     };
 
+
+
     const parsedOdds = oddsKeys.reduce((acc, key) => {
         acc[key] = parseJSON(odds.$[key]);
         return acc;
@@ -288,41 +290,41 @@ const DataTable = (props) => {
             <td className="td-league">{e.LEAGUE_NAME}</td>
             <td className="td-match">
                 <div>
-                    <p id={`home_${e.MATCH_ID}`} className={(ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g : -ODDS_AH_FT.l.g ? `me_color` : "")} >{e.HOME_NAME}</p>
-                    <p id={`away_${e.MATCH_ID}`} className={(ODDS_AH_FT.l.g < 0 ? ODDS_AH_FT.l.g ? `me_color` : "" : ODDS_AH_FT.l.g)} >{e.AWAY_NAME}</p>
+                    <p id={`home_${e.MATCH_ID}`} className={(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(-ODDS_AH_FT.l.g) : formatNumber(-ODDS_AH_FT.l.g) ? `me_color` : "")} >{e.HOME_NAME}</p>
+                    <p id={`away_${e.MATCH_ID}`} className={(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(ODDS_AH_FT.l.g) ? `me_color` : "" : formatNumber(ODDS_AH_FT.l.g))} >{e.AWAY_NAME}</p>
                 </div>
             </td>
             <td className="td-handicap-live">
                 <div className="tr__row">
                     <div className="tr__col handicap.instantHandicap" id={`goal_${e.MATCH_ID}`}>
                         <span>
-                            {(ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g : -ODDS_AH_FT.l.g)}
+                            {(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(-ODDS_AH_FT.l.g) : formatNumber(-ODDS_AH_FT.l.g))}
                         </span>
                     </div>
 
                     <div className="tr__col handicap.instantHandicap" id={`goalLive_${e.MATCH_ID}`}>
                         <span>
-                            {(ODDS_AH_FT.l.g < 0 ? ODDS_AH_FT.l.g : ODDS_AH_FT.l.g)}
+                            {(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(ODDS_AH_FT.l.g) : formatNumber(ODDS_AH_FT.l.g))}
                         </span>
                     </div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col handicap.instantHome" id={`upodds_${e.MATCH_ID}`}>{ODDS_AH_FT.l.u}</div>
-                    <div className="tr__col handicap.instantAway" id={`downodds_${e.MATCH_ID}`}>{ODDS_AH_FT.l.d}</div>
+                    <div className="tr__col handicap.instantHome" id={`upodds_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.l.u)}</div>
+                    <div className="tr__col handicap.instantAway" id={`downodds_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.l.d)}</div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col handicap.initialHandicap" id={`goalEarly_${e.MATCH_ID}`}><span>{ODDS_AH_FT.f.g < 0 ? -ODDS_AH_FT.f.g : -ODDS_AH_FT.f.g}</span></div>
-                    <div className="tr__col handicap.initialHandicap" id={`goalEarlyLive_${e.MATCH_ID}`}><span>{ODDS_AH_FT.f.g < 0 ? ODDS_AH_FT.f.g : ODDS_AH_FT.f.g}</span></div>
+                    <div className="tr__col handicap.initialHandicap" id={`goalEarly_${e.MATCH_ID}`}><span>{formatNumber(ODDS_AH_FT.f.g) < 0 ? formatNumber(-ODDS_AH_FT.f.g) : formatNumber(-ODDS_AH_FT.f.g)}</span></div>
+                    <div className="tr__col handicap.initialHandicap" id={`goalEarlyLive_${e.MATCH_ID}`}><span>{formatNumber(ODDS_AH_FT.f.g) < 0 ? formatNumber(ODDS_AH_FT.f.g) : formatNumber(ODDS_AH_FT.f.g)}</span></div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col handicap.initialHome" id={`upoddsEarly_${e.MATCH_ID}`}>{ODDS_AH_FT.f.u}</div>
-                    <div className="tr__col handicap.initialAway" id={`downoddsEarly_${e.MATCH_ID}`}>{ODDS_AH_FT.f.d}</div>
+                    <div className="tr__col handicap.initialHome" id={`upoddsEarly_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.f.u)}</div>
+                    <div className="tr__col handicap.initialAway" id={`downoddsEarly_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.f.d)}</div>
                 </div>
             </td>
 
@@ -349,24 +351,24 @@ const DataTable = (props) => {
             </td>
             <td>
                 <div className="tr__row_remove">
-                    <div className="tr__col overUnder.instantHandicap" id={`goal_t1_${e.MATCH_ID}`}>{ODDS_OU_FT.l.g}</div>
+                    <div className="tr__col overUnder.instantHandicap" id={`goal_t1_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.l.g)}</div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col overUnder.instantOver" id={`upodds_t_${e.MATCH_ID}`}>{ODDS_OU_FT.l.u}</div>
-                    <div className="tr__col overUnder.instantUnder" id={`downodds_t_${e.MATCH_ID}`}>{ODDS_OU_FT.l.d}</div>
+                    <div className="tr__col overUnder.instantOver" id={`upodds_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.l.u)}</div>
+                    <div className="tr__col overUnder.instantUnder" id={`downodds_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.l.d)}</div>
                 </div>
             </td>
             <td>
                 <div className="tr__row_remove">
-                    <div className="tr__col overUnder.initialHandicap" id={`goalEarly_t1_${e.MATCH_ID}`}>{ODDS_OU_FT.f.g}</div>
+                    <div className="tr__col overUnder.initialHandicap" id={`goalEarly_t1_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.f.g)}</div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col overUnder.initialOver" id={`upoddsEarly_t_${e.MATCH_ID}`}>{ODDS_OU_FT.f.u}</div>
-                    <div className="tr__col overUnder.initialUnder" id={`downoddsEarly_t_${e.MATCH_ID}`}>{ODDS_OU_FT.f.d}</div>
+                    <div className="tr__col overUnder.initialOver" id={`upoddsEarly_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.f.u)}</div>
+                    <div className="tr__col overUnder.initialUnder" id={`downoddsEarly_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.f.d)}</div>
                 </div>
             </td>
 

@@ -10,6 +10,7 @@ import * as actions from "../../../../redux/actions";
 import { scheduleState$, oddsallState$, statusrtState$ } from "../../../../redux/selectors";
 import DateSelector from "./Functions/DateSelector";
 import DataTable from "./DataTable";
+import { formatNumber } from "../../../../helpers";
 
 const ToolTaiXiu2 = () => {
     const dispatch = useDispatch();
@@ -72,20 +73,20 @@ const ToolTaiXiu2 = () => {
                 var upodds_t = tr.querySelector("#upodds_t_" + D.MATCH_ID);
                 var downodds_t = tr.querySelector("#downodds_t_" + D.MATCH_ID);
 
-                updateElement(DHandicapJson.l.u, upodds);
+                updateElement(formatNumber(DHandicapJson.l.u), upodds);
 
-                updateElemenAttribute(DHandicapJson.l.g < 0 ? -DHandicapJson.l.g : -DHandicapJson.l.g, goal, "odd_goal")
-                updateElemenAttribute(DHandicapJson.l.g < 0 ? DHandicapJson.l.g : DHandicapJson.l.g, goalLive, "odd_goallive")
+                updateElemenAttribute(formatNumber(DHandicapJson.l.g) < 0 ? formatNumber(-DHandicapJson.l.g) : formatNumber(-DHandicapJson.l.g), goal, "odd_goal")
+                updateElemenAttribute(formatNumber(DHandicapJson.l.g) < 0 ? formatNumber(DHandicapJson.l.g) : formatNumber(DHandicapJson.l.g), goalLive, "odd_goallive")
 
 
-                updateElement(DHandicapJson.l.g < 0 ? "" : DHandicapJson.l.g, goal);
-                updateElement(DHandicapJson.l.g < 0 ? -DHandicapJson.l.g : "", goalLive);
+                updateElement(formatNumber(DHandicapJson.l.g) < 0 ? "" : formatNumber(DHandicapJson.l.g), goal);
+                updateElement(formatNumber(DHandicapJson.l.g) < 0 ? formatNumber(-DHandicapJson.l.g) : "", goalLive);
 
-                updateElement(DHandicapJson.l.d, downodds);
+                updateElement(formatNumber(DHandicapJson.l.d), downodds);
 
-                updateElement(DOuJson.l.u, upodds_t);
-                updateElement(DOuJson.l.g, goal_t1);
-                updateElement(DOuJson.l.d, downodds_t);
+                updateElement(formatNumber(DOuJson.l.u), upodds_t);
+                updateElement(formatNumber(DOuJson.l.g), goal_t1);
+                updateElement(formatNumber(DOuJson.l.d), downodds_t);
 
                 function updateElement(newValue, element) {
                     element.textContent = newValue;
@@ -128,13 +129,13 @@ const ToolTaiXiu2 = () => {
 
                 if (oddsValue && oddsValue.trim() !== "") {
                     const old = JSON.parse(oddsValue);
-                    updateElement(D.HomeHandicap, old.HomeHandicap, "upoddsRun_", upodds);
-                    updateElement(D.Handicap < 0 ? -D.Handicap : D.Handicap, old.Handicap < 0 ? -old.Handicap : old.Handicap, "goalRun_", goal);
-                    updateElement(D.AwayHandicap, old.AwayHandicap, "downoddsRun_", downodds);
+                    updateElement(formatNumber(D.HomeHandicap), formatNumber(old.HomeHandicap), "upoddsRun_", upodds);
+                    updateElement(formatNumber(D.Handicap) < 0 ? formatNumber(-D.Handicap) : formatNumber(D.Handicap), formatNumber(old.Handicap) < 0 ? formatNumber(-old.Handicap) : formatNumber(old.Handicap), "goalRun_", goal);
+                    updateElement(formatNumber(D.AwayHandicap), formatNumber(old.AwayHandicap), "downoddsRun_", downodds);
 
-                    updateElement(D.Over, old.Over, "upoddsRun_t_", upodds_t);
-                    updateElement(D.Goals, old.Goals, "goalRun_t1_", goal_t1);
-                    updateElement(D.Under, old.Under, "downoddsRun_t_", downodds_t);
+                    updateElement(formatNumber(D.Over), formatNumber(old.Over), "upoddsRun_t_", upodds_t);
+                    updateElement(formatNumber(D.Goals), formatNumber(old.Goals), "goalRun_t1_", goal_t1);
+                    updateElement(formatNumber(D.Under), formatNumber(old.Under), "downoddsRun_t_", downodds_t);
                 }
                 function updateElement(newValue, oldValue, elementPrefix, element) {
                     if (parseFloat(oldValue) !== parseFloat(newValue)) {

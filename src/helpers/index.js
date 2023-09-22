@@ -7,6 +7,9 @@ export const parseJSON = (jsonString) => {
     }
 };
 
+export const formatNumber = (number) => {
+    return typeof number === 'number' ? number.toFixed(2) : parseFloat(number).toFixed(2)
+}
 
 export const UTCtoLocalTime = (utcTimeString, timeZoneOffset) => {
     const utcDate = new Date(utcTimeString);

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 
 import Link from '@mui/material/Link';
 
-import { UTCtoLocalTime } from "../../../../../helpers";
+import { UTCtoLocalTime, formatNumber } from "../../../../../helpers";
 import { INIT_STATE } from "../../../../../constant";
 
 
@@ -364,7 +364,7 @@ const DataTable = (props) => {
             data-s={scheduleRT?.STATUS ? scheduleRT?.STATUS : e?.STATUS}
             data-t={JSON.stringify(scheduleRT) ? JSON.stringify(scheduleRT) : ""}
             odds_rt=""
-            team={(ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g ? `meAway_${e.MATCH_ID}` : "" : -ODDS_AH_FT.l.g ? `meHome_${e.MATCH_ID}` : "")}
+            team={(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(-ODDS_AH_FT.l.g) ? `meAway_${e.MATCH_ID}` : "" : formatNumber(-ODDS_AH_FT.l.g) ? `meHome_${e.MATCH_ID}` : "")}
             tip={tipOU ? "tip" : ""}
             tp={tipOU}
         >
@@ -387,8 +387,8 @@ const DataTable = (props) => {
             <td className="td-league">{e.LEAGUE_SHORT_NAME}</td>
             <td className="td-match">
                 <div>
-                    <p id={`home_${e.MATCH_ID}`} className={(ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g : -ODDS_AH_FT.l.g ? `me_color` : "")} >{e.HOME_NAME}</p>
-                    <p id={`away_${e.MATCH_ID}`} className={(ODDS_AH_FT.l.g < 0 ? ODDS_AH_FT.l.g ? `me_color` : "" : ODDS_AH_FT.l.g)} >{e.AWAY_NAME}</p>
+                    <p id={`home_${e.MATCH_ID}`} className={(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(-ODDS_AH_FT.l.g) : formatNumber(-ODDS_AH_FT.l.g) ? `me_color` : "")} >{e.HOME_NAME}</p>
+                    <p id={`away_${e.MATCH_ID}`} className={(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(ODDS_AH_FT.l.g) ? `me_color` : "" : formatNumber(ODDS_AH_FT.l.g))} >{e.AWAY_NAME}</p>
                 </div>
             </td>
             <td width="5%" style={{ textAlign: 'center' }} className="td-score">
@@ -417,12 +417,12 @@ const DataTable = (props) => {
                     {ODDS_AH_FT.l.g < 0 ? (
                         " ") : (
                         <React.Fragment>
-                            <div className="tr__col handicap.instantHandicap" odd_goal={(ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g : -ODDS_AH_FT.l.g)} odd id={`goal_${e.MATCH_ID}`}>
+                            <div className="tr__col handicap.instantHandicap" odd_goal={(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(-ODDS_AH_FT.l.g) : formatNumber(-ODDS_AH_FT.l.g))} odd id={`goal_${e.MATCH_ID}`}>
                                 <span>
-                                    {ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g : ODDS_AH_FT.l.g}
+                                    {formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(-ODDS_AH_FT.l.g) : formatNumber(ODDS_AH_FT.l.g)}
                                 </span>
                             </div>
-                            <div className="tr__col handicap.instantHandicap" odd_goalLive={(ODDS_AH_FT.l.g < 0 ? ODDS_AH_FT.l.g : ODDS_AH_FT.l.g)} id={`goalLive_${e.MATCH_ID}`}>
+                            <div className="tr__col handicap.instantHandicap" odd_goalLive={(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(ODDS_AH_FT.l.g) : formatNumber(ODDS_AH_FT.l.g))} id={`goalLive_${e.MATCH_ID}`}>
                                 <span></span>
                             </div>
                         </React.Fragment>
@@ -430,12 +430,12 @@ const DataTable = (props) => {
 
                     {ODDS_AH_FT.l.g < 0 ? (
                         <React.Fragment>
-                            <div className="tr__col handicap.instantHandicap" odd_goal={(ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g : -ODDS_AH_FT.l.g)} id={`goal_${e.MATCH_ID}`}>
+                            <div className="tr__col handicap.instantHandicap" odd_goal={(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(-ODDS_AH_FT.l.g) : formatNumber(-ODDS_AH_FT.l.g))} id={`goal_${e.MATCH_ID}`}>
                                 <span></span>
                             </div>
-                            <div className="tr__col handicap.instantHandicap" odd_goalLive={(ODDS_AH_FT.l.g < 0 ? ODDS_AH_FT.l.g : ODDS_AH_FT.l.g)} id={`goalLive_${e.MATCH_ID}`}>
+                            <div className="tr__col handicap.instantHandicap" odd_goalLive={(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(ODDS_AH_FT.l.g) : formatNumber(ODDS_AH_FT.l.g))} id={`goalLive_${e.MATCH_ID}`}>
                                 <span>
-                                    {ODDS_AH_FT.l.g < 0 ? -ODDS_AH_FT.l.g : ODDS_AH_FT.l.g}
+                                    {formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(-ODDS_AH_FT.l.g) : formatNumber(ODDS_AH_FT.l.g)}
                                 </span>
                             </div>
                         </React.Fragment>
@@ -462,24 +462,24 @@ const DataTable = (props) => {
                     {ODDS_AH_FT.f.g < 0 ? (
                         " ") : (
                         <React.Fragment>
-                            <div className="tr__col handicap.instantHandicap" odd_goal={ODDS_AH_FT.f.g < 0 ? -ODDS_AH_FT.f.g : -ODDS_AH_FT.f.g} id={`goalEarly_${e.MATCH_ID}`}>
+                            <div className="tr__col handicap.instantHandicap" odd_goal={formatNumber(ODDS_AH_FT.f.g) < 0 ? formatNumber(-ODDS_AH_FT.f.g) : formatNumber(-ODDS_AH_FT.f.g)} id={`goalEarly_${e.MATCH_ID}`}>
                                 <span>
-                                    {ODDS_AH_FT.f.g < 0 ? -ODDS_AH_FT.f.g : ODDS_AH_FT.f.g}
+                                    {formatNumber(ODDS_AH_FT.f.g) < 0 ? formatNumber(-ODDS_AH_FT.f.g) : formatNumber(ODDS_AH_FT.f.g)}
                                 </span>
                             </div>
-                            <div className="tr__col handicap.instantHandicap" odd_goalLive={ODDS_AH_FT.f.g < 0 ? ODDS_AH_FT.f.g : ODDS_AH_FT.f.g} id={`goalEarlyLive_${e.MATCH_ID}`}>
+                            <div className="tr__col handicap.instantHandicap" odd_goalLive={formatNumber(ODDS_AH_FT.f.g) < 0 ? formatNumber(ODDS_AH_FT.f.g) : formatNumber(ODDS_AH_FT.f.g)} id={`goalEarlyLive_${e.MATCH_ID}`}>
                                 <span></span>
                             </div>
                         </React.Fragment>
                     )}
                     {ODDS_AH_FT.f.g < 0 ? (
                         <React.Fragment>
-                            <div className="tr__col handicap.instantHandicap" odd_goal={ODDS_AH_FT.f.g < 0 ? -ODDS_AH_FT.f.g : -ODDS_AH_FT.f.g} id={`goalEarly_${e.MATCH_ID}`}>
+                            <div className="tr__col handicap.instantHandicap" odd_goal={formatNumber(ODDS_AH_FT.f.g) < 0 ? formatNumber(-ODDS_AH_FT.f.g) : formatNumber(-ODDS_AH_FT.f.g)} id={`goalEarly_${e.MATCH_ID}`}>
                                 <span></span>
                             </div>
-                            <div className="tr__col handicap.instantHandicap" odd_goalLive={ODDS_AH_FT.f.g < 0 ? ODDS_AH_FT.f.g : ODDS_AH_FT.f.g} id={`goalEarlyLive_${e.MATCH_ID}`}>
+                            <div className="tr__col handicap.instantHandicap" odd_goalLive={formatNumber(ODDS_AH_FT.f.g) < 0 ? formatNumber(ODDS_AH_FT.f.g) : formatNumber(ODDS_AH_FT.f.g)} id={`goalEarlyLive_${e.MATCH_ID}`}>
                                 <span>
-                                    {ODDS_AH_FT.f.g < 0 ? -ODDS_AH_FT.f.g : ODDS_AH_FT.f.g}
+                                    {formatNumber(ODDS_AH_FT.f.g) < 0 ? formatNumber(-ODDS_AH_FT.f.g) : formatNumber(ODDS_AH_FT.f.g)}
                                 </span>
                             </div>
                         </React.Fragment>
@@ -490,8 +490,8 @@ const DataTable = (props) => {
             </td>
             <td>
                 <div className="tr__row" >
-                    <div className="tr__col handicap.initialHome" id={`upoddsEarly_${e.MATCH_ID}`}>{ODDS_AH_FT.f.u}</div>
-                    <div className="tr__col handicap.initialAway" id={`downoddsEarly_${e.MATCH_ID}`}>{ODDS_AH_FT.f.d}</div>
+                    <div className="tr__col handicap.initialHome" id={`upoddsEarly_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.f.u)}</div>
+                    <div className="tr__col handicap.initialAway" id={`downoddsEarly_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.f.d)}</div>
                 </div>
             </td>
 
@@ -513,24 +513,24 @@ const DataTable = (props) => {
 
             <td>
                 <div className="tr__row_remove">
-                    <div className="tr__col overUnder.instantHandicap" id={`goal_t1_${e.MATCH_ID}`}>{ODDS_OU_FT.l.g}</div>
+                    <div className="tr__col overUnder.instantHandicap" id={`goal_t1_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.l.g)}</div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col overUnder.instantOver" id={`upodds_t_${e.MATCH_ID}`}>{ODDS_OU_FT.l.u}</div>
-                    <div className="tr__col overUnder.instantUnder" id={`downodds_t_${e.MATCH_ID}`}>{ODDS_OU_FT.l.d}</div>
+                    <div className="tr__col overUnder.instantOver" id={`upodds_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.l.u)}</div>
+                    <div className="tr__col overUnder.instantUnder" id={`downodds_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.l.d)}</div>
                 </div>
             </td>
             <td>
                 <div className="tr__row_remove" >
-                    <div className="tr__col overUnder.initialHandicap" id={`goalEarly_t1_${e.MATCH_ID}`}>{ODDS_OU_FT.f.g}</div>
+                    <div className="tr__col overUnder.initialHandicap" id={`goalEarly_t1_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.f.g)}</div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col overUnder.initialOver" id={`upoddsEarly_t_${e.MATCH_ID}`}>{ODDS_OU_FT.f.u}</div>
-                    <div className="tr__col overUnder.initialUnder" id={`downoddsEarly_t_${e.MATCH_ID}`}>{ODDS_OU_FT.f.d}</div>
+                    <div className="tr__col overUnder.initialOver" id={`upoddsEarly_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.f.u)}</div>
+                    <div className="tr__col overUnder.initialUnder" id={`downoddsEarly_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.f.d)}</div>
                 </div>
             </td>
 
@@ -561,18 +561,18 @@ const DataTable = (props) => {
                     <div className="tr__col handicap.instantHandicap" id={`goalRun_${e.MATCH_ID}`}>{ODDS_AH_FT.r.g}</div>
                 </div> */}
                 <div className="tr__row">
-                    {ODDS_AH_FT.l.g < 0 ? (
+                    {formatNumber(ODDS_AH_FT.l.g) < 0 ? (
                         " ") : (
                         <React.Fragment>
-                            <div className="tr__col handicap.instantHandicap" odd_over={ODDS_AH_FT.r.g} id={`goalRun_${e.MATCH_ID}`}>{ODDS_AH_FT.r.g < 0 ? -ODDS_AH_FT.r.g : ODDS_AH_FT.r.g}</div>
+                            <div className="tr__col handicap.instantHandicap" odd_over={formatNumber(ODDS_AH_FT.r.g)} id={`goalRun_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.r.g) < 0 ? formatNumber(-ODDS_AH_FT.r.g) : formatNumber(ODDS_AH_FT.r.g)}</div>
                             <div className="tr__col handicap.instantHandicap" id={`goalRunDemo_${e.MATCH_ID}`}></div>
                         </React.Fragment>
                     )}
 
-                    {ODDS_AH_FT.l.g < 0 ? (
+                    {formatNumber(ODDS_AH_FT.l.g) < 0 ? (
                         <React.Fragment>
                             <div className="tr__col handicap.instantHandicap" id={`goalRunDemo_${e.MATCH_ID}`}></div>
-                            <div className="tr__col handicap.instantHandicap" id={`goalRun_${e.MATCH_ID}`}>{ODDS_AH_FT.r.g < 0 ? -ODDS_AH_FT.r.g : ODDS_AH_FT.r.g}</div>
+                            <div className="tr__col handicap.instantHandicap" id={`goalRun_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.r.g) < 0 ? formatNumber(-ODDS_AH_FT.r.g) : formatNumber(ODDS_AH_FT.r.g)}</div>
                         </React.Fragment>
                     ) : (
                         ""
@@ -581,8 +581,8 @@ const DataTable = (props) => {
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col handicap.instantHome" id={`upoddsRun_${e.MATCH_ID}`}>{ODDS_AH_FT.r.u}</div>
-                    <div className="tr__col handicap.instantAway" id={`downoddsRun_${e.MATCH_ID}`}>{ODDS_AH_FT.r.d}</div>
+                    <div className="tr__col handicap.instantHome" id={`upoddsRun_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.r.u)}</div>
+                    <div className="tr__col handicap.instantAway" id={`downoddsRun_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.r.d)}</div>
                 </div>
             </td>
 
@@ -590,13 +590,13 @@ const DataTable = (props) => {
 
             <td>
                 <div className="tr__row_remove">
-                    <div className="tr__col overUnder.instantHandicap" id={`goalRun_t1_${e.MATCH_ID}`}>{ODDS_OU_FT.r.g}</div>
+                    <div className="tr__col overUnder.instantHandicap" id={`goalRun_t1_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.r.g)}</div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col overUnder.instantOver" id={`upoddsRun_t_${e.MATCH_ID}`}>{ODDS_OU_FT.r.u}</div>
-                    <div className="tr__col overUnder.instantUnder" id={`downoddsRun_t_${e.MATCH_ID}`}>{ODDS_OU_FT.r.d}</div>
+                    <div className="tr__col overUnder.instantOver" id={`upoddsRun_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.r.u)}</div>
+                    <div className="tr__col overUnder.instantUnder" id={`downoddsRun_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.r.d)}</div>
                 </div>
             </td>
 
