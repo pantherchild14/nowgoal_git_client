@@ -89,12 +89,12 @@ const CaoThu = () => {
         var downodds_t = tr.querySelector("#downodds_t_" + D.MATCH_ID);
 
         updateElement(formatNumber(DHandicapJson.l.u), upodds);
-        updateElement(formatNumber(DHandicapJson.l.g) < 0 ? formatNumber(-DHandicapJson.l.g) : formatNumber(-DHandicapJson.l.g), goal);
-        updateElement(formatNumber(DHandicapJson.l.g) < 0 ? formatNumber(DHandicapJson.l.g) : formatNumber(DHandicapJson.l.g), goalLive);
+        updateElement((DHandicapJson.l.g) < 0 ? (-DHandicapJson.l.g) : (-DHandicapJson.l.g), goal);
+        updateElement((DHandicapJson.l.g) < 0 ? (DHandicapJson.l.g) : (DHandicapJson.l.g), goalLive);
         updateElement(formatNumber(DHandicapJson.l.d), downodds);
 
         updateElement(formatNumber(DOuJson.l.u), upodds_t);
-        updateElement(formatNumber(DOuJson.l.g), goal_t1);
+        updateElement((DOuJson.l.g), goal_t1);
         updateElement(formatNumber(DOuJson.l.d), downodds_t);
 
         function updateElement(newValue, element) {
@@ -149,8 +149,8 @@ const CaoThu = () => {
           const goalLive = tr.querySelector("#goalLive_" + D._MATCH_ID);
 
           updateElement(formatNumber(nearestOdd.AH.odds.u), upodds);
-          updateElement(formatNumber(nearestOdd.AH.odds.g) < 0 ? formatNumber(-nearestOdd.AH.odds.g) : formatNumber(-nearestOdd.AH.odds.g), goal);
-          updateElement(formatNumber(nearestOdd.AH.odds.g) < 0 ? formatNumber(nearestOdd.AH.odds.g) : formatNumber(nearestOdd.AH.odds.g), goalLive);
+          updateElement((nearestOdd.AH.odds.g) < 0 ? (-nearestOdd.AH.odds.g) : (-nearestOdd.AH.odds.g), goal);
+          updateElement((nearestOdd.AH.odds.g) < 0 ? (nearestOdd.AH.odds.g) : (nearestOdd.AH.odds.g), goalLive);
           updateElement(formatNumber(nearestOdd.AH.odds.d), downodds);
         }
       }
@@ -168,7 +168,7 @@ const CaoThu = () => {
           const downodds_t = tr.querySelector("#downodds_t_" + D._MATCH_ID);
 
           updateElement(formatNumber(nearestOdd.OU.odds.u), upodds_t);
-          updateElement(formatNumber(nearestOdd.OU.odds.g), goal_t1);
+          updateElement((nearestOdd.OU.odds.g), goal_t1);
           updateElement(formatNumber(nearestOdd.OU.odds.d), downodds_t);
         }
       }
@@ -417,23 +417,17 @@ const TableContent = ({ schedule, odds, selectedHandicap, selectedOddHandicap, s
             const scheduleItemDataRT = statusRedux.data?.SCHEDULE_DATA?.SCHEDULE_ITEM;
             const matchedScheduleItemRT = scheduleItemDataRT?.find(item => item.$?.MATCH_ID === e.MATCH_ID);
 
-            const bdCellInsertUpOdd = document.getElementById("insertUpOdd_" + e.MATCH_ID);
-            const bdCellInsertGoal = document.getElementById("insertGoal_" + e.MATCH_ID);
-            const bdCellInsertGoal_t1 = document.getElementById("insertGoal_t1_" + e.MATCH_ID);
-            const bdCellInsertUpodds_t = document.getElementById("insertUpodds_t_" + e.MATCH_ID);
-            const bdValueInsertUpOdd = bdCellInsertUpOdd?.textContent;
-            const bdValueInsertGoal = bdCellInsertGoal?.textContent;
-            const bdValueInsertGoal_t1 = bdCellInsertGoal_t1?.textContent;
-            const bdValueInsertUpodds_t = bdCellInsertUpodds_t?.textContent;
-
             if (matchedOddsItem) {
-              if ((!selectedHandicap || (bdValueInsertGoal && parseFloat(bdValueInsertGoal) <= parseFloat(selectedHandicap))) &&
-                (!selectedOddHandicap || (bdValueInsertUpOdd && parseFloat(bdValueInsertUpOdd) <= parseFloat(selectedOddHandicap))) &&
-                (!selectedOver || (bdValueInsertGoal_t1 && parseFloat(bdValueInsertGoal_t1) <= parseFloat(selectedOver))) &&
-                (!selectedOddOver || (bdValueInsertUpodds_t && parseFloat(bdValueInsertUpodds_t) <= parseFloat(selectedOddOver)))) {
-
-                return <DataTable key={e.MATCH_ID} selectedTeamUp={selectedTeamUp} e={e} odds={matchedOddsItem} statusRedux={matchedScheduleItemRT} />;
-              }
+              return <DataTable
+                key={e.MATCH_ID}
+                selectedTeamUp={selectedTeamUp}
+                e={e}
+                odds={matchedOddsItem}
+                statusRedux={matchedScheduleItemRT}
+                selectedHandicap={selectedHandicap}
+                selectedOddHandicap={selectedOddHandicap}
+                selectedOver={selectedOver}
+                selectedOddOver={selectedOddOver} />;
             }
 
             return null;
@@ -446,23 +440,17 @@ const TableContent = ({ schedule, odds, selectedHandicap, selectedOddHandicap, s
             const scheduleItemDataRT = statusRedux.data?.SCHEDULE_DATA?.SCHEDULE_ITEM;
             const matchedScheduleItemRT = scheduleItemDataRT?.find(item => item.$?.MATCH_ID === e.MATCH_ID);
 
-            const bdCellInsertUpOdd = document.getElementById("insertUpOdd_" + e.MATCH_ID);
-            const bdCellInsertGoal = document.getElementById("insertGoal_" + e.MATCH_ID);
-            const bdCellInsertGoal_t1 = document.getElementById("insertGoal_t1_" + e.MATCH_ID);
-            const bdCellInsertUpodds_t = document.getElementById("insertUpodds_t_" + e.MATCH_ID);
-            const bdValueInsertUpOdd = bdCellInsertUpOdd?.textContent;
-            const bdValueInsertGoal = bdCellInsertGoal?.textContent;
-            const bdValueInsertGoal_t1 = bdCellInsertGoal_t1?.textContent;
-            const bdValueInsertUpodds_t = bdCellInsertUpodds_t?.textContent;
-
             if (matchedOddsItem) {
-              if ((!selectedHandicap || (bdValueInsertGoal && parseFloat(bdValueInsertGoal) <= parseFloat(selectedHandicap))) &&
-                (!selectedOddHandicap || (bdValueInsertUpOdd && parseFloat(bdValueInsertUpOdd) <= parseFloat(selectedOddHandicap))) &&
-                (!selectedOver || (bdValueInsertGoal_t1 && parseFloat(bdValueInsertGoal_t1) <= parseFloat(selectedOver))) &&
-                (!selectedOddOver || (bdValueInsertUpodds_t && parseFloat(bdValueInsertUpodds_t) <= parseFloat(selectedOddOver)))) {
-
-                return <DataTable key={e.MATCH_ID} selectedTeamUp={selectedTeamUp} e={e} odds={matchedOddsItem} statusRedux={matchedScheduleItemRT} />;
-              }
+              return <DataTable
+                key={e.MATCH_ID}
+                selectedTeamUp={selectedTeamUp}
+                e={e}
+                odds={matchedOddsItem}
+                statusRedux={matchedScheduleItemRT}
+                selectedHandicap={selectedHandicap}
+                selectedOddHandicap={selectedOddHandicap}
+                selectedOver={selectedOver}
+                selectedOddOver={selectedOddOver} />;
             }
             return null;
           })}

@@ -12,7 +12,15 @@ import { UTCtoLocalTime, formatNumber } from "../../../../../helpers";
 import MatchPage from "../../../../../pages/MatchPage";
 
 const DataTable = (props) => {
-    const { e, odds, statusRedux, selectedTeamUp } = props;
+    const {
+        e,
+        odds,
+        statusRedux,
+        selectedTeamUp,
+        selectedHandicap,
+        selectedOddHandicap,
+        selectedOver,
+        selectedOddOver } = props;
     const dispatch = useDispatch();
     const [tipHandicap, setTipHandicap] = useState("");
     const [tipOU, setTipOU] = useState("");
@@ -48,21 +56,220 @@ const DataTable = (props) => {
         handleOpen();
     };
     useEffect(() => {
+        const getOdds = (trElement, nameAttri) => {
+            var text = trElement.attributes[`${nameAttri}`].value;
+            return text
+        }
         var tr = document.getElementById("tr_" + e.MATCH_ID);
+        var home = tr.querySelector("#goal_" + e.MATCH_ID);
+        var away = tr.querySelector("#goalLive_" + e.MATCH_ID);
+        var bdCellInsertUpOdd = document.getElementById("insertUpOdd_" + e.MATCH_ID);
+        var bdCellInsertDownOdd = document.getElementById("insertDownOdd_" + e.MATCH_ID);
+
+        var bdCellInsertGoal = document.getElementById("insertGoal_" + e.MATCH_ID);
+        var bdCellInsertGoalLive = document.getElementById("insertGoalLive_" + e.MATCH_ID);
+
+        var bdCellInsertGoal_t1 = document.getElementById("insertGoal_t1_" + e.MATCH_ID);
+
+        var bdCellInsertUpodds_t = document.getElementById("insertUpodds_t_" + e.MATCH_ID);
+        var bdCellInsertDownodds_t = document.getElementById("insertDownodds_t_" + e.MATCH_ID);
+
         var teamValue = tr.attributes["team"].value;
+        var checkHome = getOdds(home, "odd_goal");
+        var checkAway = getOdds(away, "odd_goallive");
 
         if (selectedTeamUp === 'away') {
             if (teamValue === `meHome_${e.MATCH_ID}` || teamValue === "") {
                 tr.style.display = 'none';
+            } else {
+                tr.style.display = 'revert';
             }
+
+            if (selectedHandicap) {
+                if (checkAway < 0) {
+                    const a = parseFloat(bdCellInsertGoalLive.textContent);
+                    const b = parseFloat(selectedHandicap);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+                }
+            }
+
+            if (selectedOddHandicap) {
+                if (checkAway < 0) {
+                    const a = parseFloat(bdCellInsertDownOdd.textContent);
+                    const b = parseFloat(selectedOddHandicap);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
+                }
+            }
+
+            if (selectedOver) {
+                if (checkAway < 0) {
+                    const a = parseFloat(bdCellInsertGoal_t1.textContent);
+                    const b = parseFloat(selectedOver);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
+                }
+            }
+
+            if (selectedOddOver) {
+                if (checkAway < 0) {
+                    const a = parseFloat(bdCellInsertDownodds_t.textContent);
+                    const b = parseFloat(selectedOddOver);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+                }
+            }
+
         } else if (selectedTeamUp === 'home') {
             if (teamValue === `meAway_${e.MATCH_ID}` || teamValue === "") {
                 tr.style.display = 'none';
+            } else {
+                tr.style.display = 'revert';
             }
+
+            if (selectedHandicap) {
+                if (checkHome < 0) {
+                    const a = parseFloat(bdCellInsertGoal.textContent);
+                    const b = parseFloat(selectedHandicap);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+                }
+            }
+
+            if (selectedOddHandicap) {
+                if (checkHome < 0) {
+                    const a = parseFloat(bdCellInsertUpOdd.textContent);
+                    const b = parseFloat(selectedOddHandicap);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+                }
+            }
+
+            if (selectedOver) {
+                if (checkHome < 0) {
+                    const a = parseFloat(bdCellInsertGoal_t1.textContent);
+                    const b = parseFloat(selectedOver);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+                }
+            }
+
+            if (selectedOddOver) {
+                if (checkHome < 0) {
+                    const a = parseFloat(bdCellInsertUpodds_t.textContent);
+                    const b = parseFloat(selectedHandicap);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+                }
+            }
+
+
         } else {
-            //   tr.style.display = 'table-row'; // Hiển thị tất cả khi không có lựa chọn
+            tr.style.display = 'revert';
+
+            if (selectedHandicap) {
+                if (checkAway < 0) {
+                    const a = parseFloat(bdCellInsertGoal.textContent);
+                    const b = parseFloat(selectedHandicap);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+                }
+            }
+
+            if (selectedOddHandicap) {
+                if (checkAway < 0) {
+                    const a = parseFloat(bdCellInsertUpOdd.textContent);
+                    const b = parseFloat(selectedOddHandicap);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+                }
+            }
+
+            if (selectedOver) {
+                if (checkAway < 0) {
+                    const a = parseFloat(bdCellInsertUpOdd.textContent);
+                    const b = parseFloat(selectedOddHandicap);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
+                }
+            }
+
+            if (selectedOddOver) {
+                if (checkAway < 0) {
+                    const a = parseFloat(bdCellInsertUpOdd.textContent);
+                    const b = parseFloat(selectedOddHandicap);
+                    if (!isNaN(a) && !isNaN(b)) {
+                        if (a <= b) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
+                }
+            }
         }
-    }, [selectedTeamUp]);
+
+    }, [selectedTeamUp, selectedHandicap, selectedOddHandicap, selectedOver, selectedOddOver]);
 
 
 
@@ -103,6 +310,8 @@ const DataTable = (props) => {
 
                 if (sumData_positive !== 0) {
                     absSumData = Math.abs(sumData_positive).toFixed(2);
+                } else {
+                    absSumData = "-";
                 }
 
                 const iconElement = document.createElement('span');
@@ -134,6 +343,8 @@ const DataTable = (props) => {
 
                 if (sumData_minus !== 0) {
                     absSumData = Math.abs(sumData_minus).toFixed(2);
+                } else {
+                    absSumData = "-";
                 }
 
                 const iconElement = document.createElement('span');
@@ -250,7 +461,7 @@ const DataTable = (props) => {
         }
 
         Odd();
-        const intervalIdOdds = setInterval(Odd, 30000);
+        const intervalIdOdds = setInterval(Odd, 5000);
 
         return () => {
             clearInterval(intervalIdOdds);
@@ -290,21 +501,21 @@ const DataTable = (props) => {
             <td className="td-league">{e.LEAGUE_NAME}</td>
             <td className="td-match">
                 <div>
-                    <p id={`home_${e.MATCH_ID}`} className={(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(-ODDS_AH_FT.l.g) : formatNumber(-ODDS_AH_FT.l.g) ? `me_color` : "")} >{e.HOME_NAME}</p>
-                    <p id={`away_${e.MATCH_ID}`} className={(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(ODDS_AH_FT.l.g) ? `me_color` : "" : formatNumber(ODDS_AH_FT.l.g))} >{e.AWAY_NAME}</p>
+                    <p id={`home_${e.MATCH_ID}`} className={((ODDS_AH_FT.l.g) < 0 ? (-ODDS_AH_FT.l.g) : (-ODDS_AH_FT.l.g) ? `me_color` : "")} >{e.HOME_NAME}</p>
+                    <p id={`away_${e.MATCH_ID}`} className={((ODDS_AH_FT.l.g) < 0 ? (ODDS_AH_FT.l.g) ? `me_color` : "" : (ODDS_AH_FT.l.g))} >{e.AWAY_NAME}</p>
                 </div>
             </td>
             <td className="td-handicap-live">
                 <div className="tr__row">
-                    <div className="tr__col handicap.instantHandicap" id={`goal_${e.MATCH_ID}`}>
+                    <div className="tr__col handicap.instantHandicap" odd_goal={((ODDS_AH_FT.l.g) < 0 ? (-ODDS_AH_FT.l.g) : (-ODDS_AH_FT.l.g))} id={`goal_${e.MATCH_ID}`}>
                         <span>
-                            {(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(-ODDS_AH_FT.l.g) : formatNumber(-ODDS_AH_FT.l.g))}
+                            {((ODDS_AH_FT.l.g) < 0 ? (-ODDS_AH_FT.l.g) : (-ODDS_AH_FT.l.g))}
                         </span>
                     </div>
 
-                    <div className="tr__col handicap.instantHandicap" id={`goalLive_${e.MATCH_ID}`}>
+                    <div className="tr__col handicap.instantHandicap" odd_goalLive={((ODDS_AH_FT.l.g) < 0 ? (ODDS_AH_FT.l.g) : (ODDS_AH_FT.l.g))} id={`goalLive_${e.MATCH_ID}`}>
                         <span>
-                            {(formatNumber(ODDS_AH_FT.l.g) < 0 ? formatNumber(ODDS_AH_FT.l.g) : formatNumber(ODDS_AH_FT.l.g))}
+                            {((ODDS_AH_FT.l.g) < 0 ? (ODDS_AH_FT.l.g) : (ODDS_AH_FT.l.g))}
                         </span>
                     </div>
                 </div>
@@ -317,8 +528,8 @@ const DataTable = (props) => {
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col handicap.initialHandicap" id={`goalEarly_${e.MATCH_ID}`}><span>{formatNumber(ODDS_AH_FT.f.g) < 0 ? formatNumber(-ODDS_AH_FT.f.g) : formatNumber(-ODDS_AH_FT.f.g)}</span></div>
-                    <div className="tr__col handicap.initialHandicap" id={`goalEarlyLive_${e.MATCH_ID}`}><span>{formatNumber(ODDS_AH_FT.f.g) < 0 ? formatNumber(ODDS_AH_FT.f.g) : formatNumber(ODDS_AH_FT.f.g)}</span></div>
+                    <div className="tr__col handicap.initialHandicap" id={`goalEarly_${e.MATCH_ID}`}><span>{(ODDS_AH_FT.f.g) < 0 ? (-ODDS_AH_FT.f.g) : (-ODDS_AH_FT.f.g)}</span></div>
+                    <div className="tr__col handicap.initialHandicap" id={`goalEarlyLive_${e.MATCH_ID}`}><span>{(ODDS_AH_FT.f.g) < 0 ? (ODDS_AH_FT.f.g) : (ODDS_AH_FT.f.g)}</span></div>
                 </div>
             </td>
             <td>
@@ -351,7 +562,7 @@ const DataTable = (props) => {
             </td>
             <td>
                 <div className="tr__row_remove">
-                    <div className="tr__col overUnder.instantHandicap" id={`goal_t1_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.l.g)}</div>
+                    <div className="tr__col overUnder.instantHandicap" id={`goal_t1_${e.MATCH_ID}`}>{(ODDS_OU_FT.l.g)}</div>
                 </div>
             </td>
             <td>
@@ -362,7 +573,7 @@ const DataTable = (props) => {
             </td>
             <td>
                 <div className="tr__row_remove">
-                    <div className="tr__col overUnder.initialHandicap" id={`goalEarly_t1_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.f.g)}</div>
+                    <div className="tr__col overUnder.initialHandicap" id={`goalEarly_t1_${e.MATCH_ID}`}>{(ODDS_OU_FT.f.g)}</div>
                 </div>
             </td>
             <td>
