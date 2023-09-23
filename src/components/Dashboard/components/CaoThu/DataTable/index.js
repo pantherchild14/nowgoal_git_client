@@ -1,15 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
-import Button from '@mui/material/Button';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-
-import * as actions from "../../../../../redux/actions";
-import { oddDetailHistoryState$ } from "../../../../../redux/selectors";
-import OddDetailModal from "./OddDetailModal";
 import { UTCtoLocalTime, formatNumber } from "../../../../../helpers";
-import MatchPage from "../../../../../pages/MatchPage";
 
 const DataTable = (props) => {
     const {
@@ -21,17 +12,12 @@ const DataTable = (props) => {
         selectedOddHandicap,
         selectedOver,
         selectedOddOver } = props;
-    const dispatch = useDispatch();
     const [tipHandicap, setTipHandicap] = useState("");
     const [tipOU, setTipOU] = useState("");
-    const [open, setOpen] = React.useState(false);
-    const oddDetailHistory = useSelector(oddDetailHistoryState$);
 
     const scheduleRT = statusRedux?.$;
     const isLocalTimeZone = localStorage.getItem('TIME_ZONE')
 
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
 
     const handleViewClickButton = () => {
         let params = '';
@@ -49,11 +35,6 @@ const DataTable = (props) => {
 
         const newUrl = `/match/${e.MATCH_ID}${params !== '' ? `?${params}` : ''}`;
         window.open(newUrl, '_blank');
-    };
-
-    const handleViewClick = () => {
-        dispatch(actions.getOddsChangeDetailHistory.getOddsChangeDetailHistoryRequest(e.MATCH_ID));
-        handleOpen();
     };
     useEffect(() => {
         const getOdds = (trElement, nameAttri) => {
@@ -78,193 +59,126 @@ const DataTable = (props) => {
         var checkHome = getOdds(home, "odd_goal");
         var checkAway = getOdds(away, "odd_goallive");
 
+        var parseInsertGoalLive = parseFloat(bdCellInsertGoalLive.textContent);
+        var parseInsertDownOdd = parseFloat(bdCellInsertDownOdd.textContent);
+        var parseInsertGoal_t1 = parseFloat(bdCellInsertGoal_t1.textContent);
+        var parseInsertDownodds_t = parseFloat(bdCellInsertDownodds_t.textContent);
+        var parseInsertGoal = parseFloat(bdCellInsertGoal.textContent);
+        var parseInsertUpOdd = parseFloat(bdCellInsertUpOdd.textContent);
+        var parseInsertUpodds_t = parseFloat(bdCellInsertUpodds_t.textContent);
+
         if (selectedTeamUp === 'away') {
-            if (teamValue === `meHome_${e.MATCH_ID}` || teamValue === "") {
-                tr.style.display = 'none';
-            } else {
+            if (teamValue !== `meHome_${e.MATCH_ID}` || teamValue === "") {
                 tr.style.display = 'revert';
-            }
 
-            if (selectedHandicap) {
-                if (checkAway < 0) {
-                    const a = parseFloat(bdCellInsertGoalLive.textContent);
-                    const b = parseFloat(selectedHandicap);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
-                    }
-                }
-            }
-
-            if (selectedOddHandicap) {
-                if (checkAway < 0) {
-                    const a = parseFloat(bdCellInsertDownOdd.textContent);
-                    const b = parseFloat(selectedOddHandicap);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
+                if (selectedHandicap && checkAway < 0) {
+                    if (parseInsertGoalLive <= selectedHandicap) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
                     }
 
                 }
-            }
 
-            if (selectedOver) {
-                if (checkAway < 0) {
-                    const a = parseFloat(bdCellInsertGoal_t1.textContent);
-                    const b = parseFloat(selectedOver);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
-                    }
-
-                }
-            }
-
-            if (selectedOddOver) {
-                if (checkAway < 0) {
-                    const a = parseFloat(bdCellInsertDownodds_t.textContent);
-                    const b = parseFloat(selectedOddOver);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
+                if (selectedOddHandicap && checkAway < 0) {
+                    if (parseInsertDownOdd <= selectedOddHandicap) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
                     }
                 }
-            }
 
+                if (selectedOver && checkAway < 0) {
+                    if (parseInsertGoal_t1 <= selectedOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                }
+
+                if (selectedOddOver && checkAway < 0) {
+                    if (parseInsertDownodds_t <= selectedOddOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                }
+            } else {
+                tr.style.display = 'none';
+            }
         } else if (selectedTeamUp === 'home') {
-            if (teamValue === `meAway_${e.MATCH_ID}` || teamValue === "") {
-                tr.style.display = 'none';
-            } else {
+            if (teamValue !== `meAway_${e.MATCH_ID}` || teamValue === "") {
                 tr.style.display = 'revert';
-            }
-
-            if (selectedHandicap) {
-                if (checkHome < 0) {
-                    const a = parseFloat(bdCellInsertGoal.textContent);
-                    const b = parseFloat(selectedHandicap);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
+                if (selectedHandicap && checkHome < 0) {
+                    if (parseInsertGoal <= selectedHandicap) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
                     }
                 }
-            }
 
-            if (selectedOddHandicap) {
-                if (checkHome < 0) {
-                    const a = parseFloat(bdCellInsertUpOdd.textContent);
-                    const b = parseFloat(selectedOddHandicap);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
+                if (selectedOddHandicap && checkHome < 0) {
+                    if (parseInsertUpOdd <= selectedOddHandicap) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
                     }
                 }
-            }
 
-            if (selectedOver) {
-                if (checkHome < 0) {
-                    const a = parseFloat(bdCellInsertGoal_t1.textContent);
-                    const b = parseFloat(selectedOver);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
+                if (selectedOver && checkHome < 0) {
+                    if (parseInsertGoal_t1 >= selectedOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+
+                }
+
+                if (selectedOddOver && checkHome < 0) {
+                    if (parseInsertUpodds_t >= selectedOddOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
                     }
                 }
+            } else {
+                tr.style.display = 'none';
             }
-
-            if (selectedOddOver) {
-                if (checkHome < 0) {
-                    const a = parseFloat(bdCellInsertUpodds_t.textContent);
-                    const b = parseFloat(selectedHandicap);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
-                    }
-                }
-            }
-
-
         } else {
             tr.style.display = 'revert';
+        }
 
-            if (selectedHandicap) {
-                if (checkAway < 0) {
-                    const a = parseFloat(bdCellInsertGoal.textContent);
-                    const b = parseFloat(selectedHandicap);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
-                    }
+        if (selectedTeamUp !== 'home' && selectedTeamUp !== 'away') {
+            if (selectedHandicap && checkHome < 0) {
+                if (parseInsertGoal <= selectedHandicap) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
                 }
             }
 
-            if (selectedOddHandicap) {
-                if (checkAway < 0) {
-                    const a = parseFloat(bdCellInsertUpOdd.textContent);
-                    const b = parseFloat(selectedOddHandicap);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
-                    }
+            if (selectedOddHandicap && checkHome < 0) {
+                if (parseInsertUpOdd <= selectedOddHandicap) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
                 }
             }
 
-            if (selectedOver) {
-                if (checkAway < 0) {
-                    const a = parseFloat(bdCellInsertUpOdd.textContent);
-                    const b = parseFloat(selectedOddHandicap);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
-                    }
-
+            if (selectedOver && checkHome < 0) {
+                if (parseInsertGoal_t1 >= selectedOver) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
                 }
+
             }
 
-            if (selectedOddOver) {
-                if (checkAway < 0) {
-                    const a = parseFloat(bdCellInsertUpOdd.textContent);
-                    const b = parseFloat(selectedOddHandicap);
-                    if (!isNaN(a) && !isNaN(b)) {
-                        if (a <= b) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
-                    }
-
+            if (selectedOddOver && checkHome < 0) {
+                if (parseInsertUpodds_t >= selectedOddOver) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
                 }
             }
         }

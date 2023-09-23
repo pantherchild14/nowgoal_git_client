@@ -230,7 +230,8 @@ const DataTable = (props) => {
         var checkHome = getOdds(home, "odd_goal");
         var checkAway = getOdds(away, "odd_goallive");
 
-        var oddOver = tr.querySelector("#upodds_t_" + e.MATCH_ID);
+        var oddOverHome = tr.querySelector("#upodds_t_" + e.MATCH_ID);
+        var oddOverAway = tr.querySelector("#downodds_t_" + e.MATCH_ID);
 
         var tipValue = tr.attributes["tip"].value;
         var teamValue = tr.attributes["team"].value;
@@ -239,95 +240,67 @@ const DataTable = (props) => {
 
         if (selectedTips === true) {
             if (tipValue === "tip") {
-                // tr.style.display = 'revert';
+                tr.style.display = 'revert';
                 if (selectedTeamUp === 'away') {
-                    if (teamValue === `meHome_${e.MATCH_ID}` || teamValue === "") {
-                        tr.style.display = 'none';
-                    } else {
+                    if (teamValue !== `meHome_${e.MATCH_ID}` || teamValue !== "") {
                         tr.style.display = 'revert';
+
+                        if (selectedOver === true && checkAway < 0 && overValue !== "Over 2.75") {
+                            tr.style.display = 'none';
+                        }
+
+                        if (selectedOddOver && checkAway < 0 && oddOverAway.textContent <= selectedOddOver) {
+                            tr.style.display = 'revert';
+                        }
+
+                        if (selectedOddOverRun && checkAway && oddAway.textContent <= selectedOddOverRun) {
+                            tr.style.display = 'revert';
+                        }
+                    } else {
+                        tr.style.display = 'none';
                     }
                 } else if (selectedTeamUp === 'home') {
-                    if (teamValue === `meAway_${e.MATCH_ID}` || teamValue === "") {
-                        tr.style.display = 'none';
-                    } else {
+                    if (teamValue !== `meAway_${e.MATCH_ID}` || teamValue !== "") {
                         tr.style.display = 'revert';
+                        if (selectedOver === true && checkHome < 0 && overValue !== "Over 2.75") {
+                            tr.style.display = 'none';
+                        }
+
+                        if (selectedOddOver && checkHome < 0 && oddOverHome.textContent <= selectedOddOver) {
+                            tr.style.display = 'revert';
+                        }
+
+                        if (selectedOddOverRun && checkHome < 0 && oddHome.textContent <= selectedOddOverRun) {
+                            tr.style.display = 'revert';
+                        }
+                    } else {
+                        tr.style.display = 'none';
                     }
                 } else {
                     tr.style.display = 'revert';
                 }
 
-
-
-
-                if (selectedTeamUp === 'away') {
-                    if (selectedOddOverRun) {
-                        if (checkAway < 0) {
-                            if (oddAway.textContent <= selectedOddOverRun) {
-                                tr.style.display = 'revert';
-                            } else {
-                                tr.style.display = 'none';
-                            }
-
-                            if (oddOver.textContent <= selectedOddOver) {
-                                tr.style.display = 'revert';
-                            } else {
-                                tr.style.display = 'none';
-                            }
-                        }
-
-                    }
-                } else if (selectedTeamUp === 'home') {
-                    if (selectedOddOverRun) {
-                        if (checkHome < 0) {
-                            if (oddHome.textContent <= selectedOddOverRun) {
-                                tr.style.display = 'revert';
-                            } else {
-                                tr.style.display = 'none';
-                            }
-
-                            if (oddOver.textContent <= selectedOddOver) {
-                                tr.style.display = 'revert';
-                            } else {
-                                tr.style.display = 'none';
-                            }
-                        }
-
-                    }
-                } else {
-                    if (selectedOddOverRun) {
-                        console.log('oddHome', oddHome.textContent);
-                        if (checkHome < 0) {
-                            if (oddHome.textContent <= selectedOddOverRun) {
-                                tr.style.display = 'revert';
-                            } else {
-                                tr.style.display = 'none';
-                            }
-                        } else if (checkAway < 0) {
-                            if (oddAway.textContent <= selectedOddOverRun) {
-                                tr.style.display = 'revert';
-                            } else {
-                                tr.style.display = 'none';
-                            }
-                        }
+                if (selectedTeamUp !== 'home' && selectedTeamUp !== 'away') {
+                    if (selectedOver === true && overValue !== "Over 2.75") {
+                        tr.style.display = 'none';
                     }
 
-                    if (selectedOddOver) {
-                        if (oddOver.textContent <= selectedOddOver) {
-                            tr.style.display = 'revert';
-                        } else {
-                            tr.style.display = 'none';
-                        }
+                    if (selectedOddOverRun && checkHome < 0 && oddHome.textContent <= selectedOddOverRun) {
+                        tr.style.display = 'revert';
                     }
 
-                    if (selectedOver === true) {
-                        if (overValue !== "Over 2.75") {
-                            tr.style.display = 'none';
-                        } else {
-                            tr.style.display = 'revert';
-                        }
+                    if (selectedOddOverRun && checkAway < 0 && oddAway.textContent <= selectedOddOverRun) {
+                        tr.style.display = 'revert';
+                    }
+
+                    if (selectedOddOver && checkHome < 0 && oddOverHome.textContent <= selectedOddOver) {
+                        tr.style.display = 'revert';
+                    }
+
+                    if (selectedOddOver && checkAway < 0 && oddOverAway.textContent <= selectedOddOver) {
+                        tr.style.display = 'revert';
                     }
                 }
-
             } else {
                 tr.style.display = 'none';
             }

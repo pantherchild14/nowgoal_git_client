@@ -287,7 +287,10 @@ const CaoThu = () => {
             <div>
               <label>
                 Biến động Handicap:
-                <select value={selectedHandicap} onChange={(e) => setSelectedHandicap(e.target.value)}>
+                <select
+                  value={selectedHandicap}
+                  onChange={(e) => setSelectedHandicap(e.target.value)}
+                >
                   <option value="">All</option>
                   <option value="0.25">0.25</option>
                   <option value="0.5">0.5</option>
@@ -302,7 +305,10 @@ const CaoThu = () => {
             <div>
               <label>
                 Biến động Tài / Xỉu:
-                <select value={selectedOver} onChange={(e) => setSelectedOver(e.target.value)}>
+                <select
+                  value={selectedOver}
+                  onChange={(e) => setSelectedOver(e.target.value)}
+                >
                   <option value="">All</option>
                   <option value="0.25">0.25</option>
                   <option value="0.5">0.5</option>
@@ -317,7 +323,10 @@ const CaoThu = () => {
             <div>
               <label>
                 Đội kèo trên:
-                <select value={selectedTeamUp} onChange={(e) => setSelectedTeamUp(e.target.value)} >
+                <select
+                  value={selectedTeamUp}
+                  onChange={(e) => setSelectedTeamUp(e.target.value)}
+                >
                   <option value="">All</option>
                   <option value="home">Home</option>
                   <option value="away">Away</option>
@@ -329,7 +338,11 @@ const CaoThu = () => {
             <div>
               <label>
                 Biến động Odds Handicap:
-                <select value={selectedOddHandicap} onChange={(e) => setSelectedOddHandicap(e.target.value)}>
+                <select
+                  value={selectedOddHandicap}
+                  onChange={(e) => setSelectedOddHandicap(e.target.value)}
+                  disabled={selectedHandicap ? "" : "disabled"}
+                >
                   <option value="">All</option>
                   <option value="0.05">0.05</option>
                   <option value="0.10">0.10</option>
@@ -343,7 +356,11 @@ const CaoThu = () => {
             <div>
               <label>
                 Biến động Odds Tài / Xỉu :
-                <select value={selectedOddOver} onChange={(e) => setSelectedOddOver(e.target.value)}>
+                <select
+                  value={selectedOddOver}
+                  onChange={(e) => setSelectedOddOver(e.target.value)}
+                  disabled={selectedOver ? "" : "disabled"}
+                >
                   <option value="">All</option>
                   <option value="0.05">0.05</option>
                   <option value="0.10">0.10</option>
