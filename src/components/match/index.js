@@ -22,6 +22,7 @@ export default function MatchLive(props) {
 
   const [threeIn1, Set3In1] = useState([]);
   const [h2hIO, setH2H] = useState([]);
+  const [timeRun, setTimeRun] = useState([]);
 
   useEffect(() => {
     dispatch(actions.getScheduleAllSingleRT.getScheduleAllSingleRTRequest(matchID));
@@ -92,6 +93,30 @@ export default function MatchLive(props) {
           }
         });
 
+        socket.on("TIME_RUN", async (data) => {
+          try {
+            const dataJson = JSON.parse(data);
+            if (dataJson && dataJson['TIMES_DATA'] && dataJson['TIMES_DATA']['TIME_ITEM']) {
+              const data = (dataJson['TIMES_DATA']['TIME_ITEM']);
+              const length = data?.length || 0;
+              const matchingDs = [];
+
+              for (var i = 0; i < length; i++) {
+                const D = data?.[i]?.$;
+
+                if (D.MATCH_ID === matchID) {
+                  matchingDs.push(D);
+                }
+
+              }
+              setTimeRun(matchingDs[0]);
+
+            }
+          } catch (error) {
+            console.error("Error while parsing JSON data:", error.message);
+          }
+        });
+
         return () => {
           socket.disconnect();
         };
@@ -103,7 +128,6 @@ export default function MatchLive(props) {
     fetchData();
   }, []);
 
-
   return (
     <div className='matchLive'>
       <div style={styles.headerMatch} className='headerMatch'>
@@ -113,6 +137,7 @@ export default function MatchLive(props) {
           ouValue={ouValue}
           schedules={schedules}
           scheduleSingle={scheduleSingle}
+          timeRun={timeRun}
         />
       </div>
       <div className='oddRun'>

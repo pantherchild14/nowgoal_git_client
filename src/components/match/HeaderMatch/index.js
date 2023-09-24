@@ -1,4 +1,8 @@
+import { useEffect } from 'react';
+
 import { Box, Grid, Link } from '@mui/material';
+import { UTCtoLocalTime, startMatchTimer } from '../../../helpers';
+
 
 const HeaderMatch = (props) => {
     const {
@@ -7,14 +11,20 @@ const HeaderMatch = (props) => {
         ouValue,
         schedules,
         scheduleSingle,
+        timeRun,
     } = props;
 
     if (!schedules || !schedules['data'] || !schedules['data'].$) {
-        return <p>Loading...</p>;
+        return; // Early return if conditions are not met
     }
 
     const { HOME_NAME, SCORE_HOME, STATUS, SCORE_AWAY, AWAY_NAME, H_T, F_T } = schedules.data.$ || {};
     const { WHEATHER } = scheduleSingle.data.$ || {};
+    const { STATE, TIME } = timeRun || {};
+
+    startMatchTimer(STATE, TIME, "matchTime");
+
+
     const styles = {
         container: {
             display: 'flex',

@@ -72,7 +72,7 @@ const DataTable = (props) => {
                 tr.style.display = 'revert';
 
                 if (selectedHandicap && checkAway < 0) {
-                    if (parseInsertGoalLive <= selectedHandicap) {
+                    if (parseInsertGoalLive >= selectedHandicap) {
                         tr.style.display = 'revert';
                     } else {
                         tr.style.display = 'none';
@@ -89,7 +89,7 @@ const DataTable = (props) => {
                 }
 
                 if (selectedOver && checkAway < 0) {
-                    if (parseInsertGoal_t1 <= selectedOver) {
+                    if (parseInsertGoal_t1 >= selectedOver) {
                         tr.style.display = 'revert';
                     } else {
                         tr.style.display = 'none';
@@ -110,7 +110,7 @@ const DataTable = (props) => {
             if (teamValue !== `meAway_${e.MATCH_ID}` || teamValue === "") {
                 tr.style.display = 'revert';
                 if (selectedHandicap && checkHome < 0) {
-                    if (parseInsertGoal <= selectedHandicap) {
+                    if (parseInsertGoal >= selectedHandicap) {
                         tr.style.display = 'revert';
                     } else {
                         tr.style.display = 'none';
@@ -135,7 +135,7 @@ const DataTable = (props) => {
                 }
 
                 if (selectedOddOver && checkHome < 0) {
-                    if (parseInsertUpodds_t >= selectedOddOver) {
+                    if (parseInsertUpodds_t <= selectedOddOver) {
                         tr.style.display = 'revert';
                     } else {
                         tr.style.display = 'none';
@@ -150,7 +150,7 @@ const DataTable = (props) => {
 
         if (selectedTeamUp !== 'home' && selectedTeamUp !== 'away') {
             if (selectedHandicap && checkHome < 0) {
-                if (parseInsertGoal <= selectedHandicap) {
+                if (parseInsertGoal >= selectedHandicap) {
                     tr.style.display = 'revert';
                 } else {
                     tr.style.display = 'none';
@@ -175,7 +175,7 @@ const DataTable = (props) => {
             }
 
             if (selectedOddOver && checkHome < 0) {
-                if (parseInsertUpodds_t >= selectedOddOver) {
+                if (parseInsertUpodds_t <= selectedOddOver) {
                     tr.style.display = 'revert';
                 } else {
                     tr.style.display = 'none';

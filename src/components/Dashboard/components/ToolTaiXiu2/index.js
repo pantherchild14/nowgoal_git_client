@@ -20,6 +20,7 @@ const ToolTaiXiu2 = () => {
 
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [bfRefresh, SetBfRefresh] = useState([]);
+    const [timeRun, setTimeRun] = useState([]);
     const [oddRealTime, setOddRealTime] = useState([]);
     const [selectedTips, setSelectedTips] = useState(false);
     const [selectedOver, setSelectedOver] = useState(false);
@@ -156,6 +157,93 @@ const ToolTaiXiu2 = () => {
     }, [oddRealTime])
 
     useEffect(() => {
+        var length = 0;
+        length = timeRun?.length || 0;
+
+        for (var i = 0; i < length; i++) {
+            var D;
+            D = timeRun?.[i]?.$;
+            if (!D) continue;
+            let tr = document.getElementById("tr_" + D.MATCH_ID);
+            if (tr === null) continue;
+
+            try {
+                const startMatchTimer = () => {
+                    if (D.STATE === undefined || D.TIME === undefined) {
+                        // Nếu thiếu STATE hoặc TIME, không thực hiện gì cả.
+                        return;
+                    }
+                    var currentTimeUTC = new Date();
+                    const offsetHours = -7;
+                    currentTimeUTC.setHours(currentTimeUTC.getHours() + offsetHours);
+                    var _serverTime = `${currentTimeUTC.getFullYear()},${currentTimeUTC.getMonth()},${currentTimeUTC.getDate()},${currentTimeUTC.getHours()},${currentTimeUTC.getMinutes()},${currentTimeUTC.getSeconds()}`;
+
+                    var difftime;
+                    if (_serverTime) {
+                        var sps = _serverTime.split(",");
+                        difftime = new Date() - new Date(sps[0], sps[1], sps[2], sps[3], sps[4], sps[5]);
+                    }
+
+                    let ms = "";
+                    let goTime = "";
+                    const timeIcon = "<span class='in-gif'></span>";
+
+                    // switch (STATE) {
+                    //     case 5: ms = 'Pen.'; break; // Đá penalty
+                    //     case 4: ms = 'ET'; break; // Thời gian bù giờ
+                    //     case 3: ms = '2nd Half'; break; // Hiệp 2
+                    //     case 2: ms = 'HT'; break; // Giữa hiệp
+                    //     case 1: ms = '1st Half'; break; // Hiệp 1
+                    //     default: ms = 'Unknown'; // Xử lý trạng thái không khớp
+                    // }
+
+                    if (D.STATE === '1') {
+                        const currentTime = new Date();
+                        const elapsedTime = currentTime - new Date(D.TIME) - difftime;
+                        goTime = Math.floor(elapsedTime / 60000);
+                        if (goTime < 1) {
+                            goTime = "1";
+                        } else if (goTime > 45) {
+                            goTime = "45+";
+                        }
+
+                        ms += "1st Half - " + goTime + timeIcon;
+                    } else if (D.STATE === '3') {
+                        const currentTime = new Date();
+                        const elapsedTime = (currentTime) - new Date((D.TIME)) - difftime;
+                        goTime = Math.floor(elapsedTime / 60000) + 46;
+
+                        if (goTime < 46) {
+                            goTime = "46";
+                        } else if (goTime > 90) {
+                            goTime = "90+";
+                        }
+
+                        ms += "2nd Half - " + goTime + timeIcon;
+                    } else if (D.STATE === '2') {
+                        ms += "HT";
+                    } else if (D.STATE === '4') {
+                        ms += "ET";
+                    } else if (D.STATE === '5') {
+                        ms += "Pen";
+                    }
+
+                    const matchTimeElement = tr.querySelector(`#ms${D.MATCH_ID}`);
+                    if (matchTimeElement) {
+                        matchTimeElement.innerHTML = ms;
+                    }
+                    setTimeout(startMatchTimer, 30 * 1000);
+                }
+
+                startMatchTimer();
+
+            } catch (error) {
+                console.error("Error parsing JSON:", error);
+            }
+        }
+    }, [timeRun])
+
+    useEffect(() => {
         const fetchData = async () => {
             try {
                 const socket = io.connect(`${process.env.REACT_APP_URL_SERVER}`);
@@ -180,6 +268,19 @@ const ToolTaiXiu2 = () => {
                         if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
                             const dataOdds = dataJson['ODDS_DATA']['ODDS_ITEM'];
                             setOddRealTime(dataOdds);
+                        }
+                    } catch (error) {
+                        console.error("Error while parsing JSON data:", error.message);
+                    }
+                });
+
+                socket.on("TIME_RUN", async (data) => {
+                    try {
+                        const dataJson = JSON.parse(data);
+                        if (dataJson && dataJson['TIMES_DATA'] && dataJson['TIMES_DATA']['TIME_ITEM']) {
+                            const data = (dataJson['TIMES_DATA']['TIME_ITEM']);
+                            setTimeRun(data);
+
                         }
                     } catch (error) {
                         console.error("Error while parsing JSON data:", error.message);
