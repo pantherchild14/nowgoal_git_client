@@ -55,7 +55,7 @@ const DataTable = (props) => {
         var bdCellInsertUpodds_t = document.getElementById("insertUpodds_t_" + e.MATCH_ID);
         var bdCellInsertDownodds_t = document.getElementById("insertDownodds_t_" + e.MATCH_ID);
 
-        var teamValue = tr.attributes["team"].value;
+        var teamValue = tr.attributes["team"].textContent;
         var checkHome = getOdds(home, "odd_goal");
         var checkAway = getOdds(away, "odd_goallive");
 
@@ -68,21 +68,39 @@ const DataTable = (props) => {
         var parseInsertUpodds_t = parseFloat(bdCellInsertUpodds_t.textContent);
 
         if (selectedTeamUp === 'away') {
-            if (teamValue !== `meHome_${e.MATCH_ID}` || teamValue === "") {
+            if (teamValue === `meAway_${e.MATCH_ID}`) {
                 tr.style.display = 'revert';
 
                 if (selectedHandicap && checkAway < 0) {
                     if (parseInsertGoalLive >= selectedHandicap) {
                         tr.style.display = 'revert';
-                    } else {
-                        tr.style.display = 'none';
-                    }
 
-                }
+                        if (selectedOddHandicap && checkAway < 0) {
+                            if (parseInsertDownOdd <= selectedOddHandicap) {
+                                tr.style.display = 'revert';
 
-                if (selectedOddHandicap && checkAway < 0) {
-                    if (parseInsertDownOdd <= selectedOddHandicap) {
-                        tr.style.display = 'revert';
+                                if (selectedOver && checkAway < 0) {
+                                    if (parseInsertGoal_t1 >= selectedOver) {
+                                        tr.style.display = 'revert';
+
+                                        if (selectedOddOver && checkAway < 0) {
+                                            if (parseInsertDownodds_t <= selectedOddOver) {
+                                                tr.style.display = 'revert';
+                                            } else {
+                                                tr.style.display = 'none';
+                                            }
+                                        }
+
+                                    } else {
+                                        tr.style.display = 'none';
+                                    }
+                                }
+
+                            } else {
+                                tr.style.display = 'none';
+                            }
+                        }
+
                     } else {
                         tr.style.display = 'none';
                     }
@@ -91,14 +109,33 @@ const DataTable = (props) => {
                 if (selectedOver && checkAway < 0) {
                     if (parseInsertGoal_t1 >= selectedOver) {
                         tr.style.display = 'revert';
-                    } else {
-                        tr.style.display = 'none';
-                    }
-                }
 
-                if (selectedOddOver && checkAway < 0) {
-                    if (parseInsertDownodds_t <= selectedOddOver) {
-                        tr.style.display = 'revert';
+                        if (selectedOddOver && checkAway < 0) {
+                            if (parseInsertDownodds_t <= selectedOddOver) {
+                                tr.style.display = 'revert';
+
+                                if (selectedHandicap && checkAway < 0) {
+                                    if (parseInsertGoalLive >= selectedHandicap) {
+                                        tr.style.display = 'revert';
+
+                                        if (selectedOddHandicap && checkAway < 0) {
+                                            if (parseInsertDownOdd <= selectedOddHandicap) {
+                                                tr.style.display = 'revert';
+                                            } else {
+                                                tr.style.display = 'none';
+                                            }
+                                        }
+
+                                    } else {
+                                        tr.style.display = 'none';
+                                    }
+                                }
+
+                            } else {
+                                tr.style.display = 'none';
+                            }
+                        }
+
                     } else {
                         tr.style.display = 'none';
                     }
@@ -107,19 +144,38 @@ const DataTable = (props) => {
                 tr.style.display = 'none';
             }
         } else if (selectedTeamUp === 'home') {
-            if (teamValue !== `meAway_${e.MATCH_ID}` || teamValue === "") {
+            if (teamValue === `meHome_${e.MATCH_ID}`) {
                 tr.style.display = 'revert';
                 if (selectedHandicap && checkHome < 0) {
                     if (parseInsertGoal >= selectedHandicap) {
                         tr.style.display = 'revert';
-                    } else {
-                        tr.style.display = 'none';
-                    }
-                }
 
-                if (selectedOddHandicap && checkHome < 0) {
-                    if (parseInsertUpOdd <= selectedOddHandicap) {
-                        tr.style.display = 'revert';
+                        if (selectedOddHandicap && checkHome < 0) {
+                            if (parseInsertUpOdd <= selectedOddHandicap) {
+                                tr.style.display = 'revert';
+
+                                if (selectedOver && checkHome < 0) {
+                                    if (parseInsertGoal_t1 >= selectedOver) {
+                                        tr.style.display = 'revert';
+
+                                        if (selectedOddOver && checkHome < 0) {
+                                            if (parseInsertUpodds_t <= selectedOddOver) {
+                                                tr.style.display = 'revert';
+                                            } else {
+                                                tr.style.display = 'none';
+                                            }
+                                        }
+
+                                    } else {
+                                        tr.style.display = 'none';
+                                    }
+                                }
+
+                            } else {
+                                tr.style.display = 'none';
+                            }
+                        }
+
                     } else {
                         tr.style.display = 'none';
                     }
@@ -128,19 +184,39 @@ const DataTable = (props) => {
                 if (selectedOver && checkHome < 0) {
                     if (parseInsertGoal_t1 >= selectedOver) {
                         tr.style.display = 'revert';
+
+                        if (selectedOddOver && checkHome < 0) {
+                            if (parseInsertUpodds_t <= selectedOddOver) {
+                                tr.style.display = 'revert';
+
+                                if (selectedHandicap && checkHome < 0) {
+                                    if (parseInsertGoal >= selectedHandicap) {
+                                        tr.style.display = 'revert';
+
+                                        if (selectedOddHandicap && checkHome < 0) {
+                                            if (parseInsertUpOdd <= selectedOddHandicap) {
+                                                tr.style.display = 'revert';
+                                            } else {
+                                                tr.style.display = 'none';
+                                            }
+                                        }
+
+                                    } else {
+                                        tr.style.display = 'none';
+                                    }
+                                }
+
+                            } else {
+                                tr.style.display = 'none';
+                            }
+                        }
+
                     } else {
                         tr.style.display = 'none';
                     }
-
                 }
 
-                if (selectedOddOver && checkHome < 0) {
-                    if (parseInsertUpodds_t <= selectedOddOver) {
-                        tr.style.display = 'revert';
-                    } else {
-                        tr.style.display = 'none';
-                    }
-                }
+
             } else {
                 tr.style.display = 'none';
             }
@@ -149,37 +225,76 @@ const DataTable = (props) => {
         }
 
         if (selectedTeamUp !== 'home' && selectedTeamUp !== 'away') {
-            if (selectedHandicap && checkHome < 0) {
+            if (selectedHandicap) {
                 if (parseInsertGoal >= selectedHandicap) {
                     tr.style.display = 'revert';
+
+                    if (selectedOddHandicap) {
+                        if (parseInsertUpOdd <= selectedOddHandicap) {
+                            tr.style.display = 'revert';
+
+                            if (selectedOver) {
+                                if (parseInsertGoal_t1 >= selectedOver) {
+                                    tr.style.display = 'revert';
+
+                                    if (selectedOddOver) {
+                                        if (parseInsertUpodds_t <= selectedOddOver) {
+                                            tr.style.display = 'revert';
+                                        } else {
+                                            tr.style.display = 'none';
+                                        }
+                                    }
+
+                                } else {
+                                    tr.style.display = 'none';
+                                }
+
+                            }
+
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
                 } else {
                     tr.style.display = 'none';
                 }
             }
 
-            if (selectedOddHandicap && checkHome < 0) {
-                if (parseInsertUpOdd <= selectedOddHandicap) {
-                    tr.style.display = 'revert';
-                } else {
-                    tr.style.display = 'none';
-                }
-            }
-
-            if (selectedOver && checkHome < 0) {
+            if (selectedOver) {
                 if (parseInsertGoal_t1 >= selectedOver) {
                     tr.style.display = 'revert';
+
+                    if (selectedOddOver) {
+                        if (parseInsertUpodds_t <= selectedOddOver) {
+                            tr.style.display = 'revert';
+
+                            if (selectedHandicap) {
+                                if (parseInsertGoal >= selectedHandicap) {
+                                    tr.style.display = 'revert';
+
+                                    if (selectedOddHandicap) {
+                                        if (parseInsertUpOdd <= selectedOddHandicap) {
+                                            tr.style.display = 'revert';
+                                        } else {
+                                            tr.style.display = 'none';
+                                        }
+                                    }
+
+                                } else {
+                                    tr.style.display = 'none';
+                                }
+                            }
+
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
                 } else {
                     tr.style.display = 'none';
                 }
 
-            }
-
-            if (selectedOddOver && checkHome < 0) {
-                if (parseInsertUpodds_t <= selectedOddOver) {
-                    tr.style.display = 'revert';
-                } else {
-                    tr.style.display = 'none';
-                }
             }
         }
 
