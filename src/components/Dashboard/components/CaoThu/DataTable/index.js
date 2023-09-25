@@ -44,16 +44,16 @@ const DataTable = (props) => {
         var tr = document.getElementById("tr_" + e.MATCH_ID);
         var home = tr.querySelector("#goal_" + e.MATCH_ID);
         var away = tr.querySelector("#goalLive_" + e.MATCH_ID);
-        var bdCellInsertUpOdd = document.getElementById("insertUpOdd_" + e.MATCH_ID);
-        var bdCellInsertDownOdd = document.getElementById("insertDownOdd_" + e.MATCH_ID);
+        var bdCellInsertUpOdd = tr.querySelector("#insertUpOdd_" + e.MATCH_ID);
+        var bdCellInsertDownOdd = tr.querySelector("#insertDownOdd_" + e.MATCH_ID);
 
-        var bdCellInsertGoal = document.getElementById("insertGoal_" + e.MATCH_ID);
-        var bdCellInsertGoalLive = document.getElementById("insertGoalLive_" + e.MATCH_ID);
+        var bdCellInsertGoal = tr.querySelector("#insertGoal_" + e.MATCH_ID);
+        var bdCellInsertGoalLive = tr.querySelector("#insertGoalLive_" + e.MATCH_ID);
 
-        var bdCellInsertGoal_t1 = document.getElementById("insertGoal_t1_" + e.MATCH_ID);
+        var bdCellInsertGoal_t1 = tr.querySelector("#insertGoal_t1_" + e.MATCH_ID);
 
-        var bdCellInsertUpodds_t = document.getElementById("insertUpodds_t_" + e.MATCH_ID);
-        var bdCellInsertDownodds_t = document.getElementById("insertDownodds_t_" + e.MATCH_ID);
+        var bdCellInsertUpodds_t = tr.querySelector("#insertUpodds_t_" + e.MATCH_ID);
+        var bdCellInsertDownodds_t = tr.querySelector("#insertDownodds_t_" + e.MATCH_ID);
 
         var teamValue = tr.attributes["team"].textContent;
         var checkHome = getOdds(home, "odd_goal");
@@ -71,150 +71,225 @@ const DataTable = (props) => {
             if (teamValue === `meAway_${e.MATCH_ID}`) {
                 tr.style.display = 'revert';
 
-                if (selectedHandicap && checkAway < 0) {
-                    if (parseInsertGoalLive >= selectedHandicap) {
+                if (selectedOver && selectedOddOver && selectedHandicap && selectedOddHandicap && checkAway < 0) {
+                    if (parseInsertGoalLive >= selectedHandicap && parseInsertDownOdd <= selectedOddHandicap && parseInsertGoal_t1 >= selectedOver && parseInsertDownodds_t <= selectedOddOver) {
                         tr.style.display = 'revert';
-
-                        if (selectedOddHandicap && checkAway < 0) {
-                            if (parseInsertDownOdd <= selectedOddHandicap) {
-                                tr.style.display = 'revert';
-
-                                if (selectedOver && checkAway < 0) {
-                                    if (parseInsertGoal_t1 >= selectedOver) {
-                                        tr.style.display = 'revert';
-
-                                        if (selectedOddOver && checkAway < 0) {
-                                            if (parseInsertDownodds_t <= selectedOddOver) {
-                                                tr.style.display = 'revert';
-                                            } else {
-                                                tr.style.display = 'none';
-                                            }
-                                        }
-
-                                    } else {
-                                        tr.style.display = 'none';
-                                    }
-                                }
-
-                            } else {
-                                tr.style.display = 'none';
-                            }
-                        }
-
                     } else {
                         tr.style.display = 'none';
                     }
-                }
-
-                if (selectedOver && checkAway < 0) {
-                    if (parseInsertGoal_t1 >= selectedOver) {
+                } else if (selectedOver && selectedOddOver && checkAway < 0) {
+                    if (parseInsertGoal_t1 >= selectedOver && parseInsertDownodds_t <= selectedOddOver) {
                         tr.style.display = 'revert';
-
-                        if (selectedOddOver && checkAway < 0) {
-                            if (parseInsertDownodds_t <= selectedOddOver) {
-                                tr.style.display = 'revert';
-
-                                if (selectedHandicap && checkAway < 0) {
-                                    if (parseInsertGoalLive >= selectedHandicap) {
-                                        tr.style.display = 'revert';
-
-                                        if (selectedOddHandicap && checkAway < 0) {
-                                            if (parseInsertDownOdd <= selectedOddHandicap) {
-                                                tr.style.display = 'revert';
-                                            } else {
-                                                tr.style.display = 'none';
-                                            }
-                                        }
-
-                                    } else {
-                                        tr.style.display = 'none';
-                                    }
-                                }
-
-                            } else {
-                                tr.style.display = 'none';
-                            }
-                        }
-
                     } else {
                         tr.style.display = 'none';
                     }
+                } else if (selectedHandicap && selectedOddHandicap && checkAway < 0) {
+                    if (parseInsertGoalLive >= selectedHandicap && parseInsertDownOdd <= selectedOddHandicap) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                } else if (selectedOver && selectedOddOver && selectedHandicap && checkAway < 0) {
+                    if (parseInsertGoalLive >= selectedHandicap && parseInsertGoal_t1 >= selectedOver && parseInsertDownodds_t <= selectedOddOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                } else if (selectedOver && selectedHandicap && selectedOddHandicap && checkAway < 0) {
+                    if (parseInsertGoalLive >= selectedHandicap && parseInsertDownOdd <= selectedOddHandicap && parseInsertGoal_t1 >= selectedOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                } else if (selectedOver && selectedHandicap && checkAway < 0) {
+                    if (parseInsertGoalLive >= selectedHandicap && parseInsertGoal_t1 >= selectedOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                } else {
+                    if (selectedHandicap && checkAway < 0) {
+                        if (parseInsertGoalLive >= selectedHandicap) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
+                    if (selectedOddHandicap && checkAway < 0) {
+                        if (parseInsertDownOdd <= selectedOddHandicap) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
+                    if (selectedOver && checkAway < 0) {
+                        if (parseInsertGoal_t1 >= selectedOver) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
+                    if (selectedOddOver && checkAway < 0) {
+                        if (parseInsertDownodds_t <= selectedOddOver) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
                 }
+
+
+                // if (selectedOver && checkAway < 0) {
+                //     if (parseInsertGoal_t1 >= selectedOver) {
+                //         tr.style.display = 'revert';
+
+                //         if (selectedOddOver && checkAway < 0) {
+                //             if (parseInsertDownodds_t <= selectedOddOver) {
+                //                 tr.style.display = 'revert';
+
+                //                 if (selectedHandicap && checkAway < 0) {
+                //                     if (parseInsertGoalLive >= selectedHandicap) {
+                //                         tr.style.display = 'revert';
+
+                //                         if (selectedOddHandicap && checkAway < 0) {
+                //                             if (parseInsertDownOdd <= selectedOddHandicap) {
+                //                                 tr.style.display = 'revert';
+                //                             } else {
+                //                                 tr.style.display = 'none';
+                //                             }
+                //                         }
+
+                //                     } else {
+                //                         tr.style.display = 'none';
+                //                     }
+                //                 }
+
+                //             } else {
+                //                 tr.style.display = 'none';
+                //             }
+                //         }
+
+                //     } else {
+                //         tr.style.display = 'none';
+                //     }
+                // }
             } else {
                 tr.style.display = 'none';
             }
         } else if (selectedTeamUp === 'home') {
             if (teamValue === `meHome_${e.MATCH_ID}`) {
                 tr.style.display = 'revert';
-                if (selectedHandicap && checkHome < 0) {
-                    if (parseInsertGoal >= selectedHandicap) {
+
+                if (selectedOver && selectedOddOver && selectedHandicap && selectedOddHandicap && checkHome < 0) {
+                    if (parseInsertGoal >= selectedHandicap && parseInsertUpOdd <= selectedOddHandicap && parseInsertGoal_t1 >= selectedOver && parseInsertUpodds_t <= selectedOddOver) {
                         tr.style.display = 'revert';
-
-                        if (selectedOddHandicap && checkHome < 0) {
-                            if (parseInsertUpOdd <= selectedOddHandicap) {
-                                tr.style.display = 'revert';
-
-                                if (selectedOver && checkHome < 0) {
-                                    if (parseInsertGoal_t1 >= selectedOver) {
-                                        tr.style.display = 'revert';
-
-                                        if (selectedOddOver && checkHome < 0) {
-                                            if (parseInsertUpodds_t <= selectedOddOver) {
-                                                tr.style.display = 'revert';
-                                            } else {
-                                                tr.style.display = 'none';
-                                            }
-                                        }
-
-                                    } else {
-                                        tr.style.display = 'none';
-                                    }
-                                }
-
-                            } else {
-                                tr.style.display = 'none';
-                            }
-                        }
-
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                } else if (selectedHandicap && selectedOddHandicap && checkHome < 0) {
+                    if (parseInsertGoal >= selectedHandicap && parseInsertUpOdd <= selectedOddHandicap) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                } else if (selectedOver && selectedOddOver && checkHome < 0) {
+                    if (parseInsertGoal_t1 >= selectedOver && parseInsertUpodds_t <= selectedOddOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                } else if (selectedOver && selectedOddOver && selectedHandicap && checkHome < 0) {
+                    if (parseInsertGoal >= selectedHandicap && parseInsertGoal_t1 >= selectedOver && parseInsertUpodds_t <= selectedOddOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                } else if (selectedOver && selectedHandicap && selectedOddHandicap && checkHome < 0) {
+                    if (parseInsertGoal >= selectedHandicap && parseInsertUpOdd <= selectedOddHandicap && parseInsertGoal_t1 >= selectedOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                } else if (selectedOver && selectedHandicap && checkHome < 0) {
+                    if (parseInsertGoal >= selectedHandicap && parseInsertGoal_t1 >= selectedOver) {
+                        tr.style.display = 'revert';
                     } else {
                         tr.style.display = 'none';
                     }
                 }
-
-                if (selectedOver && checkHome < 0) {
-                    if (parseInsertGoal_t1 >= selectedOver) {
-                        tr.style.display = 'revert';
-
-                        if (selectedOddOver && checkHome < 0) {
-                            if (parseInsertUpodds_t <= selectedOddOver) {
-                                tr.style.display = 'revert';
-
-                                if (selectedHandicap && checkHome < 0) {
-                                    if (parseInsertGoal >= selectedHandicap) {
-                                        tr.style.display = 'revert';
-
-                                        if (selectedOddHandicap && checkHome < 0) {
-                                            if (parseInsertUpOdd <= selectedOddHandicap) {
-                                                tr.style.display = 'revert';
-                                            } else {
-                                                tr.style.display = 'none';
-                                            }
-                                        }
-
-                                    } else {
-                                        tr.style.display = 'none';
-                                    }
-                                }
-
-                            } else {
-                                tr.style.display = 'none';
-                            }
+                else {
+                    if (selectedHandicap && checkHome < 0) {
+                        if (parseInsertGoal >= selectedHandicap) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
                         }
+                    }
 
-                    } else {
-                        tr.style.display = 'none';
+                    if (selectedOddHandicap && checkHome < 0) {
+                        if (parseInsertUpOdd <= selectedOddHandicap) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
+                    if (selectedOver && checkHome < 0) {
+                        if (parseInsertGoal_t1 >= selectedOver) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
+                    }
+
+                    if (selectedOddOver && checkHome < 0) {
+                        if (parseInsertUpodds_t <= selectedOddOver) {
+                            tr.style.display = 'revert';
+                        } else {
+                            tr.style.display = 'none';
+                        }
                     }
                 }
+
+
+
+                // if (selectedOver && checkHome < 0) {
+                //     if (parseInsertGoal_t1 >= selectedOver) {
+                //         tr.style.display = 'revert';
+
+                //         if (selectedOddOver && checkHome < 0) {
+                //             if (parseInsertUpodds_t <= selectedOddOver) {
+                //                 tr.style.display = 'revert';
+
+                //                 if (selectedHandicap && checkHome < 0) {
+                //                     if (parseInsertGoal >= selectedHandicap) {
+                //                         tr.style.display = 'revert';
+
+                //                         if (selectedOddHandicap && checkHome < 0) {
+                //                             if (parseInsertUpOdd <= selectedOddHandicap) {
+                //                                 tr.style.display = 'revert';
+                //                             } else {
+                //                                 tr.style.display = 'none';
+                //                             }
+                //                         }
+
+                //                     } else {
+                //                         tr.style.display = 'none';
+                //                     }
+                //                 }
+
+                //             } else {
+                //                 tr.style.display = 'none';
+                //             }
+                //         }
+
+                //     } else {
+                //         tr.style.display = 'none';
+                //     }
+                // }
 
 
             } else {
@@ -225,77 +300,220 @@ const DataTable = (props) => {
         }
 
         if (selectedTeamUp !== 'home' && selectedTeamUp !== 'away') {
-            if (selectedHandicap) {
-                if (parseInsertGoal >= selectedHandicap) {
+
+            if (selectedOver && selectedOddOver && selectedHandicap && selectedOddHandicap && checkAway < 0) {
+                if (parseInsertGoalLive >= selectedHandicap && parseInsertDownOdd <= selectedOddHandicap && parseInsertGoal_t1 >= selectedOver && parseInsertDownodds_t <= selectedOddOver) {
                     tr.style.display = 'revert';
-
-                    if (selectedOddHandicap) {
-                        if (parseInsertUpOdd <= selectedOddHandicap) {
-                            tr.style.display = 'revert';
-
-                            if (selectedOver) {
-                                if (parseInsertGoal_t1 >= selectedOver) {
-                                    tr.style.display = 'revert';
-
-                                    if (selectedOddOver) {
-                                        if (parseInsertUpodds_t <= selectedOddOver) {
-                                            tr.style.display = 'revert';
-                                        } else {
-                                            tr.style.display = 'none';
-                                        }
-                                    }
-
-                                } else {
-                                    tr.style.display = 'none';
-                                }
-
-                            }
-
-                        } else {
-                            tr.style.display = 'none';
-                        }
+                } else {
+                    tr.style.display = 'none';
+                }
+            } else if (selectedOver && selectedOddOver && checkAway < 0) {
+                if (parseInsertGoal_t1 >= selectedOver && parseInsertDownodds_t <= selectedOddOver) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
+                }
+            } else if (selectedHandicap && selectedOddHandicap && checkAway < 0) {
+                if (parseInsertGoalLive >= selectedHandicap && parseInsertDownOdd <= selectedOddHandicap) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
+                }
+            } else if (selectedOver && selectedOddOver && selectedHandicap && checkAway < 0) {
+                if (parseInsertGoalLive >= selectedHandicap && parseInsertGoal_t1 >= selectedOver && parseInsertDownodds_t <= selectedOddOver) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
+                }
+            } else if (selectedOver && selectedHandicap && selectedOddHandicap && checkAway < 0) {
+                if (parseInsertGoalLive >= selectedHandicap && parseInsertDownOdd <= selectedOddHandicap && parseInsertGoal_t1 >= selectedOver) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
+                }
+            } else if (selectedOver && selectedHandicap && checkAway < 0) {
+                if (parseInsertGoalLive >= selectedHandicap && parseInsertGoal_t1 >= selectedOver) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
+                }
+            } else {
+                if (selectedHandicap && checkAway < 0) {
+                    if (parseInsertGoalLive >= selectedHandicap) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
                     }
+                }
 
+                if (selectedOddHandicap && checkAway < 0) {
+                    if (parseInsertDownOdd <= selectedOddHandicap) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                }
+
+                if (selectedOver && checkAway < 0) {
+                    if (parseInsertGoal_t1 >= selectedOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                }
+
+                if (selectedOddOver && checkAway < 0) {
+                    if (parseInsertDownodds_t <= selectedOddOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                }
+            }
+
+            /* ********************************************************************* */
+
+            if (selectedOver && selectedOddOver && selectedHandicap && selectedOddHandicap && checkHome < 0) {
+                if (parseInsertGoal >= selectedHandicap && parseInsertUpOdd <= selectedOddHandicap && parseInsertGoal_t1 >= selectedOver && parseInsertUpodds_t <= selectedOddOver) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
+                }
+            } else if (selectedHandicap && selectedOddHandicap && checkHome < 0) {
+                if (parseInsertGoal >= selectedHandicap && parseInsertUpOdd <= selectedOddHandicap) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
+                }
+            } else if (selectedOver && selectedOddOver && checkHome < 0) {
+                if (parseInsertGoal_t1 >= selectedOver && parseInsertUpodds_t <= selectedOddOver) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
+                }
+            } else if (selectedOver && selectedOddOver && selectedHandicap && checkHome < 0) {
+                if (parseInsertGoal >= selectedHandicap && parseInsertGoal_t1 >= selectedOver && parseInsertUpodds_t <= selectedOddOver) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
+                }
+            } else if (selectedOver && selectedHandicap && selectedOddHandicap && checkHome < 0) {
+                if (parseInsertGoal >= selectedHandicap && parseInsertUpOdd <= selectedOddHandicap && parseInsertGoal_t1 >= selectedOver) {
+                    tr.style.display = 'revert';
+                } else {
+                    tr.style.display = 'none';
+                }
+            } else if (selectedOver && selectedHandicap && checkHome < 0) {
+                if (parseInsertGoal >= selectedHandicap && parseInsertGoal_t1 >= selectedOver) {
+                    tr.style.display = 'revert';
                 } else {
                     tr.style.display = 'none';
                 }
             }
-
-            if (selectedOver) {
-                if (parseInsertGoal_t1 >= selectedOver) {
-                    tr.style.display = 'revert';
-
-                    if (selectedOddOver) {
-                        if (parseInsertUpodds_t <= selectedOddOver) {
-                            tr.style.display = 'revert';
-
-                            if (selectedHandicap) {
-                                if (parseInsertGoal >= selectedHandicap) {
-                                    tr.style.display = 'revert';
-
-                                    if (selectedOddHandicap) {
-                                        if (parseInsertUpOdd <= selectedOddHandicap) {
-                                            tr.style.display = 'revert';
-                                        } else {
-                                            tr.style.display = 'none';
-                                        }
-                                    }
-
-                                } else {
-                                    tr.style.display = 'none';
-                                }
-                            }
-
-                        } else {
-                            tr.style.display = 'none';
-                        }
+            else {
+                if (selectedHandicap && checkHome < 0) {
+                    if (parseInsertGoal >= selectedHandicap) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
                     }
-
-                } else {
-                    tr.style.display = 'none';
                 }
 
+                if (selectedOddHandicap && checkHome < 0) {
+                    if (parseInsertUpOdd <= selectedOddHandicap) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                }
+
+                if (selectedOver && checkHome < 0) {
+                    if (parseInsertGoal_t1 >= selectedOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                }
+
+                if (selectedOddOver && checkHome < 0) {
+                    if (parseInsertUpodds_t <= selectedOddOver) {
+                        tr.style.display = 'revert';
+                    } else {
+                        tr.style.display = 'none';
+                    }
+                }
             }
+
+            /* **********************************************************************************  */
+
+            // if (selectedHandicap) {
+            //     if (parseInsertGoal >= selectedHandicap) {
+            //         tr.style.display = 'revert';
+            //     } else {
+            //         tr.style.display = 'none';
+            //     }
+            // }
+
+            // if (selectedOddHandicap) {
+            //     if (parseInsertUpOdd <= selectedOddHandicap) {
+            //         tr.style.display = 'revert';
+            //     } else {
+            //         tr.style.display = 'none';
+            //     }
+            // }
+
+            // if (selectedOver) {
+            //     if (parseInsertGoal_t1 >= selectedOver) {
+            //         tr.style.display = 'revert';
+            //     } else {
+            //         tr.style.display = 'none';
+            //     }
+
+            // }
+
+            // if (selectedOddOver) {
+            //     if (parseInsertUpodds_t <= selectedOddOver) {
+            //         tr.style.display = 'revert';
+            //     } else {
+            //         tr.style.display = 'none';
+            //     }
+            // }
+
+            // if (selectedOver) {
+            //     if (parseInsertGoal_t1 >= selectedOver) {
+            //         tr.style.display = 'revert';
+
+            //         if (selectedOddOver) {
+            //             if (parseInsertUpodds_t <= selectedOddOver) {
+            //                 tr.style.display = 'revert';
+
+            //                 if (selectedHandicap) {
+            //                     if (parseInsertGoal >= selectedHandicap) {
+            //                         tr.style.display = 'revert';
+
+            //                         if (selectedOddHandicap) {
+            //                             if (parseInsertUpOdd <= selectedOddHandicap) {
+            //                                 tr.style.display = 'revert';
+            //                             } else {
+            //                                 tr.style.display = 'none';
+            //                             }
+            //                         }
+
+            //                     } else {
+            //                         tr.style.display = 'none';
+            //                     }
+            //                 }
+
+            //             } else {
+            //                 tr.style.display = 'none';
+            //             }
+            //         }
+
+            //     } else {
+            //         tr.style.display = 'none';
+            //     }
+
+            // }
         }
 
     }, [selectedTeamUp, selectedHandicap, selectedOddHandicap, selectedOver, selectedOddOver]);
