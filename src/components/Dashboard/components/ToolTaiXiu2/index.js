@@ -20,7 +20,9 @@ const ToolTaiXiu2 = () => {
 
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [bfRefresh, SetBfRefresh] = useState([]);
+    const [selectedTimeRun, setSelectedTimeRun] = useState([]);
     const [timeRun, setTimeRun] = useState([]);
+    const [threeIn1, Set3In1] = useState([]);
     const [oddRealTime, setOddRealTime] = useState([]);
     const [selectedTips, setSelectedTips] = useState(false);
     const [selectedOver, setSelectedOver] = useState(false);
@@ -102,6 +104,104 @@ const ToolTaiXiu2 = () => {
 
 
     }, [bfRefresh])
+
+    useEffect(() => {
+        const get3In1 = () => {
+            const length = threeIn1?.length || 0;
+
+            for (let i = 0; i < length; i++) {
+                const D = threeIn1?.[i]?.$;
+
+                if (!D) continue;
+
+                const tr = document.getElementById("tr_" + D._MATCH_ID);
+                if (!tr) continue;
+
+                try {
+                    const odds = JSON.parse(D._ODDS);
+                    const oddAH_ft = odds.ODDS_FT.AH;
+                    const oddOU_ft = odds.ODDS_FT.OU;
+
+                    if (selectedTimeRun !== "") {
+                        updateAHOdds(tr, D, oddAH_ft);
+                        updateOUOdds(tr, D, oddOU_ft);
+                    }
+                } catch (error) {
+                    console.error("Error parsing JSON:", error);
+                }
+            }
+        }
+
+        // Hàm cập nhật AH odds
+        const updateAHOdds = (tr, D, oddAH_ft) => {
+            if (oddAH_ft && oddAH_ft.length > 0) {
+
+                oddAH_ft.sort((a, b) => Math.abs(hourse(a.AH.mt) - selectedTimeRun) - Math.abs(hourse(b.AH.mt) - selectedTimeRun));
+                const nearestOdd = oddAH_ft.find(odd => hourse(odd.AH.mt) <= selectedTimeRun);
+
+                if (nearestOdd) {
+                    const upodds = tr.querySelector("#upodds_" + D._MATCH_ID);
+                    const downodds = tr.querySelector("#downodds_" + D._MATCH_ID);
+                    const goal = tr.querySelector("#goal_" + D._MATCH_ID);
+                    const goalLive = tr.querySelector("#goalLive_" + D._MATCH_ID);
+
+
+                    updateElement(formatNumber(nearestOdd.AH.odds.u), upodds);
+                    updateAttri(goal, "odd_goal", (nearestOdd.AH.odds.g) < 0 ? (-nearestOdd.AH.odds.g) : (-nearestOdd.AH.odds.g))
+                    updateAttri(goalLive, "odd_goallive", (nearestOdd.AH.odds.g) < 0 ? (nearestOdd.AH.odds.g) : (nearestOdd.AH.odds.g))
+
+                    // updateElement((nearestOdd.AH.odds.g) < 0 ? (-nearestOdd.AH.odds.g) : (-nearestOdd.AH.odds.g), goal);
+                    // updateElement((nearestOdd.AH.odds.g) < 0 ? (nearestOdd.AH.odds.g) : (nearestOdd.AH.odds.g), goalLive);
+
+                    updateElement((nearestOdd.AH.odds.g) < 0 ? "" : (nearestOdd.AH.odds.g), goal);
+                    updateElement((nearestOdd.AH.odds.g) < 0 ? (-nearestOdd.AH.odds.g) : "", goalLive);
+
+                    updateElement(formatNumber(nearestOdd.AH.odds.d), downodds);
+
+
+                }
+            }
+        }
+
+        // Hàm cập nhật OU odds
+        const updateOUOdds = (tr, D, oddOU_ft) => {
+            if (oddOU_ft && oddOU_ft.length > 0) {
+                oddOU_ft.sort((a, b) => Math.abs(hourse(a.OU.mt) - selectedTimeRun) - Math.abs(hourse(b.OU.mt) - selectedTimeRun));
+                const nearestOdd = oddOU_ft.find(odd => hourse(odd.OU.mt) <= selectedTimeRun);
+
+                if (nearestOdd) {
+                    const goal_t1 = tr.querySelector("#goal_t1_" + D._MATCH_ID);
+                    const upodds_t = tr.querySelector("#upodds_t_" + D._MATCH_ID);
+                    const downodds_t = tr.querySelector("#downodds_t_" + D._MATCH_ID);
+
+                    updateElement(formatNumber(nearestOdd.OU.odds.u), upodds_t);
+                    updateElement((nearestOdd.OU.odds.g), goal_t1);
+                    updateElement(formatNumber(nearestOdd.OU.odds.d), downodds_t);
+                }
+            }
+        }
+
+        const hourse = (time) => {
+            var mtInSeconds = time;
+            var mtInMilliseconds = mtInSeconds * 1000;
+            var mtDate = new Date(mtInMilliseconds);
+
+            var mtHours = mtDate.getHours();
+            return mtHours;
+        }
+
+
+        // Hàm cập nhật phần tử HTML
+        const updateElement = (newValue, element) => {
+            element.innerHTML = newValue;
+        }
+
+        const updateAttri = (tr, elementAttri, newValue) => {
+            return tr.attributes[`${elementAttri}`].value = newValue;
+        }
+
+        get3In1();
+    }, [threeIn1, selectedTimeRun]);
 
     useEffect(() => {
         var length = 0;
@@ -207,7 +307,7 @@ const ToolTaiXiu2 = () => {
                             goTime = "45+";
                         }
 
-                        ms += "1st Half - " + goTime + timeIcon;
+                        ms += goTime + timeIcon;
                     } else if (D.STATE === '3') {
                         const currentTime = new Date();
                         const elapsedTime = (currentTime) - new Date((D.TIME)) - difftime;
@@ -219,16 +319,28 @@ const ToolTaiXiu2 = () => {
                             goTime = "90+";
                         }
 
-                        ms += "2nd Half - " + goTime + timeIcon;
+                        ms += goTime + timeIcon;
                     } else if (D.STATE === '2') {
                         ms += "HT";
                     } else if (D.STATE === '4') {
                         ms += "ET";
                     } else if (D.STATE === '5') {
                         ms += "Pen";
+                    } else {
+                        ms += "FT";
+                        tr.attributes["data-t"].value = "Finished";
+                    }
+                    const td_score = tr.querySelector(`#tdSrc_${D.MATCH_ID}`);
+                    if (td_score) {
+                        td_score.innerHTML =
+                            `<div class='half'>
+                                <div class='score'>${D.SCORE_HOME}</div>
+                                <div class='vs hhs'><span id='matchTime'></span></div>
+                                <div class='score'>${D.SCORE_AWAY}</div>
+                            </div>`;
                     }
 
-                    const matchTimeElement = tr.querySelector(`#ms${D.MATCH_ID}`);
+                    const matchTimeElement = tr.querySelector(`#matchTime`);
                     if (matchTimeElement) {
                         matchTimeElement.innerHTML = ms;
                     }
@@ -298,16 +410,16 @@ const ToolTaiXiu2 = () => {
                 //     }
                 // });
 
-                // socket.on("3IN1", async (data) => {
-                //   try {
-                //     const dataJson = JSON.parse(data);
-                //     if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
-                //       Set3In1(dataJson['ODDS_DATA']['ODDS_ITEM']);
-                //     }
-                //   } catch (error) {
-                //     console.error("Error while parsing JSON data:", error.message);
-                //   }
-                // });
+                socket.on("3IN1", async (data) => {
+                    try {
+                        const dataJson = JSON.parse(data);
+                        if (dataJson && dataJson['ODDS_DATA'] && dataJson['ODDS_DATA']['ODDS_ITEM']) {
+                            Set3In1(dataJson['ODDS_DATA']['ODDS_ITEM']);
+                        }
+                    } catch (error) {
+                        console.error("Error while parsing JSON data:", error.message);
+                    }
+                });
 
                 return () => {
                     socket.disconnect();
@@ -332,6 +444,22 @@ const ToolTaiXiu2 = () => {
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 1 }}>
                     <Grid item xs={2}>
                         <DateSelector selectedDate={selectedDate} onSelectDate={setSelectedDate} />
+                    </Grid>
+                    <Grid item xs={2}>
+                        <div>
+                            <label>
+                                Thời gian biến động kèo::
+                                <select value={selectedTimeRun} onChange={(e) => setSelectedTimeRun(e.target.value)} >
+                                    <option value="">All</option>
+                                    <option value="3">3H</option>
+                                    <option value="6">6H</option>
+                                    <option value="12">12H</option>
+                                    <option value="24">1 Ngày</option>
+                                    <option value="48">2 Ngày</option>
+                                    <option value="52">3 Ngày</option>
+                                </select>
+                            </label>
+                        </div>
                     </Grid>
                     <Grid item xs={2}>
                         <div>
@@ -361,7 +489,7 @@ const ToolTaiXiu2 = () => {
                             </label>
                         </div>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={2}>
                         <div>
                             <label>
                                 Lọc Odds Over:
@@ -380,7 +508,7 @@ const ToolTaiXiu2 = () => {
                             </label>
                         </div>
                     </Grid>
-                    <Grid item xs={4}></Grid>
+                    <Grid item xs={6}></Grid>
                     <Grid item xs={2}>
                         <div>
                             <label>

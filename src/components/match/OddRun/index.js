@@ -31,7 +31,7 @@ const OddRun = (props) => {
         }
     };
 
-    if (Array.isArray(threeIn1) && threeIn1.length > 0) {
+    if (threeIn1) {
         try {
             parsedOddsRun = JSON.parse(threeIn1);
         } catch (error) {
@@ -39,6 +39,7 @@ const OddRun = (props) => {
             console.error("Error parsing JSON data:", error.message);
         }
     }
+
 
     if (oddDetailHistory?.data && oddDetailHistory?.data?.$ && oddDetailHistory?.data?.$?._ODDS) {
         parsedOdds = JSON.parse(oddDetailHistory?.data?.$?._ODDS);

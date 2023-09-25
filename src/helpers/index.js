@@ -158,6 +158,8 @@ export const startMatchTimer = (STATE, TIME, elementID) => {
         ms += "ET";
     } else if (STATE === '5') {
         ms += "Pen";
+    } else {
+        ms += "FT.";
     }
 
     const matchTimeElement = document.getElementById(elementID);

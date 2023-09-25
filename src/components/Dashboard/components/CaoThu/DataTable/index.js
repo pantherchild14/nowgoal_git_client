@@ -207,7 +207,7 @@ const DataTable = (props) => {
                     } else {
                         tr.style.display = 'none';
                     }
-                } else if (selectedOver && selectedHandicap && selectedOddHandicap && checkHome < 0) {
+                } else if (selectedHandicap && selectedOddHandicap && selectedOver && checkHome < 0) {
                     if (parseInsertGoal >= selectedHandicap && parseInsertUpOdd <= selectedOddHandicap && parseInsertGoal_t1 >= selectedOver) {
                         tr.style.display = 'revert';
                     } else {

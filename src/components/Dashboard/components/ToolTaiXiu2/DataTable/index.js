@@ -14,16 +14,12 @@ const DataTable = (props) => {
     const handleViewClickButton = () => {
         let params = '';
 
-        // if (tipHandicap !== '') {
-        //     params += `ah=${tipHandicap}`;
-        // }
-
-        // if (tipOU !== '') {
-        //     if (params !== '') {
-        //         params += '&';
-        //     }
-        //     params += `ou=${tipOU}`;
-        // }
+        if (tipOU !== '') {
+            if (params !== '') {
+                params += '&';
+            }
+            params += `ou=${tipOU}`;
+        }
 
         const newUrl = `/match/${e.MATCH_ID}${params !== '' ? `?${params}` : ''}`;
         window.open(newUrl, '_blank');
@@ -513,7 +509,7 @@ const DataTable = (props) => {
                     <p id={`away_${e.MATCH_ID}`} className={((ODDS_AH_FT.l.g) < 0 ? (ODDS_AH_FT.l.g) ? `me_color` : "" : (ODDS_AH_FT.l.g))} >{e.AWAY_NAME}</p>
                 </div>
             </td>
-            <td width="5%" style={{ textAlign: 'center' }} className="td-score">
+            <td width="5%" style={{ textAlign: 'center' }} className="td-score" id={`tdSrc_${e.MATCH_ID}`}>
                 <span id={'hs' + e.MATCH_ID} className="blue">{scheduleRT?.HOME_SCORE}</span>
                 <br />
                 <span id={'ms' + e.MATCH_ID}>{scheduleRT?.START_TIME}</span>
@@ -726,7 +722,7 @@ const DataTable = (props) => {
             {/* onClick={handleViewClickButton} */}
             <td >
                 <div className="td-viewfull" style={{ display: 'grid', padding: '0px 5px 0 5px' }}>
-                    <button style={{ marginBottom: '5px' }}>View</button>
+                    <button style={{ marginBottom: '5px' }} onClick={handleViewClickButton}>View</button>
                     <button onClick={handleLinkNowgGoal}>Link</button>
                 </div>
             </td>

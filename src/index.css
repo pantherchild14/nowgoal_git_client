@@ -121,6 +121,13 @@ table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-mi
     display: none !important;
 }
 
+.in-gif {
+    display: inline-block;
+    background: url(../public/in.gif);
+    width: 3px;
+    height: 8px;
+}
+
 table.odds-table-bg,
 div#caothu table,
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle {
@@ -301,11 +308,22 @@ tr {
     color: #212529;
 }
 
+table.dntable-list thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
 table.tooltaixiu2 tbody tr[data-s="1st Half"],
 table.tooltaixiu2 tbody tr[data-s="2nd Half"],
 table.tooltaixiu2 tbody tr[data-s="1"] {
     --bs-table-accent-bg: #FFDDD1;
     color: #212529;
+}
+
+table.dntable-list tbody tr:hover {
+    --bs-table-accent-bg: #8888888a !important;
+    cursor: pointer;
 }
 
 .dntable-list.-td-0 tbody td {

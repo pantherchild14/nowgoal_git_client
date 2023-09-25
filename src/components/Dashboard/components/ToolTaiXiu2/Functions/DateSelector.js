@@ -3,7 +3,13 @@ import React, { useState } from "react";
 const DateSelector = ({ selectedDate, onSelectDate }) => {
     const currentDate = new Date();
     const dateOptions = [];
-    for (let i = 0; i < 3; i++) {
+
+    // Kiểm tra nếu hiện tại là sau 12 giờ trưa thì tăng currentDate thêm 1 ngày
+    if (currentDate.getHours() >= 12) {
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    for (let i = -1; i < 2; i++) {
         const date = new Date(currentDate);
         date.setDate(currentDate.getDate() + i);
         dateOptions.push(date.toISOString().split('T')[0]);
@@ -27,6 +33,8 @@ const DateSelector = ({ selectedDate, onSelectDate }) => {
         </div>
     );
 };
+
+
 
 const formatDate = (date) => {
     const [year, month, day] = date.split("-");
