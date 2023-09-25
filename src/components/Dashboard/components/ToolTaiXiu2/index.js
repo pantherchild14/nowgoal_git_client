@@ -10,7 +10,7 @@ import * as actions from "../../../../redux/actions";
 import { scheduleState$, oddsallState$, statusrtState$ } from "../../../../redux/selectors";
 import DateSelector from "./Functions/DateSelector";
 import DataTable from "./DataTable";
-import { formatNumber } from "../../../../helpers";
+import { UTCtoLocalTime, formatNumber } from "../../../../helpers";
 
 const ToolTaiXiu2 = () => {
     const dispatch = useDispatch();
@@ -18,6 +18,8 @@ const ToolTaiXiu2 = () => {
     const odds = useSelector(oddsallState$);
     const statusRedux = useSelector(statusrtState$);
 
+    const [newSocket, setSocket] = useState(null);
+    const [isSocketConnected, setIsSocketConnected] = useState(false);
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [bfRefresh, SetBfRefresh] = useState([]);
     const [selectedTimeRun, setSelectedTimeRun] = useState([]);
@@ -106,6 +108,8 @@ const ToolTaiXiu2 = () => {
     }, [bfRefresh])
 
     useEffect(() => {
+
+
         const get3In1 = () => {
             const length = threeIn1?.length || 0;
 
@@ -123,8 +127,17 @@ const ToolTaiXiu2 = () => {
                     const oddOU_ft = odds.ODDS_FT.OU;
 
                     if (selectedTimeRun !== "") {
+                        if (newSocket && isSocketConnected) {
+                            newSocket.disconnect();
+                            console.log("Socket disconnected due to selectedTimeRun change");
+                        }
                         updateAHOdds(tr, D, oddAH_ft);
                         updateOUOdds(tr, D, oddOU_ft);
+                    } else {
+                        if (newSocket && isSocketConnected) {
+                            newSocket.connect();
+                            console.log("Socket disconnected due to selectedTimeRun change");
+                        }
                     }
                 } catch (error) {
                     console.error("Error parsing JSON:", error);
@@ -136,15 +149,23 @@ const ToolTaiXiu2 = () => {
         const updateAHOdds = (tr, D, oddAH_ft) => {
             if (oddAH_ft && oddAH_ft.length > 0) {
 
-                oddAH_ft.sort((a, b) => Math.abs(hourse(a.AH.mt) - selectedTimeRun) - Math.abs(hourse(b.AH.mt) - selectedTimeRun));
-                const nearestOdd = oddAH_ft.find(odd => hourse(odd.AH.mt) <= selectedTimeRun);
+                const currentTime = new Date();
+                currentTime.setHours(currentTime.getHours() - selectedTimeRun);
+
+                const nearestOdd = oddAH_ft.find(odd => {
+                    const oddTime = new Date(odd.AH.mt * 1000);
+
+                    if (oddTime <= currentTime) {
+                        return odd;
+                    }
+                    return false; // Tiếp tục tìm odd khác
+                });
 
                 if (nearestOdd) {
-                    const upodds = tr.querySelector("#upodds_" + D._MATCH_ID);
-                    const downodds = tr.querySelector("#downodds_" + D._MATCH_ID);
-                    const goal = tr.querySelector("#goal_" + D._MATCH_ID);
-                    const goalLive = tr.querySelector("#goalLive_" + D._MATCH_ID);
-
+                    const upodds = tr.querySelector("#upoddsEarly_" + D._MATCH_ID);
+                    const downodds = tr.querySelector("#downoddsEarly_" + D._MATCH_ID);
+                    const goal = tr.querySelector("#goalEarly_" + D._MATCH_ID);
+                    const goalLive = tr.querySelector("#goalEarlyLive_" + D._MATCH_ID);
 
                     updateElement(formatNumber(nearestOdd.AH.odds.u), upodds);
                     updateAttri(goal, "odd_goal", (nearestOdd.AH.odds.g) < 0 ? (-nearestOdd.AH.odds.g) : (-nearestOdd.AH.odds.g))
@@ -152,13 +173,10 @@ const ToolTaiXiu2 = () => {
 
                     // updateElement((nearestOdd.AH.odds.g) < 0 ? (-nearestOdd.AH.odds.g) : (-nearestOdd.AH.odds.g), goal);
                     // updateElement((nearestOdd.AH.odds.g) < 0 ? (nearestOdd.AH.odds.g) : (nearestOdd.AH.odds.g), goalLive);
-
                     updateElement((nearestOdd.AH.odds.g) < 0 ? "" : (nearestOdd.AH.odds.g), goal);
                     updateElement((nearestOdd.AH.odds.g) < 0 ? (-nearestOdd.AH.odds.g) : "", goalLive);
 
                     updateElement(formatNumber(nearestOdd.AH.odds.d), downodds);
-
-
                 }
             }
         }
@@ -166,13 +184,22 @@ const ToolTaiXiu2 = () => {
         // Hàm cập nhật OU odds
         const updateOUOdds = (tr, D, oddOU_ft) => {
             if (oddOU_ft && oddOU_ft.length > 0) {
-                oddOU_ft.sort((a, b) => Math.abs(hourse(a.OU.mt) - selectedTimeRun) - Math.abs(hourse(b.OU.mt) - selectedTimeRun));
-                const nearestOdd = oddOU_ft.find(odd => hourse(odd.OU.mt) <= selectedTimeRun);
+                const currentTime = new Date();
+                currentTime.setHours(currentTime.getHours() - selectedTimeRun);
+
+                const nearestOdd = oddOU_ft.find(odd => {
+                    const oddTime = new Date(odd.OU.mt * 1000);
+
+                    if (oddTime <= currentTime) {
+                        return odd;
+                    }
+                    return false;
+                });
 
                 if (nearestOdd) {
-                    const goal_t1 = tr.querySelector("#goal_t1_" + D._MATCH_ID);
-                    const upodds_t = tr.querySelector("#upodds_t_" + D._MATCH_ID);
-                    const downodds_t = tr.querySelector("#downodds_t_" + D._MATCH_ID);
+                    const goal_t1 = tr.querySelector("#goalEarly_t1_" + D._MATCH_ID);
+                    const upodds_t = tr.querySelector("#upoddsEarly_t_" + D._MATCH_ID);
+                    const downodds_t = tr.querySelector("#downoddsEarly_t_" + D._MATCH_ID);
 
                     updateElement(formatNumber(nearestOdd.OU.odds.u), upodds_t);
                     updateElement((nearestOdd.OU.odds.g), goal_t1);
@@ -180,16 +207,6 @@ const ToolTaiXiu2 = () => {
                 }
             }
         }
-
-        const hourse = (time) => {
-            var mtInSeconds = time;
-            var mtInMilliseconds = mtInSeconds * 1000;
-            var mtDate = new Date(mtInMilliseconds);
-
-            var mtHours = mtDate.getHours();
-            return mtHours;
-        }
-
 
         // Hàm cập nhật phần tử HTML
         const updateElement = (newValue, element) => {
@@ -201,7 +218,7 @@ const ToolTaiXiu2 = () => {
         }
 
         get3In1();
-    }, [threeIn1, selectedTimeRun]);
+    }, [selectedTimeRun]);
 
     useEffect(() => {
         var length = 0;
@@ -269,7 +286,7 @@ const ToolTaiXiu2 = () => {
 
             try {
                 const startMatchTimer = () => {
-                    if (D.STATE === undefined || D.TIME === undefined) {
+                    if (D.STATE === undefined || D.TIME === undefined || D.SCORE_HOME === undefined || D.SCORE_AWAY === undefined) {
                         // Nếu thiếu STATE hoặc TIME, không thực hiện gì cả.
                         return;
                     }
@@ -301,6 +318,7 @@ const ToolTaiXiu2 = () => {
                         const currentTime = new Date();
                         const elapsedTime = currentTime - new Date(D.TIME) - difftime;
                         goTime = Math.floor(elapsedTime / 60000);
+
                         if (goTime < 1) {
                             goTime = "1";
                         } else if (goTime > 45) {
@@ -310,7 +328,7 @@ const ToolTaiXiu2 = () => {
                         ms += goTime + timeIcon;
                     } else if (D.STATE === '3') {
                         const currentTime = new Date();
-                        const elapsedTime = (currentTime) - new Date((D.TIME)) - difftime;
+                        const elapsedTime = (currentTime) - new Date(D.TIME) - difftime;
                         goTime = Math.floor(elapsedTime / 60000) + 46;
 
                         if (goTime < 46) {
@@ -326,24 +344,28 @@ const ToolTaiXiu2 = () => {
                         ms += "ET";
                     } else if (D.STATE === '5') {
                         ms += "Pen";
-                    } else {
+                    } else if (D.STATE === '-1' || D.STATE === '-11') {
                         ms += "FT";
-                        tr.attributes["data-t"].value = "Finished";
-                    }
-                    const td_score = tr.querySelector(`#tdSrc_${D.MATCH_ID}`);
-                    if (td_score) {
-                        td_score.innerHTML =
-                            `<div class='half'>
-                                <div class='score'>${D.SCORE_HOME}</div>
-                                <div class='vs hhs'><span id='matchTime'></span></div>
-                                <div class='score'>${D.SCORE_AWAY}</div>
-                            </div>`;
+                        tr.attributes["data-s"].value = D.STATE;
                     }
 
-                    const matchTimeElement = tr.querySelector(`#matchTime`);
-                    if (matchTimeElement) {
-                        matchTimeElement.innerHTML = ms;
+                    const matchTimeElement = tr.querySelector(`#ms${D.MATCH_ID}`);
+                    const hsElement = tr.querySelector(`#hs${D.MATCH_ID}`);
+                    const gsElement = tr.querySelector(`#gs${D.MATCH_ID}`);
+
+                    if (ms !== "") {
+                        if (matchTimeElement) {
+                            matchTimeElement.innerHTML = ms;
+                        }
+                        if (hsElement) {
+                            hsElement.innerHTML = D.SCORE_HOME;
+                        }
+                        if (gsElement) {
+                            gsElement.innerHTML = D.SCORE_AWAY;
+                        }
                     }
+
+
                     setTimeout(startMatchTimer, 30 * 1000);
                 }
 
@@ -360,7 +382,8 @@ const ToolTaiXiu2 = () => {
             try {
                 const socket = io.connect(`${process.env.REACT_APP_URL_SERVER}`);
                 socket.on("connect", () => {
-                    console.log("con ws");
+                    setIsSocketConnected(true);
+                    console.log("con sw");
                 });
 
                 socket.on("XML_ODDS", async (data) => {
@@ -421,8 +444,18 @@ const ToolTaiXiu2 = () => {
                     }
                 });
 
+                socket.on("disconnect", () => {
+                    setIsSocketConnected(false);
+                    console.log("Socket disconnected");
+                });
+
+                setSocket(socket);
+
                 return () => {
-                    socket.disconnect();
+                    if (newSocket) {
+                        newSocket.disconnect();
+                    }
+                    // socket.disconnect();
                 };
             } catch (error) {
                 console.error("Error fetching data:", error.message);

@@ -515,6 +515,11 @@ const DataTable = (props) => {
                 <span id={'ms' + e.MATCH_ID}>{scheduleRT?.START_TIME}</span>
                 <br />
                 <span id={'gs' + e.MATCH_ID} className="blue">{scheduleRT?.AWAY_SCORE}</span>
+                {/* <div class='half'>
+                    <div id={'hs' + e.MATCH_ID} className='blue'>{scheduleRT?.HOME_SCORE}</div>
+                    <div className='vs hhs'><span id='matchTime'>{scheduleRT?.START_TIME}</span></div>
+                    <div id={'gs' + e.MATCH_ID} className='blue'>{scheduleRT?.AWAY_SCORE}</div>
+                </div> */}
             </td>
             {/* ***************************************************  Handicap  ***************************************************** */}
 
