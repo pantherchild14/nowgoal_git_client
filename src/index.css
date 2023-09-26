@@ -111,7 +111,7 @@ div#\36 in1 table[data-t *="Pause"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-s="-10"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-s="-11"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-s="-14"],
-table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[chodds=""],
+/* table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[chodds=""], */
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Finished"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Pend"],
 table.dntable-list.-td-0.table.table-hover.table-striped.table-bordered.align-middle tbody tr[data-t *="Cancel"],
@@ -317,7 +317,7 @@ table.dntable-list thead {
 table.tooltaixiu2 tbody tr[data-s="1st Half"],
 table.tooltaixiu2 tbody tr[data-s="2nd Half"],
 table.tooltaixiu2 tbody tr[data-s="1"] {
-    --bs-table-accent-bg: #FFDDD1;
+    --bs-table-accent-bg: #FFDDD1 !important;
     color: #212529;
 }
 

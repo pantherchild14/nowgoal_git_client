@@ -112,49 +112,54 @@ const ToolTaiXiu2 = () => {
 
         const get3In1 = () => {
             const length = threeIn1?.length || 0;
+            try {
+                if (selectedTimeRun !== "") {
+                    if (newSocket && isSocketConnected) {
+                        newSocket.disconnect();
+                        console.log("Socket disconnected due to selectedTimeRun change");
+                    }
 
-            for (let i = 0; i < length; i++) {
-                const D = threeIn1?.[i]?.$;
+                    for (let i = 0; i < length; i++) {
+                        const D = threeIn1?.[i]?.$;
 
-                if (!D) continue;
+                        if (!D) continue;
 
-                const tr = document.getElementById("tr_" + D._MATCH_ID);
-                if (!tr) continue;
+                        const tr = document.getElementById("tr_" + D._MATCH_ID);
+                        if (!tr) continue;
 
-                try {
-                    const odds = JSON.parse(D._ODDS);
-                    const oddAH_ft = odds.ODDS_FT.AH;
-                    const oddOU_ft = odds.ODDS_FT.OU;
+                        try {
+                            const odds = JSON.parse(D._ODDS);
+                            const oddAH_ft = odds.ODDS_FT.AH;
+                            const oddOU_ft = odds.ODDS_FT.OU;
 
-                    if (selectedTimeRun !== "") {
-                        if (newSocket && isSocketConnected) {
-                            newSocket.disconnect();
-                            console.log("Socket disconnected due to selectedTimeRun change");
-                        }
-                        updateAHOdds(tr, D, oddAH_ft);
-                        updateOUOdds(tr, D, oddOU_ft);
-                    } else {
-                        if (newSocket && isSocketConnected) {
-                            newSocket.connect();
-                            console.log("Socket disconnected due to selectedTimeRun change");
+                            updateAHOdds(tr, D, oddAH_ft, D._MATCH_ID);
+                            updateOUOdds(tr, D, oddOU_ft);
+                        } catch (error) {
+                            console.error("Error parsing JSON:", error);
                         }
                     }
-                } catch (error) {
-                    console.error("Error parsing JSON:", error);
+                } else {
+                    if (newSocket && !isSocketConnected) {
+                        newSocket.connect();
+                        console.log("Socket connected due to selectedTimeRun change");
+                    }
                 }
+            } catch (error) {
+                console.error("Socket connection error:", error);
             }
         }
 
         // Hàm cập nhật AH odds
-        const updateAHOdds = (tr, D, oddAH_ft) => {
+        const updateAHOdds = (tr, D, oddAH_ft, matchid) => {
             if (oddAH_ft && oddAH_ft.length > 0) {
 
                 const currentTime = new Date();
                 currentTime.setHours(currentTime.getHours() - selectedTimeRun);
 
                 const nearestOdd = oddAH_ft.find(odd => {
-                    const oddTime = new Date(odd.AH.mt * 1000);
+                    const oddTime = new Date(odd.AH.mt * 1000 - 1 * 60 * 60 * 1000);
 
+                    console.log('matchid', matchid, 'oddTime', oddTime);
                     if (oddTime <= currentTime) {
                         return odd;
                     }
@@ -247,13 +252,15 @@ const ToolTaiXiu2 = () => {
 
                 if (oddsValue && oddsValue.trim() !== "") {
                     const old = JSON.parse(oddsValue);
-                    updateElement(formatNumber(D.HomeHandicap), formatNumber(old.HomeHandicap), "upoddsRun_", upodds);
-                    updateElement((D.Handicap) < 0 ? (-D.Handicap) : (D.Handicap), (old.Handicap) < 0 ? (-old.Handicap) : (old.Handicap), "goalRun_", goal);
-                    updateElement(formatNumber(D.AwayHandicap), formatNumber(old.AwayHandicap), "downoddsRun_", downodds);
+                    if (old.unknow14 === "1") {
+                        updateElement(formatNumber(D.HomeHandicap), formatNumber(old.HomeHandicap), "upoddsRun_", upodds);
+                        updateElement((D.Handicap) < 0 ? (-D.Handicap) : (D.Handicap), (old.Handicap) < 0 ? (-old.Handicap) : (old.Handicap), "goalRun_", goal);
+                        updateElement(formatNumber(D.AwayHandicap), formatNumber(old.AwayHandicap), "downoddsRun_", downodds);
 
-                    updateElement(formatNumber(D.Over), formatNumber(old.Over), "upoddsRun_t_", upodds_t);
-                    updateElement((D.Goals), (old.Goals), "goalRun_t1_", goal_t1);
-                    updateElement(formatNumber(D.Under), formatNumber(old.Under), "downoddsRun_t_", downodds_t);
+                        updateElement(formatNumber(D.Over), formatNumber(old.Over), "upoddsRun_t_", upodds_t);
+                        updateElement((D.Goals), (old.Goals), "goalRun_t1_", goal_t1);
+                        updateElement(formatNumber(D.Under), formatNumber(old.Under), "downoddsRun_t_", downodds_t);
+                    }
                 }
                 function updateElement(newValue, oldValue, elementPrefix, element) {
                     if (parseFloat(oldValue) !== parseFloat(newValue)) {
@@ -346,8 +353,9 @@ const ToolTaiXiu2 = () => {
                         ms += "Pen";
                     } else if (D.STATE === '-1' || D.STATE === '-11') {
                         ms += "FT";
-                        tr.attributes["data-s"].value = D.STATE;
+
                     }
+                    console.log(tr.attributes["data-s"].value);
 
                     const matchTimeElement = tr.querySelector(`#ms${D.MATCH_ID}`);
                     const hsElement = tr.querySelector(`#hs${D.MATCH_ID}`);

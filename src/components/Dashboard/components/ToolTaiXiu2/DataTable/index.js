@@ -687,7 +687,7 @@ const DataTable = (props) => {
                     {(ODDS_AH_FT.l.g) < 0 ? (
                         " ") : (
                         <React.Fragment>
-                            <div className="tr__col handicap.instantHandicap" odd_over={(ODDS_AH_FT.r.g)} id={`goalRun_${e.MATCH_ID}`}>{(ODDS_AH_FT.r.g) < 0 ? (-ODDS_AH_FT.r.g) : (ODDS_AH_FT.r.g)}</div>
+                            <div className="tr__col handicap.instantHandicap" odd_over={(ODDS_AH_FT.r.g)} id={`goalRun_${e.MATCH_ID}`}></div>
                             <div className="tr__col handicap.instantHandicap" id={`goalRunDemo_${e.MATCH_ID}`}></div>
                         </React.Fragment>
                     )}
@@ -695,7 +695,7 @@ const DataTable = (props) => {
                     {(ODDS_AH_FT.l.g) < 0 ? (
                         <React.Fragment>
                             <div className="tr__col handicap.instantHandicap" id={`goalRunDemo_${e.MATCH_ID}`}></div>
-                            <div className="tr__col handicap.instantHandicap" id={`goalRun_${e.MATCH_ID}`}>{(ODDS_AH_FT.r.g) < 0 ? (-ODDS_AH_FT.r.g) : (ODDS_AH_FT.r.g)}</div>
+                            <div className="tr__col handicap.instantHandicap" id={`goalRun_${e.MATCH_ID}`}></div>
                         </React.Fragment>
                     ) : (
                         ""
@@ -704,8 +704,8 @@ const DataTable = (props) => {
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col handicap.instantHome" id={`upoddsRun_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.r.u)}</div>
-                    <div className="tr__col handicap.instantAway" id={`downoddsRun_${e.MATCH_ID}`}>{formatNumber(ODDS_AH_FT.r.d)}</div>
+                    <div className="tr__col handicap.instantHome" id={`upoddsRun_${e.MATCH_ID}`}></div>
+                    <div className="tr__col handicap.instantAway" id={`downoddsRun_${e.MATCH_ID}`}></div>
                 </div>
             </td>
 
@@ -713,13 +713,13 @@ const DataTable = (props) => {
 
             <td>
                 <div className="tr__row_remove">
-                    <div className="tr__col overUnder.instantHandicap" id={`goalRun_t1_${e.MATCH_ID}`}>{(ODDS_OU_FT.r.g)}</div>
+                    <div className="tr__col overUnder.instantHandicap" id={`goalRun_t1_${e.MATCH_ID}`}></div>
                 </div>
             </td>
             <td>
                 <div className="tr__row">
-                    <div className="tr__col overUnder.instantOver" id={`upoddsRun_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.r.u)}</div>
-                    <div className="tr__col overUnder.instantUnder" id={`downoddsRun_t_${e.MATCH_ID}`}>{formatNumber(ODDS_OU_FT.r.d)}</div>
+                    <div className="tr__col overUnder.instantOver" id={`upoddsRun_t_${e.MATCH_ID}`}></div>
+                    <div className="tr__col overUnder.instantUnder" id={`downoddsRun_t_${e.MATCH_ID}`}></div>
                 </div>
             </td>
 
